@@ -1,25 +1,10 @@
-/* exposes localhost to the web via ngrok
-
-usage:
-	var ngrok = require('ngrok');
-	ngrok.connect({port: 80, log: true}, function (url) {
-		console.log('got nkgro url', url);
-	});
-	ngrok.disconnect();
-
-see http://127.0.0.1:4040/http/in to view the webhooks
-see https://ngrok.com/ for details
-*/
-
 var spawn = require('child_process').spawn;
 var path = require('path');
-
-var port = 80;
 var ngrokTunnels = {};
 
 function connect(opts, fn) {
 
-	opts || (opts = {});
+	opts || (opts = {prot: 80, log: true});
 	fn || (fn = function() {});
 
 	if (ngrok) {
@@ -28,7 +13,7 @@ function connect(opts, fn) {
 
 	var tunnelUrl;
 	var ngrokBin = getNgrokBin();
-	var ngrok = spawn(ngrokBin, ['-log=stdout', opts.port || port], {cwd: './bin'});
+	var ngrok = spawn(ngrokBin, ['-log=stdout', opts.port], {cwd: './bin'});
 
 	ngrok.stdout.on('data', function (data) {
 		var urlMatch = data.toString().match(/Tunnel established at (https..*.ngrok.com)/);
