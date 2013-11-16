@@ -1,5 +1,3 @@
 language: node_js
 before_script:
-  - chmod +x bin/ngrok-linux
-  - chmod +x bin/ngrok-darwin
   - npm install
