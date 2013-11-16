@@ -1,0 +1,29 @@
+{
+  "name": "ngrok",
+  "version": "0.0.0",
+  "description": "node wrapper for ngrok",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/_mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bubenshchykov/ngrok.git"
+  },
+  "keywords": [
+    "ngrok",
+    "localhost",
+    "tunelling",
+    "localtunnel",
+    "webhook"
+  ],
+  "author": "bubenshchykov",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/bubenshchykov/ngrok/issues"
+  },
+  "devDependencies": {
+    "mocha": "~1.14.0",
+    "chai": "~1.8.1"
+  }
+}
