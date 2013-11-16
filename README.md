@@ -1,7 +1,7 @@
 ngrok
 =====
 
-Simple node wrapper for ngrok client. Nkrok exposes localhost to the web.
+Simple node wrapper for ngrok client. Ngrok exposes localhost to the web.
 
 https://ngrok.com/
 
@@ -10,8 +10,8 @@ usage
 
 ```javascript
 var ngrok = require('ngrok');
-ngrok.connect({port: 80, log: true}, function (err, url) {
-  console.log('got nkgrok url', url);
+ngrok.connect({port: 80}, function (err, url) {
+  console.log('got ngrok url', url);
 });
 ```
 
