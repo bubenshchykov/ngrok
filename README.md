@@ -10,6 +10,7 @@ usage
 
 ```javascript
 var ngrok = require('ngrok');
+
 ngrok.connect({port: 80}, function (err, url) {
   console.log('got ngrok url', url);
 });
