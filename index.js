@@ -7,10 +7,6 @@ function connect(opts, fn) {
 	opts || (opts = {prot: 80, log: true});
 	fn || (fn = function() {});
 
-	if (ngrok) {
-		return;
-	}
-
 	var tunnelUrl;
 	var ngrokBin = getNgrokBin();
 	var ngrok = spawn('./' + ngrokBin, ['-log=stdout', opts.port], {cwd: './bin'});
