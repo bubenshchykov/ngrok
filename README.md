@@ -1,12 +1,13 @@
 ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok)
 =====
 
-Simple node wrapper for ngrok client. Ngrok exposes localhost to the web.
-
-https://ngrok.com/
-
+Simple node wrapper for ngrok client. Ngrok exposes localhost to the web. https://ngrok.com/
+```shell
+$ npm install ngrok
+```
 usage
 ====
+Require ngrok and call connect method, defaul options are: `{port: 80, log: false}`
 
 ```javascript
 var ngrok = require('ngrok');
