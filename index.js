@@ -13,7 +13,7 @@ function connect(opts, fn) {
 
 	var tunnelUrl;
 	var ngrokBin = getNgrokBin();
-	var ngrok = spawn(ngrokBin, ['-log=stdout', opts.port], {cwd: './bin'});
+	var ngrok = spawn('./' + ngrokBin, ['-log=stdout', opts.port], {cwd: './bin'});
 
 	ngrok.stdout.on('data', function (data) {
 		var urlMatch = data.toString().match(/Tunnel established at (https..*.ngrok.com)/);
