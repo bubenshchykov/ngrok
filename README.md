@@ -1,4 +1,4 @@
-ngrok
+ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok)
 =====
 
 Simple node wrapper for ngrok client. Ngrok exposes localhost to the web.
