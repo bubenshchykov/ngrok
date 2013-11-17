@@ -19,6 +19,10 @@ describe('connecting to ngrok', function(){
 		expect(tunnelUrl).not.to.be.empty;
 	});
 
+	it('should return url pointing to ngrok domain', function(){
+		expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/)
+	});
+
 	describe('starting simple local server', function() {
 
 		before(function() {
