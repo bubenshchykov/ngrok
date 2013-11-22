@@ -4,12 +4,12 @@ var ngrokTunnels = {};
 
 function connect(opts, fn) {
 
-	opts || (opts = {prot: 80, log: true});
+	opts || (opts = {port: 80, log: true});
 	fn || (fn = function() {});
 
 	var tunnelUrl;
 	var ngrokBin = getNgrokBin();
-	var ngrok = spawn('./' + ngrokBin, ['-log=stdout', opts.port], {cwd: './bin'});
+	var ngrok = spawn('./' + ngrokBin, ['-log=stdout', opts.port], {cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
 		var urlMatch = data.toString().match(/Tunnel established at (https..*.ngrok.com)/);
