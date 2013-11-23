@@ -7,12 +7,26 @@ $ npm install ngrok
 ```
 usage
 ====
-Require ngrok and call connect method, defaul options are: `{port: 80, log: false}`
+Require ngrok and call connect method with a port and callback function:
 
 ```javascript
 var ngrok = require('ngrok');
 
-ngrok.connect({port: 80}, function (err, url) {
+ngrok.connect(8080, function (err, url) {
+  console.log('got ngrok url', url);
+});
+```
+You may want to use more advanced ngrok options:
+```javascript
+var ngrok = require('ngrok');
+
+ngrok.connect({
+	authoken: 'your-token',
+	subdomain: 'fixed-domain',
+	httpauth: 'user:password',
+	port: 22,
+	proto: 'tcp'
+}, function (err, url) {
   console.log('got ngrok url', url);
 });
 ```
@@ -24,3 +38,9 @@ The tunnel will be killed when node process is done. For manual shutdown use
 ```javascript
 ngrok.disconnect();
 ```
+
+next
+=====
+* add support for ngrok config file and running multiple ngrok clients
+* add negative tests
+* rewrite entire ngrok client with node :)

@@ -3,13 +3,20 @@ var path = require('path');
 var ngrokTunnels = {};
 
 function connect(opts, fn) {
+	
+	if (typeof opts === 'number') {
+		opts = {log: true, port: opts};
+	}
 
-	opts || (opts = {port: 80, log: true});
-	fn || (fn = function() {});
+	var error = validateOpts(opts);
+	if (error) {
+		return fn(error);
+	}
 
 	var tunnelUrl;
 	var ngrokBin = getNgrokBin();
-	var ngrok = spawn('./' + ngrokBin, ['-log=stdout', opts.port], {cwd: __dirname + '/bin'});
+	var ngrokArgs = getNgrokArgs(opts);
+	var ngrok = spawn('./' + ngrokBin, ngrokArgs, {cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
 		var urlMatch = data.toString().match(/Tunnel established at (https..*.ngrok.com)/);
@@ -40,6 +47,19 @@ function connect(opts, fn) {
 	}
 }
 
+function validateOpts (opts) {
+	if (!opts.port) {
+		return new Error('port not specified');
+	}
+	if (opts.start || opts.hostname) {
+		return new Error('starting multiple ngrok clients or using hostname option is not supported yet');
+	}
+	if ((opts.subdomain || opts.httpauth || opts.proto) && !opts.authtoken) {
+		return new Error('authtoken should be specified to use signup features: subdomain|httpauth|proto');
+	}
+	return false;
+}
+
 function getNgrokBin () {
 	var bins = {
 		darwin: 'ngrok-darwin',
@@ -47,6 +67,16 @@ function getNgrokBin () {
 		win32: 'ngrok-win32.exe'
 	};
 	return bins[process.platform] || bins.linux;
+}
+
+function getNgrokArgs(opts) {
+	var args = ['-log=stdout'];
+	opts.authtoken && args.push('-authtoken', opts.authtoken);
+	opts.subdomain && args.push('-subdomain', opts.subdomain);
+	opts.httpauth && args.push('-httpauth', opts.httpauth);
+	opts.proto && args.push('-proto', opts.proto);
+	args.push(opts.port);
+	return args;
 }
 
 function disconnect(tunnelUrl) {
