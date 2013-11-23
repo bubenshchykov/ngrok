@@ -1,33 +1,33 @@
 ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok)
 =====
 
-Simple node wrapper for ngrok client. Ngrok exposes localhost to the web. https://ngrok.com/
+Simple node wrapper for ngrok client. Ngrok exposes your localhost to the web. https://ngrok.com/
 ```shell
 $ npm install ngrok
 ```
 usage
 ====
-Require ngrok and call connect method with a port and callback function:
+Just require ngrok and call connect method with a port and callback function.
 
 ```javascript
 var ngrok = require('ngrok');
 
 ngrok.connect(8080, function (err, url) {
-  console.log('got ngrok url', url);
+	// https://757c1652.ngrok.com -> 127.0.0.1:8080 
 });
 ```
-You may want to use more advanced ngrok options:
+Or you may want to use some of the advanced ngrok options:
 ```javascript
 var ngrok = require('ngrok');
 
 ngrok.connect({
 	authoken: 'your-token',
-	subdomain: 'fixed-domain',
-	httpauth: 'user:password',
-	port: 22,
-	proto: 'tcp'
+	subdomain: 'susanna',
+	httpauth: 'user:pwd',
+	proto: 'tcp',
+	port: 22
 }, function (err, url) {
-  console.log('got ngrok url', url);
+	// https://susanna.ngrok.com -> 127.0.0.1:22 (tcp)
 });
 ```
 
