@@ -79,18 +79,38 @@ function getNgrokArgs(opts) {
 	return args;
 }
 
-function disconnect(tunnelUrl) {
+function disconnect(tunnelUrl, callback) {
+	if (typeof tunnelUrl === 'function') {
+		callback = tunnelUrl;
+		tunnelUrl = null;
+	}
+
 	if(tunnelUrl) {
-		return killNgrok(tunnelUrl);
+		return killNgrok(tunnelUrl, callback);
 	} else {
-		return Object.keys(ngrokTunnels).forEach(killNgrok);
+		var pending = 1;
+		function next() {
+			if (--pending === 0) callback && callback();
+		}
+		Object.keys(ngrokTunnels).forEach(function(host) {
+			pending++;
+			killNgrok(host, next);
+		});
+		// ensure we get at least one tick.
+		process.nextTick(next);
 	}
 }
 
-function killNgrok(tunnelUrl) {
+function killNgrok(tunnelUrl, callback) {
 	var ngrok = ngrokTunnels[tunnelUrl];
-	ngrok && ngrok.kill();
 	delete ngrokTunnels[tunnelUrl];
+	// don't wait for exit if its not in the object
+	if (!ngrok) return callback && process.nextTick(callback);
+	// verify we actually killed it...
+	ngrok.once('exit', function() {
+		callback();
+	});
+	ngrok.kill();
 	return;
 }
 

@@ -57,8 +57,8 @@ describe('starting simple local server', function() {
 
 				describe('disconnecting from ngrok', function () {
 
-					before(function() {
-						ngrok.disconnect();
+					before(function(done) {
+						ngrok.disconnect(done);
 					});
 
 					describe('calling local server through discconected ngrok', function() {
