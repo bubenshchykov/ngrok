@@ -1,6 +1,8 @@
 var ngrok = require('..');
 var http = require('http');
+var net = require('net');
 var request = require('request');
+var URL = require('url');
 
 var port = 8080;
 var authtoken = '9qh-WUj4noglhhjqe_-Q';
@@ -164,4 +166,49 @@ describe('starting simple local server', function() {
 		});
 
 	});
+
+	describe('tcp connections', function () {
+		// create the tcp server
+		var tcpServer;
+		var tcpServerPort;
+		before(function(done) {
+			tcpServer = net.createServer(function(socket) {
+				socket.end('oki-doki: tcp');
+			});
+
+			// bind to some new port
+			tcpServer.listen(0, function() {
+				tcpServerPort = tcpServer.address().port;
+				done();
+			});
+		});
+
+		before(function (done) {
+			ngrok.connect({
+				proto: 'tcp',
+				port: tcpServerPort,
+				authtoken: authtoken,
+			}, function(err, url){
+				tunnelUrl = url;
+				done(err);
+			});
+		});
+
+		it('should contain tcp:// protocol and port', function() {
+			var parts = URL.parse(tunnelUrl);
+			expect(parts.protocol).to.equal('tcp:');
+			expect(parts.port).to.be.ok;
+		});
+
+		it('should be able to connect through the tunnel', function(done) {
+			var parsed = URL.parse(tunnelUrl);
+			var socket = net.connect(parsed.port, parsed.hostname, function() {
+				socket.once('data', function(value) {
+					expect(value.toString().trim()).to.equal('oki-doki: tcp');
+					done();
+				});
+			});
+		});
+	});
+
 });
