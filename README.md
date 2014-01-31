@@ -30,6 +30,24 @@ ngrok.connect({
 });
 ```
 
+Or even create a tunnel that works based protocols other then http.
+```javascript
+var ngrok = require('ngrok');
+
+// create tunnel for your local amqp setup
+ngrok.connect({
+	// http is the default protocol (and you should use it for the https
+	// support) but tcp will work for everything else.
+	proto: 'tcp',
+	authoken: 'your-token',
+	port: 5672
+}, function (err, url) {
+	// tcp://abcd.ngrok.com:60234 -> 127.0.0.1:5762
+});
+```
+
+
+
 When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
 
 The tunnel will be killed when node process is done. For manual shutdown use
