@@ -1,6 +1,8 @@
 var ngrok = require('..');
 var http = require('http');
+var net = require('net');
 var request = require('request');
+var URL = require('url');
 
 var port = 8080;
 var authtoken = '9qh-WUj4noglhhjqe_-Q';
@@ -39,7 +41,7 @@ describe('starting simple local server', function() {
 			});
 
 			it('should return url pointing to ngrok domain', function(){
-				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/)
+				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/);
 			});
 
 			describe('calling local server through ngrok', function() {
@@ -129,7 +131,7 @@ describe('starting simple local server', function() {
 			});
 
 			it('should return url pointing to ngrok domain', function(){
-				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/)
+				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/);
 			});
 
 			describe('calling local server through ngrok without http authorization', function() {
@@ -164,4 +166,64 @@ describe('starting simple local server', function() {
 		});
 
 	});
+
+	describe('connecting to ngrok by tcp', function () {
+		// create the tcp server
+		var tcpServer;
+		var tcpServerPort;
+		before(function(done) {
+			tcpServer = net.createServer(function(socket) {
+				socket.end('oki-doki: tcp');
+			});
+
+			// bind to some new port
+			tcpServer.listen(0, function() {
+				tcpServerPort = tcpServer.address().port;
+				done();
+			});
+		});
+
+		var tunnelUrlParts;
+		before(function (done) {
+			ngrok.connect({
+				proto: 'tcp',
+				port: tcpServerPort,
+				authtoken: authtoken,
+			}, function(err, url){
+				tunnelUrl = url;
+				tunnelUrlParts = URL.parse(tunnelUrl);
+				done(err);
+			});
+		});
+
+		it('should return ngrok url with tcp protocol', function() {
+			expect(tunnelUrlParts.protocol).to.equal('tcp:');
+		});
+
+		it('should return ngrok url with a port', function() {
+			expect(tunnelUrlParts.port).to.be.ok;
+		});
+
+		describe('calling local tcp server through ngrok', function() {
+			var socketData;
+			var socket;
+			before(function(done) {
+				var socket = net.connect(
+					tunnelUrlParts.port,
+					tunnelUrlParts.hostname,
+					function() {
+						socket.once('data', function(data) {
+							socketData = data.toString();
+							done();
+						});
+					}
+				);
+			});
+
+			it('should be able to connect through the tunnel', function() {
+				expect(socketData).to.equal('oki-doki: tcp');
+			});
+		});
+	});
+
 });
