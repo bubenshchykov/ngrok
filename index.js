@@ -5,7 +5,7 @@ var ngrokTunnels = {};
 function connect(opts, fn) {
 	
 	if (typeof opts === 'number') {
-		opts = {log: true, port: opts};
+		opts = {log: false, port: opts};
 	}
 
 	var error = validateOpts(opts);

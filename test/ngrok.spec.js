@@ -9,7 +9,7 @@ var authtoken = '9qh-WUj4noglhhjqe_-Q';
 var localUrl = 'http://localhost:' + port;
 var tunnelUrl, respBody;
 
-describe('starting simple local server', function() {
+describe('starting local http server', function() {
 
 	before(function() {
 		http.createServer(function (req, res) {
@@ -166,23 +166,24 @@ describe('starting simple local server', function() {
 		});
 
 	});
+});
 
-	describe('connecting to ngrok by tcp', function () {
-		// create the tcp server
-		var tcpServer;
-		var tcpServerPort;
-		before(function(done) {
-			tcpServer = net.createServer(function(socket) {
-				socket.end('oki-doki: tcp');
-			});
-
-			// bind to some new port
-			tcpServer.listen(0, function() {
-				tcpServerPort = tcpServer.address().port;
-				done();
-			});
+describe('starting local tcp server', function () {
+		
+	var tcpServer;
+	var tcpServerPort;
+	before(function(done) {
+		tcpServer = net.createServer(function(socket) {
+			socket.end('oki-doki: tcp');
 		});
+		// bind to some new port
+		tcpServer.listen(0, function() {
+			tcpServerPort = tcpServer.address().port;
+			done();
+		});
+	});
 
+	describe('connecting to ngrok by tcp', function() {
 		var tunnelUrlParts;
 		before(function (done) {
 			ngrok.connect({
@@ -224,6 +225,5 @@ describe('starting simple local server', function() {
 				expect(socketData).to.equal('oki-doki: tcp');
 			});
 		});
-	});
-
+	})
 });
