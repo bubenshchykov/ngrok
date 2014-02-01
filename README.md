@@ -21,7 +21,7 @@ Or you may want to use some of the advanced ngrok options like:
 var ngrok = require('ngrok');
 
 ngrok.connect({
-	authoken: 'your-token',
+	authtoken: 'your-token',
 	subdomain: 'susanna',
 	httpauth: 'user:pwd',
 	port: 8080
@@ -39,7 +39,7 @@ ngrok.connect({
 	// http is the default protocol (and you should use it for the https
 	// support) but tcp will work for everything else.
 	proto: 'tcp',
-	authoken: 'your-token',
+	authtoken: 'your-token',
 	port: 5672
 }, function (err, url) {
 	// tcp://abcd.ngrok.com:60234 -> 127.0.0.1:5762
