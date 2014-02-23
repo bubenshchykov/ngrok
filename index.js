@@ -1,9 +1,8 @@
 var spawn = require('child_process').spawn;
-var path = require('path');
 var ngrokTunnels = {};
 
 function connect(opts, fn) {
-	
+
 	if (typeof opts === 'number') {
 		opts = {log: false, port: opts};
 	}
@@ -26,6 +25,14 @@ function connect(opts, fn) {
 			log('ngrok: tunnel established at ' + tunnelUrl);
 			return fn(null, tunnelUrl);
 		}
+        var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
+	if (urlBusy && urlBusy[3]) {
+            ngrok.kill();
+            var info = 'ngrok: The tunnel ' + urlBusy[3] +' '+urlBusy[6];
+            var err = new Error(info);
+            log(info);
+            return fn(err);
+        }
 
 	});
 
