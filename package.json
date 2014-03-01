@@ -4,7 +4,9 @@
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/_mocha"
+    "test": "node ./node_modules/mocha/bin/_mocha",
+    "postinstall": "node ./postinstall.js",
+    "postupdate": "node ./postinstall.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +28,8 @@
     "mocha": "~1.14.0",
     "chai": "~1.8.1",
     "request": "~2.27.0"
+  },
+  "dependencies": {
+    "unzip": "~0.1.9"
   }
 }
