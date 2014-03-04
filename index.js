@@ -25,15 +25,15 @@ function connect(opts, fn) {
 			log('ngrok: tunnel established at ' + tunnelUrl);
 			return fn(null, tunnelUrl);
 		}
-	        var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
-		if (urlBusy && urlBusy[3]) {
-	            ngrok.kill();
-	            var info = 'ngrok: The tunnel ' + urlBusy[3] +' '+urlBusy[6];
-	            var err = new Error(info);
-	            log(info);
-	            return fn(err);
-	        }
 
+		var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
+		if (urlBusy && urlBusy[3]) {
+			ngrok.kill();
+			var info = 'ngrok: The tunnel ' + urlBusy[3] +' '+urlBusy[6];
+			var err = new Error(info);
+			log(info);
+			return fn(err);
+		}
 	});
 
 	ngrok.stderr.on('data', function (data) {
@@ -91,30 +91,28 @@ function disconnect(tunnelUrl, callback) {
 		callback = tunnelUrl;
 		tunnelUrl = null;
 	}
-
 	if(tunnelUrl) {
 		return killNgrok(tunnelUrl, callback);
-	} else {
-		var pending = 1;
-		function next() {
-			if (--pending === 0) callback && callback();
-		}
-		Object.keys(ngrokTunnels).forEach(function(host) {
-			pending++;
-			killNgrok(host, next);
-		});
-		// ensure we get at least one tick.
-		process.nextTick(next);
+	}
+	var pending = 1;
+	Object.keys(ngrokTunnels).forEach(function(host) {
+		pending++;
+		killNgrok(host, next);
+	});
+	process.nextTick(next); // ensure we get at least one tick.
+	
+	function next() {
+		if (--pending === 0) callback && callback();
 	}
 }
 
 function killNgrok(tunnelUrl, callback) {
 	var ngrok = ngrokTunnels[tunnelUrl];
 	delete ngrokTunnels[tunnelUrl];
-	// don't wait for exit if its not in the object
-	if (!ngrok) return callback && process.nextTick(callback);
-	// verify we actually killed it...
-	ngrok.once('exit', function() {
+	if (!ngrok) { // don't wait for exit if its not in the object
+		return callback && process.nextTick(callback);
+	}
+	ngrok.once('exit', function() { // verify we actually killed it...
 		callback();
 	});
 	ngrok.kill();

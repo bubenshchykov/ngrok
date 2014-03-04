@@ -115,6 +115,27 @@ describe('starting local http server', function() {
 				});
 
 			});
+
+			describe('connecting to ngrok with same subdomain again', function () {
+				var error;
+
+				before(function (done) {
+					ngrok.connect({
+						port: port,
+						authtoken: authtoken,
+						subdomain: uniqDomain
+					}, function(err, url){
+						error = err;
+						done();
+					});
+				});
+
+				it('should return an error that the tunnel is already established', function () {
+					expect(error)
+						.to.be.an.instanceof(Error)
+						.to.match(/ngrok: The tunnel (.*) is already registered/);
+				});
+			});
 		});
 
 		describe('connecting to ngrok with authtoken and httpauth', function () {
