@@ -27,7 +27,7 @@ function connect(opts, fn) {
 			tunnelUrl = urlMatch[1];
 			ngrokTunnels[tunnelUrl] = ngrok;
 			log('ngrok: tunnel established at ' + tunnelUrl);
-			if ( fn ) fn(null, tunnelUrl);
+			fn && fn(null, tunnelUrl);
 			return eventEmitter.emit('connect', tunnelUrl);
 		}
 		var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
@@ -45,7 +45,7 @@ function connect(opts, fn) {
 		var info = 'ngrok: process exited due to error\n' + data.toString().substring(0, 10000);
 		var err = new Error(info);
 		log(info);
-		if ( fn ) fn(err);
+		fn && fn(err);
 		return eventEmitter.emit('error', err);
 	});
 
@@ -120,14 +120,14 @@ function killNgrok(tunnelUrl, callback) {
 	}
 	ngrok.once('exit', function() { // verify we actually killed it...
 		eventEmitter.emit('disconnect');  
-		if ( callback ) callback();
+		return callback && callback();
 	});
 	ngrok.kill();
 	return;
 }
 
 for( var key in eventEmitter ) {
-  exports[key] = eventEmitter[key];
+	exports[key] = eventEmitter[key];
 }
 
 exports.connect = connect;

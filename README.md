@@ -47,14 +47,20 @@ ngrok.connect({
 });
 ```
 
-
-
 When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
 
 The tunnel will be killed when node process is done. For manual shutdown use
 
 ```javascript
 ngrok.disconnect();
+```
+
+Also you can use ngrok as EventEmitter, it fires connect/disconnect/error events
+```javascript
+ngrok.once('connect', function (url) {
+	console.log('got a tunnel url', url);
+});
+ngrok.connect(port);
 ```
 
 next
