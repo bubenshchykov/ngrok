@@ -54,12 +54,15 @@ The tunnel will be killed when node process is done. For manual shutdown use
 ```javascript
 ngrok.disconnect();
 ```
+event emitter
+=====
 
-Also you can use ngrok as EventEmitter, it fires connect/disconnect/error events
+Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
 ```javascript
 ngrok.once('connect', function (url) {
 	console.log('got a tunnel url', url);
 });
+
 ngrok.connect(port);
 ```
 
