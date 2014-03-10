@@ -1,5 +1,8 @@
 var spawn = require('child_process').spawn;
+var EventEmitter = require('events').EventEmitter;
 var ngrokTunnels = {};
+var eventEmitter = new EventEmitter();
+var exports = {};
 
 function connect(opts, fn) {
 
@@ -9,7 +12,8 @@ function connect(opts, fn) {
 
 	var error = validateOpts(opts);
 	if (error) {
-		return fn(error);
+		if(fn) fn(error);
+		return eventEmitter.emit('error', error);
 	}
 
 	var tunnelUrl;
@@ -23,9 +27,9 @@ function connect(opts, fn) {
 			tunnelUrl = urlMatch[1];
 			ngrokTunnels[tunnelUrl] = ngrok;
 			log('ngrok: tunnel established at ' + tunnelUrl);
-			return fn(null, tunnelUrl);
+			if ( fn ) fn(null, tunnelUrl);
+			return eventEmitter.emit('connect', tunnelUrl);
 		}
-
 		var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
 		if (urlBusy && urlBusy[3]) {
 			ngrok.kill();
@@ -41,12 +45,14 @@ function connect(opts, fn) {
 		var info = 'ngrok: process exited due to error\n' + data.toString().substring(0, 10000);
 		var err = new Error(info);
 		log(info);
-		return fn(err);
+		if ( fn ) fn(err);
+		return eventEmitter.emit('error', err);
 	});
 
 	ngrok.on('close', function () {
 		var tunnelInfo = tunnelUrl ? tunnelUrl + ' ' : '';
 		log('ngrok: ' + tunnelInfo + 'disconnected');
+		eventEmitter.emit('close');
 	});
 
 	function log(message) {
@@ -113,13 +119,18 @@ function killNgrok(tunnelUrl, callback) {
 		return callback && process.nextTick(callback);
 	}
 	ngrok.once('exit', function() { // verify we actually killed it...
-		callback();
+		eventEmitter.emit('disconnect');  
+		if ( callback ) callback();
 	});
 	ngrok.kill();
 	return;
 }
 
-module.exports = {
-	connect: connect,
-	disconnect: disconnect
-};
+for( var key in eventEmitter ) {
+  exports[key] = eventEmitter[key];
+}
+
+exports.connect = connect;
+exports.disconnect = disconnect;
+
+module.exports = exports;
