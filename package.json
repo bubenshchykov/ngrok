@@ -31,5 +31,8 @@
   },
   "dependencies": {
     "unzip": "~0.1.9"
+  },
+  "bin": {
+    "ngrok": "./bin/ngrok"
   }
 }

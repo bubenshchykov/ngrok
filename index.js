@@ -1,3 +1,4 @@
+var os = require('os');
 var spawn = require('child_process').spawn;
 var EventEmitter = require('events').EventEmitter;
 var ngrokTunnels = {};
@@ -74,12 +75,8 @@ function validateOpts (opts) {
 }
 
 function getNgrokBin () {
-	var bins = {
-		darwin: 'ngrok-darwin',
-		linux: 'ngrok-linux',
-		win32: 'ngrok-win32.exe'
-	};
-	return bins[process.platform] || bins.linux;
+	var suffix = os.platform() === 'win32' ? '.exe' : '';
+	return 'ngrok' + suffix;
 }
 
 function getNgrokArgs(opts) {
