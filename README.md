@@ -73,6 +73,10 @@ ngrok.once('connect', function (url) {
 ngrok.connect(port);
 ```
 
+issues
+======
+* global "ngrok" command doesn't work for windows, see #10
+
 next
 =====
 * add support for ngrok config file and running multiple ngrok clients
