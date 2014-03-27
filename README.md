@@ -5,7 +5,14 @@ Simple node wrapper for ngrok client. Ngrok exposes your localhost to the web. h
 ```shell
 $ npm install ngrok
 ```
-Note, it will download the newest ngrok binary based on your platform and put it into the bin folder.
+It will download the newest ngrok binary based on your platform and put it into the bin folder.
+
+You can install ngrok globally and use ngrok directly from bash
+```shell
+$ npm install ngrok -g
+$ ngrok 8080
+```
+
 usage
 ====
 Just require ngrok and call connect method with a port and callback function:
