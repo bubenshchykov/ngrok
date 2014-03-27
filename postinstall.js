@@ -38,7 +38,7 @@ function unzipFile(file) {
 		if (suffix === '.exe') {
 			fs.writeFileSync(path + 'ngrok.cmd', 'ngrok.exe');
 		}
-		fs.unlink(path + 'ngrok.zip');
+		fs.unlinkSync(path + 'ngrok.zip');
 		var target = path + 'ngrok' + suffix;
 		fs.chmodSync(target, 0755);
 		if (fs.existsSync(target) && fs.statSync(target).size > 0) {
