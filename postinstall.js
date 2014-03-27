@@ -36,7 +36,7 @@ function unzipFile(file) {
 	var binary = fs.createReadStream(file);
 	binary.pipe(unzip.Extract({path: path}).on('close', function() {
 		if (suffix === '.exe') {
-			fs.writeFile(path + 'ngrok.cmd', 'ngrok.exe');
+			fs.writeFileSync(path + 'ngrok.cmd', 'ngrok.exe');
 		}
 		fs.unlink(path + 'ngrok.zip');
 		var target = path + 'ngrok' + suffix;
