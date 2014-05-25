@@ -34,7 +34,7 @@ https.get(files[which], function(response) {
 function unzipFile(file) {
 	var suffix = os.platform() === 'win32' ? '.exe' : '';
 	var binary = fs.createReadStream(file);
-	binary.pipe(unzip.Extract({path: path}).on('close', function() {
+	binary.pipe(unzip.Extract({path: path}).on('finish', function() {
 		if (suffix === '.exe') {
 			fs.writeFileSync(path + 'ngrok.cmd', 'ngrok.exe');
 		}
