@@ -4,7 +4,7 @@ var os = require('os');
 var https = require('https');
 var fs = require('fs');
 var util = require('util');
-var unzip = require('unzip');
+var DecompressZip = require('decompress-zip');
 
 var files = {
 	darwinia32: 'https://dl.ngrok.com/darwin_amd64/ngrok.zip',
@@ -24,8 +24,7 @@ if (!fs.existsSync(path)) {
 var zip = fs.createWriteStream(path + 'ngrok.zip');
 var which = os.platform() + os.arch();
 https.get(files[which], function(response) {
-	response.pipe(zip, {end:false});
-	response.on('end', function() {
+	response.pipe(zip).on('finish', function() {
 		console.error('ngrok - Zipfile received (' + files[which] + ') ...');
 		unzipFile(path + 'ngrok.zip');
 	});
@@ -33,8 +32,13 @@ https.get(files[which], function(response) {
 
 function unzipFile(file) {
 	var suffix = os.platform() === 'win32' ? '.exe' : '';
-	var binary = fs.createReadStream(file);
-	binary.pipe(unzip.Extract({path: path}).on('finish', function() {
+	var unzipper = new DecompressZip(file);
+	unzipper.extract({ path: path });
+	unzipper.once('error', function(e) {
+		console.error(e);
+		process.exit(1);
+	});
+	unzipper.once('extract', function(log) {
 		if (suffix === '.exe') {
 			fs.writeFileSync(path + 'ngrok.cmd', 'ngrok.exe');
 		}
@@ -43,9 +47,9 @@ function unzipFile(file) {
 		fs.chmodSync(target, 0755);
 		if (fs.existsSync(target) && fs.statSync(target).size > 0) {
 			console.error('ngrok - Binary downloaded.');
-			process.exit(0);
+			return;
 		}
 		console.error('ngrok - Binary NOT downloaded.');
 		process.exit(-1);
-	}));
+	});
 };

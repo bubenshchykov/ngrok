@@ -30,7 +30,7 @@
     "request": "~2.27.0"
   },
   "dependencies": {
-    "unzip": "~0.1.9"
+    "decompress-zip": "0.0.7"
   },
   "bin": {
     "ngrok": "./bin/ngrok"
