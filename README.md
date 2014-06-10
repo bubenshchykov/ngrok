@@ -1,7 +1,10 @@
 ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok)
 =====
 
+![alt ngrok.com](https://ngrok.com/static/img/overview.png)
+
 Simple node wrapper for ngrok client. Ngrok exposes your localhost to the web. https://ngrok.com/
+
 ```shell
 $ npm install ngrok
 ```
