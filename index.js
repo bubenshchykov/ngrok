@@ -23,8 +23,7 @@ function connect(opts, fn) {
 	var ngrok = spawn('./' + ngrokBin, ngrokArgs, {cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
-		console.log('data', data.toString());
-		var urlMatch = data.toString().match(/Tunnel established at ((tcp|https)..*.ngrok.com(:[0-9]+)?)/);
+		var urlMatch = data.toString().match(/\[INFO\] \[client\] Tunnel established at ((tcp|https)..*.ngrok.com(:[0-9]+)?)/);
 		if (urlMatch && urlMatch[1]) {
 			tunnelUrl = urlMatch[1];
 			ngrokTunnels[tunnelUrl] = ngrok;
@@ -32,13 +31,10 @@ function connect(opts, fn) {
 			fn && fn(null, tunnelUrl);
 			return eventEmitter.emit('connect', tunnelUrl);
 		}
-		var urlBusy = data.toString().match(/(.*)\[EROR\] \[client\] Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
-		if (urlBusy && urlBusy[2]) {
-			console.log(urlBusy);
-			console.log('data -> error: already registered');
+		var urlBusy = data.toString().match(/\[EROR\] \[client\] Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
+		if (urlBusy && urlBusy[1]) {
 			ngrok.kill();
-			console.log('killed');
-			var info = 'ngrok: The tunnel ' + urlBusy[2] + ' ' + urlBusy[5];
+			var info = 'ngrok: The tunnel ' + urlBusy[1] + ' ' + urlBusy[4];
 			var err = new Error(info);
 			log(info);
 			return fn(err);
@@ -46,7 +42,6 @@ function connect(opts, fn) {
 	});
 
 	ngrok.stderr.on('data', function (data) {
-		console.log('error', data.toString());
 		ngrok.kill();
 		var info = 'ngrok: process exited due to error\n' + data.toString().substring(0, 10000);
 		var err = new Error(info);
@@ -56,7 +51,6 @@ function connect(opts, fn) {
 	});
 
 	ngrok.on('close', function () {
-		console.log('close')
 		var tunnelInfo = tunnelUrl ? tunnelUrl + ' ' : '';
 		log('ngrok: ' + tunnelInfo + 'disconnected');
 		eventEmitter.emit('close');
