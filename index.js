@@ -32,12 +32,13 @@ function connect(opts, fn) {
 			fn && fn(null, tunnelUrl);
 			return eventEmitter.emit('connect', tunnelUrl);
 		}
-		var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
-		if (urlBusy && urlBusy[3]) {
+		var urlBusy = data.toString().match(/(.*)\[EROR\] \[client\] Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
+		if (urlBusy && urlBusy[2]) {
+			console.log(urlBusy);
 			console.log('data -> error: already registered');
 			ngrok.kill();
 			console.log('killed');
-			var info = 'ngrok: The tunnel ' + urlBusy[3] + ' ' + urlBusy[6];
+			var info = 'ngrok: The tunnel ' + urlBusy[2] + ' ' + urlBusy[5];
 			var err = new Error(info);
 			log(info);
 			return fn(err);
