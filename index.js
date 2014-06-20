@@ -23,6 +23,7 @@ function connect(opts, fn) {
 	var ngrok = spawn('./' + ngrokBin, ngrokArgs, {cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
+		console.log('data', data.toString());
 		var urlMatch = data.toString().match(/Tunnel established at ((tcp|https)..*.ngrok.com(:[0-9]+)?)/);
 		if (urlMatch && urlMatch[1]) {
 			tunnelUrl = urlMatch[1];
@@ -42,6 +43,7 @@ function connect(opts, fn) {
 	});
 
 	ngrok.stderr.on('data', function (data) {
+		console.log('error', data.toString());
 		ngrok.kill();
 		var info = 'ngrok: process exited due to error\n' + data.toString().substring(0, 10000);
 		var err = new Error(info);
@@ -51,6 +53,7 @@ function connect(opts, fn) {
 	});
 
 	ngrok.on('close', function () {
+		console.log('close')
 		var tunnelInfo = tunnelUrl ? tunnelUrl + ' ' : '';
 		log('ngrok: ' + tunnelInfo + 'disconnected');
 		eventEmitter.emit('close');
