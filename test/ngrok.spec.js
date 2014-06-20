@@ -97,7 +97,7 @@ describe('starting local http server', function() {
 				});
 			});
 
-			it('should return ngrok url with and given subdomain', function(){
+			it('should return ngrok url with a given subdomain', function(){
 				expect(tunnelUrl).to.equal('https://' + uniqDomain + '.ngrok.com');
 			});
 
@@ -134,6 +134,29 @@ describe('starting local http server', function() {
 					expect(error)
 						.to.be.an.instanceof(Error)
 						.to.match(/ngrok: The tunnel (.*) is already registered/);
+				});
+			});
+
+			describe('disconnecting fron ngrok and connecting with same dubdomain again', function () {
+				var error;
+
+				before(function(done) {
+					ngrok.disconnect(done);
+				});
+
+				before(function (done) {
+					ngrok.connect({
+						port: port,
+						authtoken: authtoken,
+						subdomain: uniqDomain
+					}, function(err, url){
+						error = err;
+						done();
+					});
+				});
+
+				it('should be able to connect and return the same ngrok url', function(){
+					expect(tunnelUrl).to.equal('https://' + uniqDomain + '.ngrok.com');
 				});
 			});
 		});
