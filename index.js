@@ -34,8 +34,10 @@ function connect(opts, fn) {
 		}
 		var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
 		if (urlBusy && urlBusy[3]) {
+			console.log('data -> error: already registered');
 			ngrok.kill();
-			var info = 'ngrok: The tunnel ' + urlBusy[3] +' '+urlBusy[6];
+			console.log('killed');
+			var info = 'ngrok: The tunnel ' + urlBusy[3] + ' ' + urlBusy[6];
 			var err = new Error(info);
 			log(info);
 			return fn(err);
