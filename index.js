@@ -23,7 +23,7 @@ function connect(opts, fn) {
 	var ngrok = spawn('./' + ngrokBin, ngrokArgs, {cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
-		var urlMatch = data.toString().match(/Tunnel established at ((tcp|https)..*.ngrok.com(:[0-9]+)?)/);
+		var urlMatch = data.toString().match(/\[INFO\] \[client\] Tunnel established at ((tcp|https)..*.ngrok.com(:[0-9]+)?)/);
 		if (urlMatch && urlMatch[1]) {
 			tunnelUrl = urlMatch[1];
 			ngrokTunnels[tunnelUrl] = ngrok;
@@ -31,10 +31,10 @@ function connect(opts, fn) {
 			fn && fn(null, tunnelUrl);
 			return eventEmitter.emit('connect', tunnelUrl);
 		}
-		var urlBusy = data.toString().match(/(.*)(\n)Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
-		if (urlBusy && urlBusy[3]) {
+		var urlBusy = data.toString().match(/\[EROR\] \[client\] Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/);
+		if (urlBusy && urlBusy[1]) {
 			ngrok.kill();
-			var info = 'ngrok: The tunnel ' + urlBusy[3] +' '+urlBusy[6];
+			var info = 'ngrok: The tunnel ' + urlBusy[1] + ' ' + urlBusy[4];
 			var err = new Error(info);
 			log(info);
 			return fn(err);
