@@ -137,7 +137,7 @@ describe('starting local http server', function() {
 				});
 			});
 
-			describe('disconnecting fron ngrok and connecting with same dubdomain again', function () {
+			describe('disconnecting from ngrok and connecting with same subdomain again', function () {
 				var error;
 
 				before(function(done) {
