@@ -26,9 +26,9 @@ function connect(opts, cb) {
 	var ngrok = spawn('./' + getNgrokBin(), getNgrokArgs(opts), {cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
-		var urlMatch = data.toString().match(TUNNEL_OK);
-		if (urlMatch && urlMatch[1]) {
-			tunnelUrl = urlMatch[1];
+		var urlOk = data.toString().match(TUNNEL_OK);
+		if (urlOk && urlOk[1]) {
+			tunnelUrl = urlOk[1];
 			tunnels[tunnelUrl] = ngrok;
 			log('ngrok: tunnel established at ' + tunnelUrl);
 			cb(null, tunnelUrl);
