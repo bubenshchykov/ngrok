@@ -3,14 +3,14 @@ ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=mast
 
 ![alt ngrok.com](https://ngrok.com/static/img/overview.png)
 
-Simple node wrapper for ngrok client. Ngrok exposes your localhost to the web. https://ngrok.com/
+Ngrok exposes your localhost to the web. https://ngrok.com/
 
 ```shell
 $ npm install ngrok
 ```
-It will download the newest ngrok binary based on your platform and put it into the bin folder.
+It will download the ngrok binary for your platform and put it into the bin folder.
 
-You can install ngrok globally and use ngrok directly from bash
+Also you can install ngrok globally and use ngrok directly from bash
 ```shell
 $ npm install ngrok -g
 $ ngrok 8080
@@ -64,7 +64,7 @@ The tunnel will be killed when node process is done. For manual shutdown use
 ```javascript
 ngrok.disconnect();
 ```
-event emitter
+emitter
 =====
 
 Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
@@ -75,13 +75,3 @@ ngrok.once('connect', function (url) {
 
 ngrok.connect(port);
 ```
-
-issues
-======
-* global "ngrok" command doesn't work for windows, see #10
-
-next
-=====
-* add support for ngrok config file and running multiple ngrok clients
-* add negative tests
-* rewrite entire ngrok client with node :)
