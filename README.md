@@ -5,9 +5,8 @@ ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=mast
 
 Ngrok exposes your localhost to the web. https://ngrok.com/
 
-```shell
-$ npm install ngrok
-```
+[![NPM](https://nodei.co/npm/ngrok.png?global=true)](https://nodei.co/npm/ngrok/)
+
 It will download the ngrok binary for your platform and put it into the bin folder.
 
 Also you can install ngrok globally and use ngrok directly from bash
