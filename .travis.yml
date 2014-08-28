@@ -5,7 +5,5 @@ node_js:
 os:
   - linux
   - osx
-services:
-  - mongodb
 before_script:
   - npm install
