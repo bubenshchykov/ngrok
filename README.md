@@ -5,7 +5,7 @@ ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=mast
 
 Ngrok exposes your localhost to the web. https://ngrok.com/
 
-[![NPM](https://nodei.co/npm/ngrok.png?global=true)](https://nodei.co/npm/ngrok/)
+[![NPM](https://nodei.co/npm/ngrok.png?global=true&&downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ngrok/)
 
 It will download the ngrok binary for your platform and put it into the bin folder.
 
