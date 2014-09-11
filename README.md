@@ -40,7 +40,7 @@ ngrok.connect({
 });
 ```
 
-Or even create a tunnel that works based on protocols other then http.
+Or even create a tunnel that works based on protocols other than http.
 ```javascript
 var ngrok = require('ngrok');
 
