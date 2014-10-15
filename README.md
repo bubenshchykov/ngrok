@@ -5,19 +5,18 @@ ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=mast
 
 Ngrok exposes your localhost to the web. https://ngrok.com/
 
+usage
+===
+
 [![NPM](https://nodei.co/npm/ngrok.png?global=true&&downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ngrok/)
 
-It will download the ngrok binary for your platform and put it into the bin folder.
-
-Also you can install ngrok globally and use ngrok directly from bash
+It will download the ngrok binary for your platform and put it into the bin folder. You can also install ngrok globally and use it directly from bash
 ```shell
 $ npm install ngrok -g
 $ ngrok 8080
 ```
 
-usage
-====
-Just require ngrok and call connect method with a port and callback function:
+## basic
 
 ```javascript
 var ngrok = require('ngrok');
@@ -26,7 +25,7 @@ ngrok.connect(8080, function (err, url) {
 	// https://757c1652.ngrok.com -> 127.0.0.1:8080 
 });
 ```
-Or you may want to use some of the advanced ngrok options like:
+## subdomains
 ```javascript
 var ngrok = require('ngrok');
 
@@ -40,7 +39,7 @@ ngrok.connect({
 });
 ```
 
-Or even create a tunnel that works based on protocols other than http.
+## tcp
 ```javascript
 var ngrok = require('ngrok');
 
@@ -56,15 +55,12 @@ ngrok.connect({
 });
 ```
 
-When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
-
+## disconnect
 The tunnel will be killed when node process is done. For manual shutdown use
-
 ```javascript
 ngrok.disconnect();
 ```
-emitter
-=====
+## emitter
 
 Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
 ```javascript
@@ -74,3 +70,6 @@ ngrok.once('connect', function (url) {
 
 ngrok.connect(port);
 ```
+
+## inspector
+When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
