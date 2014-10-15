@@ -45,8 +45,7 @@ ngrok.connect({
 }, function (err, url) {
 	// https://757c1652.ngrok.com -> 127.0.0.1:8080 with http auth required
 });
-
-,
+```
 
 ## tcp
 ```javascript
