@@ -25,30 +25,36 @@ ngrok.connect(8080, function (err, url) {
 	// https://757c1652.ngrok.com -> 127.0.0.1:8080 
 });
 ```
-## subdomains
+## subdomain
 ```javascript
-var ngrok = require('ngrok');
-
 ngrok.connect({
 	authtoken: 'your-token',
 	subdomain: 'susanna',
-	httpauth: 'user:pwd',
 	port: 8080
 }, function (err, url) {
-	// https://susanna.ngrok.com -> 127.0.0.1:8080 with http auth required
+	// https://susanna.ngrok.com -> 127.0.0.1:8080
 });
 ```
 
+## http auth
+```javascript
+ngrok.connect({
+	authtoken: 'your-token',
+	httpauth: 'user:pwd'
+	port: 8080
+}, function (err, url) {
+	// https://757c1652.ngrok.com -> 127.0.0.1:8080 with http auth required
+});
+
+,
+
 ## tcp
 ```javascript
-var ngrok = require('ngrok');
-
-// create tunnel for your local amqp setup
 ngrok.connect({
 	// http is the default protocol (and you should use it for the https
 	// support) but tcp will work for everything else.
-	proto: 'tcp',
 	authtoken: 'your-token',
+	proto: 'tcp',
 	port: 5672
 }, function (err, url) {
 	// tcp://abcd.ngrok.com:60234 -> 127.0.0.1:5762
