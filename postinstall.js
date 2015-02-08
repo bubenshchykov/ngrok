@@ -1,12 +1,12 @@
 console.error('ngrok - downloading newest binary...');
 
 var os = require('os');
-var https = require('https');
+var http = require('follow-redirects').http;
 var fs = require('fs');
 var util = require('util');
 var DecompressZip = require('decompress-zip');
 
-var host = 'https://api.equinox.io/1/Applications/ap_pJSFC5wQYkAyI0FIVwKYs9h1hW/Updates/Asset/ngrok.zip?channel=stable&';
+var host = 'http://api.equinox.io/1/Applications/ap_pJSFC5wQYkAyI0FIVwKYs9h1hW/Updates/Asset/ngrok.zip?channel=stable&';
 var files = {
 	darwinia32:	host + 'os=darwin&arch=386',
 	darwinx64:	host + 'os=darwin&arch=amd64',
@@ -24,9 +24,9 @@ if (!fs.existsSync(path)) {
 	fs.mkdirSync(path);
 }
 
-var zip = fs.createWriteStream(path + 'ngrok.zip');
 var which = os.platform() + os.arch();
-https.get(files[which], function(response) {
+http.get(files[which], function(response) {
+	var zip = fs.createWriteStream(path + 'ngrok.zip');
 	response
 		.pipe(zip)
 		.on('finish', function() {
@@ -43,7 +43,7 @@ function unzipFile(file) {
 	new DecompressZip(file)
 		.extract({path: path})
 		.once('error', function(e) {
-			console.error('ngrok - error unzipping binary', e);
+			console.error('ngrok - error unpacking binary', e);
 			process.exit(1);     
 		})
 		.once('extract', function(log) {
@@ -56,7 +56,7 @@ function unzipFile(file) {
 			fs.chmodSync(target, 0755);
 			if (fs.existsSync(target) && fs.statSync(target).size > 0) {
 				console.log('ngrok - binary unpacked.');
-				return;
+				process.exit(0);
 			}
 			console.error('ngrok - error unpacking binary.');
 			process.exit(1);
