@@ -15,6 +15,9 @@ function connect(opts, cb) {
 	if (typeof opts === 'number') {
 		opts = {log: false, port: opts};
 	}
+	if (typeof opts === 'string') {
+		opts = {log: false, host: opts};
+	}
 
 	var error = validateOpts(opts);
 	if (error) {
@@ -65,8 +68,8 @@ function connect(opts, cb) {
 }
 
 function validateOpts (opts) {
-	if (!opts.port) {
-		return new Error('port not specified');
+	if (!opts.port && !opts.host) {
+		return new Error('port or host not specified');
 	}
 	if (opts.start || opts.hostname) {
 		return new Error('starting multiple ngrok clients or using hostname option is not supported yet');
@@ -88,7 +91,7 @@ function getNgrokArgs(opts) {
 	opts.subdomain && args.push('-subdomain', opts.subdomain);
 	opts.httpauth && args.push('-httpauth', opts.httpauth);
 	opts.proto && args.push('-proto', opts.proto);
-	args.push(opts.port);
+	args.push(opts.host || opts.port);
 	return args;
 }
 

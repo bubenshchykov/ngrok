@@ -17,7 +17,6 @@ $ ngrok 8080
 ```
 
 ## basic
-
 ```javascript
 var ngrok = require('ngrok');
 
@@ -57,6 +56,21 @@ ngrok.connect({
 	port: 5672
 }, function (err, url) {
 	// tcp://abcd.ngrok.com:60234 -> 127.0.0.1:5762
+});
+```
+
+## non-local host
+```javascript
+var ngrok = require('ngrok');
+
+ngrok.connect('192.168.0.1:80', function (err, url) {
+	// https://757c1652.ngrok.com -> 192.168.0.1:8080 
+});
+```
+or 
+```javascript
+ngrok.connect({host: '192.168.0.1:80'}, function (err, url) {
+	// https://757c1652.ngrok.com -> 192.168.0.1:8080 
 });
 ```
 
