@@ -74,6 +74,7 @@ function runNgrok(opts, cb) {
 			{cwd: __dirname + '/bin'});
 	
 	ngrok.stdout.on('data', function (data) {
+		console.log(data.toString());
 		var addr = data.toString().match(ready);
 		if (addr) {
 			api = request.defaults({
@@ -115,7 +116,6 @@ function _runTunnel(opts, cb) {
 	opts.name = opts.name || String(id++);
 	
 	var retry = function() {
-		console.log(retries);
 		api.post(
 			{url: '/tunnels', json: opts},
 			function(err, resp, body) {
