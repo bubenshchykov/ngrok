@@ -64,7 +64,7 @@ ngrok.connect(port);
 ```
 
 ## configs
-You can use ngrok's configurations files, then just pass `name` option when making a tunnel
+You can use ngrok's [configurations files](https://ngrok.com/docs#config), then just pass `name` option when making a tunnel
 ```
 OS X	/Users/example/.ngrok2/ngrok.yml
 Linux	/home/example/.ngrok2/ngrok.yml
