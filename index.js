@@ -111,6 +111,7 @@ function runTunnel(opts, cb) {
 }
 
 function _runTunnel(opts, cb) {
+	console.log(opts);
 	var retries = 200;
 
 	opts.name = opts.name || String(id++);
