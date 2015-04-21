@@ -119,6 +119,7 @@ function _runTunnel(opts, cb) {
 		api.post(
 			{url: '/tunnels', json: opts},
 			function(err, resp, body) {
+				console.log(body);
 				if (err) {
 					return cb(err);
 				}
