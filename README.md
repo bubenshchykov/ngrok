@@ -24,10 +24,9 @@ ngrok.connect(function (err, url) {}); // https://757c1652.ngrok.io -> http://lo
 ngrok.connect(9090, function (err, url) {}); // https://757c1652.ngrok.io -> http://localhost:9090
 ngrok.connect({proto: 'tcp', addr: 22}, function (err, url) {}); // tcp://0.tcp.ngrok.io:48590
 ngrok.connect(opts, function(err, url) {});
-
+```
 First connect spawns the ngrok process so each next tunnel is created much faster.
 
-```
 ## options
 ```javascript
 ngrok.connect({
@@ -39,18 +38,15 @@ ngrok.connect({
 }, function (err, url) {});
 ```
 
-Other options: `inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [https://ngrok.com/docs](here)
+Other options: `inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
 
 ## disconnect
 The ngrok and all tunnels will be killed when node process is done. To stop the tunnels use
 ```javascript
-ngrok.disconnect(); // stops all
 ngrok.disconnect(url); // stops one
-ngrok.kill(); // kills the ngrok process
+ngrok.disconnect(); // stops all
+ngrok.kill(); // kills ngrok process
 ```
-
-## inspector
-When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
 
 ## authtoken
 Many advanced features of the ngrok.com service require that you sign up for an account and use authtoken. The authtoken you specify is not the same as the one you used for ngrok 1.0 - module versions prior to 0.2. Your 2.0 ngrok authtoken is available on your ngrok 2.0 dashboard.
@@ -66,3 +62,6 @@ Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and
 ngrok.once('connect', function (url) {};
 ngrok.connect(port);
 ```
+
+## inspector
+When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
