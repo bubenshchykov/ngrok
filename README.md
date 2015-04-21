@@ -38,7 +38,7 @@ ngrok.connect({
 }, function (err, url) {});
 ```
 
-Other options: `inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
+Other options: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
 
 ## disconnect
 The ngrok and all tunnels will be killed when node process is done. To stop the tunnels use
@@ -61,6 +61,14 @@ Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and
 ```javascript
 ngrok.once('connect', function (url) {};
 ngrok.connect(port);
+```
+
+## configs
+You can use ngrok's configurations files, then just pass `name` option when making a tunnel
+```
+OS X	/Users/example/.ngrok2/ngrok.yml
+Linux	/home/example/.ngrok2/ngrok.yml
+Windows	C:\Users\example\.ngrok2\ngrok.yml
 ```
 
 ## inspector
