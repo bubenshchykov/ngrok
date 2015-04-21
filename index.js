@@ -110,11 +110,12 @@ function runTunnel(opts, cb) {
 }
 
 function _runTunnel(opts, cb) {
-	var retries = 100;
+	var retries = 200;
 
 	opts.name = opts.name || String(id++);
 	
 	var retry = function() {
+		console.log(retries);
 		api.post(
 			{url: '/tunnels', json: opts},
 			function(err, resp, body) {
