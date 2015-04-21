@@ -269,3 +269,38 @@ describe('starting local tcp server', function () {
 		});
 	})
 });
+
+describe('setting authtoken, connecting with subdomain ', function () {
+
+	var uniqDomain = 'koko-' + Math.random().toString(36).slice(-4); 
+	var token;
+
+	before(function(done) {
+		ngrok.authtoken(authtoken, function(err, t) {
+			token = t;
+			done(err);
+		});
+	});
+
+	it('should set token and return it', function() {
+		expect(token).to.equal(authtoken);
+	})
+
+	describe('connecting to ngrok with subdomain', function () {
+
+		before(function (done) {
+			ngrok.connect({
+				port: port,
+				subdomain: uniqDomain
+			}, function(err, url){
+				tunnelUrl = url;
+				done(err);
+			});
+		});
+
+		it('should grab authtoken and return ngrok url with a given subdomain', function(){
+			expect(tunnelUrl).to.equal('https://' + uniqDomain + '.ngrok.io');
+		});
+
+	});
+});

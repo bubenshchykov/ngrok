@@ -20,8 +20,8 @@ $ ngrok http 8080
 ```javascript
 var ngrok = require('ngrok');
 
-ngrok.connect(function (err, url) {}); // https://757c1652.ngrok.io
-ngrok.connect(9090, function (err, url) {}); // https://757c1652.ngrok.io
+ngrok.connect(function (err, url) {}); // https://757c1652.ngrok.io -> http://localhost:80
+ngrok.connect(9090, function (err, url) {}); // https://757c1652.ngrok.io -> http://localhost:9090
 ngrok.connect({proto: 'tcp', addr: 22}, function (err, url) {}); // tcp://0.tcp.ngrok.io:48590
 ngrok.connect(opts, function(err, url) {});
 
@@ -42,21 +42,11 @@ ngrok.connect({
 Other options: `inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [https://ngrok.com/docs](here)
 
 ## disconnect
-The ngrok and all tunnels will be killed when node process is done. Just to stop the tunnels use
+The ngrok and all tunnels will be killed when node process is done. To stop the tunnels use
 ```javascript
 ngrok.disconnect(); // stops all
 ngrok.disconnect(url); // stops one
 ngrok.kill(); // kills the ngrok process
-```
-
-## emitter
-Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
-```javascript
-ngrok.once('connect', function (url) {
-	console.log('got a tunnel url', url);
-});
-
-ngrok.connect(port);
 ```
 
 ## inspector
@@ -65,3 +55,14 @@ When tunnel is established you can use the ngrok interface http://127.0.0.1:4040
 ## authtoken
 Many advanced features of the ngrok.com service require that you sign up for an account and use authtoken. The authtoken you specify is not the same as the one you used for ngrok 1.0 - module versions prior to 0.2. Your 2.0 ngrok authtoken is available on your ngrok 2.0 dashboard.
 
+You can pass it as option with each `connect` or set it once for further tunnels
+```javascript```
+ngrok.authtoken(token, function(err, token) {});
+```
+
+## emitter
+Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
+```javascript
+ngrok.once('connect', function (url) {};
+ngrok.connect(port);
+```

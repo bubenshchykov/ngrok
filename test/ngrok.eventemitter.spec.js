@@ -2,10 +2,6 @@ var ngrok = require('..');
 
 describe('using ngrok as event emitter', function ( ) {
 
-	before(function(done) {
-		ngrok.disconnect(done);
-	});
-
 	describe('connecting to ngrok', function ( ) {
 		var connected, tunnelUrl;
 		before(function(done) {

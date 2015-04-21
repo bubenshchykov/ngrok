@@ -5,7 +5,6 @@ var platform = require('os').platform();
 var lock = require('lock')();
 var async = require('async');
 
-
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 
@@ -77,7 +76,7 @@ function runNgrok(opts, cb) {
 		var addr = data.toString().match(ready);
 		if (addr) {
 			api = request.defaults({
-				baseUrl: 'http://' + addr[1] + '/api',
+				baseUrl: 'http://' + addr[1],
 				json: true
 			});
 			cb();
@@ -111,12 +110,11 @@ function runTunnel(opts, cb) {
 
 function _runTunnel(opts, cb) {
 	var retries = 100;
-
-	opts.name = opts.name || String(id++);
+	opts.name = String(opts.name || id++);
 	
 	var retry = function() {
 		api.post(
-			{url: '/tunnels', json: opts},
+			{url: 'api/tunnels', json: opts},
 			function(err, resp, body) {
 				if (err) {
 					return cb(err);
@@ -132,7 +130,7 @@ function _runTunnel(opts, cb) {
 					var err = new Error(JSON.stringify(body));
 					return cb(err);
 				}
-				tunnels[url] = body.name;
+				tunnels[url] = body.uri;
 				return cb(null, url);
 			});
 	};
@@ -145,11 +143,12 @@ function _runTunnel(opts, cb) {
 }
 
 function authtoken(token, cb) {
+	cb = cb || noop;
 	var a = spawn(
 		bin,
 		['authtoken', token],
 		{cwd: __dirname + '/bin'});
-	a.stdout.once('data', cb);
+	a.stdout.once('data', cb.bind(this, null, token));
 	a.stderr.once('data', cb);
 }
 
@@ -164,7 +163,7 @@ function disconnect(url, cb) {
 	}
 	if (url) {
 		return api.del(
-			'tunnels/' + tunnels[url],
+			tunnels[url],
 			function(err, resp, body) {
 				if (err || resp.statusCode !== 204) {
 					return cb(err || new Error(body));
@@ -203,10 +202,11 @@ function kill(cb) {
 var exports = {
 	connect: connect,
 	disconnect: disconnect,
+	authtoken: authtoken,
 	kill: kill
 };
 
-for(var key in emitter) {
+for (var key in emitter) {
 	exports[key] = emitter[key];
 }
 
