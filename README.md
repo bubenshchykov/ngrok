@@ -16,7 +16,7 @@ $ npm install ngrok -g
 $ ngrok http 8080
 ```
 
-## basic
+## connect
 ```javascript
 var ngrok = require('ngrok');
 
