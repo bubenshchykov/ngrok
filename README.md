@@ -20,17 +20,10 @@ $ ngrok http 8080
 ```javascript
 var ngrok = require('ngrok');
 
-ngrok.connect(function (err, url) {
-	// https://757c1652.ngrok.io -> 127.0.0.1:8080 
-});
-
-ngrok.connect(9090, function (err, url) {
-	// https://757c1652.ngrok.io -> 127.0.0.1:9090 
-});
-
-ngrok.connect({proto: 'tcp', addr: 22}, function (err, url) {
-	// tcp://0.tcp.ngrok.io:48590 -> 127.0.0.1:22
-});
+ngrok.connect(function (err, url) {}); // https://757c1652.ngrok.io
+ngrok.connect(9090, function (err, url) {}); // https://757c1652.ngrok.io
+ngrok.connect({proto: 'tcp', addr: 22}, function (err, url) {}); // tcp://0.tcp.ngrok.io:48590
+ngrok.connect(opts, function(err, url) {});
 
 First connect spawns the ngrok process so each next tunnel is created much faster.
 
