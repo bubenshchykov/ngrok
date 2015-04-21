@@ -1,10 +1,10 @@
 var ngrok = require('..');
-var port = 8080;
-var authtoken = '9qh-WUj4noglhhjqe_-Q';
-ngrok.disconnect();
-
 
 describe('using ngrok as event emitter', function ( ) {
+
+	before(function(done) {
+		ngrok.disconnect(done);
+	});
 
 	describe('connecting to ngrok', function ( ) {
 		var connected, tunnelUrl;
@@ -14,7 +14,7 @@ describe('using ngrok as event emitter', function ( ) {
 				tunnelUrl = url;
 				done();
 			});
-			ngrok.connect(port);
+			ngrok.connect();
 		});
 
 		it('should fire "connect" event', function ( ) {
@@ -22,7 +22,7 @@ describe('using ngrok as event emitter', function ( ) {
 		});
 
 		it('should pass tunnel url with a "connect" event', function ( ) {
-			expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/);
+			expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
 		});
 	});
 
@@ -47,7 +47,7 @@ describe('using ngrok as event emitter', function ( ) {
 				error = err;
 				done();
 			});	
-			ngrok.connect({});
+			ngrok.connect({proto: 'xxx'});
 		});
 
 		it('should fire error event', function(){

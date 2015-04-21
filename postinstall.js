@@ -6,17 +6,17 @@ var util = require('util');
 var https = require('https');
 var DecompressZip = require('decompress-zip');
 
-var source = 'https://api.equinox.io/1/Applications/ap_pJSFC5wQYkAyI0FIVwKYs9h1hW/Updates/Asset/ngrok.zip?channel=stable&';
+var source = 'https://dl.ngrok.com/ngrok_2.0.17_';
 var files = {
-	darwinia32:	source + 'os=darwin&arch=386',
-	darwinx64:	source + 'os=darwin&arch=amd64',
-	linuxarm:	source + 'os=linux&arch=arm',
-	linuxia32:	source + 'os=linux&arch=386',
-	linuxx64:	source + 'os=linux&arch=amd64',
-	win32ia32:	source + 'os=windows&arch=386',
-	win32x64:	source + 'os=windows&arch=amd64',
-	freebsdia32:	source + 'os=freebsd&arch=386',
-	freebsdx64:	source + 'os=freebsd&arch=amd64'
+	darwinia32:	source + 'darwin_386.zip',
+	darwinx64:	source + 'darwin_amd64.zip',
+	linuxarm:	source + 'linux_arm.zip',
+	linuxia32:	source + 'linux_386.zip',
+	linuxx64:	source + 'linux_amd64.zip',
+	win32ia32:	source + 'windows_386.zip',
+	win32x64:	source + 'windows_amd64.zip',
+	freebsdia32:	source + 'freebsd_386.zip',
+	freebsdx64:	source + 'freebsd_amd64.zip'
 };
 
 var path = __dirname + '/bin/';

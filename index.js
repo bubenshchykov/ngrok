@@ -1,137 +1,213 @@
-var os = require('os');
+var request = require('request');
 var spawn = require('child_process').spawn;
-var EventEmitter = require('events').EventEmitter;
+var Emitter = require('events').EventEmitter;
+var platform = require('os').platform();
+var lock = require('lock')();
+var async = require('async');
 
-var emitter = new EventEmitter();
-var tunnels = {};
-var exports = {};
 
-var TUNNEL_OK = /\[INFO\] \[client\] Tunnel established at ((tcp|https)..*.ngrok.com(:[0-9]+)?)/;
-var TUNNEL_BUSY = /\[EROR\] \[client\] Server failed to allocate tunnel: The tunnel ((tcp|http|https)..*.ngrok.com([0-9]+)?) (.*is already registered)/;
+var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
+var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+
+var noop = function() {};
+var emitter = new Emitter().on('error', noop);
+var ngrok, api, tunnels = {}, id = 0;
 
 function connect(opts, cb) {
 
-	cb || (cb = function(){});
-	if (typeof opts === 'number') {
-		opts = {log: false, port: opts};
-	}
-	if (typeof opts === 'string') {
-		opts = {log: false, host: opts};
+	if (typeof opts === 'function') {
+		cb = opts;
 	}
 
-	var error = validateOpts(opts);
-	if (error) {
-		cb(error);
-		return emitter.emit('error', error);
+	cb = cb || noop;
+	opts = defaults(opts);
+
+	if (api) {
+		return runTunnel(opts, cb);
 	}
 
-	var tunnelUrl;
-	var ngrok = spawn('./' + getNgrokBin(), getNgrokArgs(opts), {cwd: __dirname + '/bin'});
+	lock('ngrok', function(release) {
+		runNgrok(opts, release(function(err) {
+			if (err) {
+				emitter.emit('error', err);
+				return cb(err);
+			}
+			runTunnel(opts, cb)
+		}));
+	});	
+}
 
+function defaults(opts) {
+	opts = opts || {proto: 'http', addr: 80};
+
+	if (typeof opts === 'function') {
+		opts = {proto: 'http', addr: 80};
+	}
+	
+	if (typeof opts !== 'object') {
+		opts = {proto: 'http', addr: opts};
+	}
+
+	if (!opts.proto) {
+		opts.proto = 'http';
+	}
+
+	if (!opts.addr) {
+		opts.addr = opts.port || opts.host || 80;
+	}
+
+	if (opts.httpauth) {
+		opts.auth = opts.httpauth;
+	}
+
+	return opts;
+}
+
+function runNgrok(opts, cb) {
+	if (api) {
+		return cb();
+	}
+	
+	ngrok = spawn(
+			bin,
+			['start', '--none', '--log=stdout'],
+			{cwd: __dirname + '/bin'});
+	
 	ngrok.stdout.on('data', function (data) {
-		var urlOk = data.toString().match(TUNNEL_OK);
-		if (urlOk && urlOk[1]) {
-			tunnelUrl = urlOk[1];
-			tunnels[tunnelUrl] = ngrok;
-			log('ngrok: tunnel established at ' + tunnelUrl);
-			cb(null, tunnelUrl);
-			return emitter.emit('connect', tunnelUrl);
-		}
-		var urlBusy = data.toString().match(TUNNEL_BUSY);
-		if (urlBusy && urlBusy[1]) {
-			ngrok.kill();
-			var info = 'ngrok: The tunnel ' + urlBusy[1] + ' ' + urlBusy[4];
-			var err = new Error(info);
-			log(info);
-			return cb(err);
+		var addr = data.toString().match(ready);
+		if (addr) {
+			api = request.defaults({
+				baseUrl: 'http://' + addr[1] + '/api',
+				json: true
+			});
+			cb();
 		}
 	});
 
-	ngrok.stderr.on('data', function (data) {
-		ngrok.kill();
-		var info = 'ngrok: process exited due to error\n' + data.toString().substring(0, 10000);
-		var err = new Error(info);
-		log(info);
-		cb(err);
-		return emitter.emit('error', err);
+	ngrok.stderr.once('data', function (data) {
+		var info = data.toString().substring(0, 10000);
+		return cb(new Error(info));
 	});
 
 	ngrok.on('close', function () {
-		var tunnelInfo = tunnelUrl ? tunnelUrl + ' ' : '';
-		log('ngrok: ' + tunnelInfo + 'disconnected');
 		return emitter.emit('close');
 	});
 
-	function log(message) {
-		opts.log && console.log(message);
-	}
-}
-
-function validateOpts (opts) {
-	if (!opts.port && !opts.host) {
-		return new Error('port or host not specified');
-	}
-	if (opts.start || opts.hostname) {
-		return new Error('starting multiple ngrok clients or using hostname option is not supported yet');
-	}
-	if ((opts.subdomain || opts.httpauth || opts.proto) && !opts.authtoken) {
-		return new Error('authtoken should be specified to use signup features: subdomain|httpauth|proto');
-	}
-	return false;
-}
-
-function getNgrokBin () {
-	var suffix = os.platform() === 'win32' ? '.exe' : '';
-	return 'ngrok' + suffix;
-}
-
-function getNgrokArgs(opts) {
-	var args = ['-log=stdout'];
-	opts.authtoken && args.push('-authtoken', opts.authtoken);
-	opts.subdomain && args.push('-subdomain', opts.subdomain);
-	opts.httpauth && args.push('-httpauth', opts.httpauth);
-	opts.proto && args.push('-proto', opts.proto);
-	args.push(opts.host || opts.port);
-	return args;
-}
-
-function disconnect(tunnelUrl, callback) {
-	if (typeof tunnelUrl === 'function') {
-		callback = tunnelUrl;
-		tunnelUrl = null;
-	}
-	if (tunnelUrl) {
-		return kill(tunnelUrl, callback);
-	}
-	var pending = 1;
-	Object.keys(tunnels).forEach(function(url) {
-		pending++;
-		kill(url, next);
+	process.on('exit', function() {
+		kill();
 	});
-	process.nextTick(next);
-	
-	function next() {
-		if (--pending === 0) callback && callback();
-	}
 }
 
-function kill(tunnelUrl, callback) {
-	var ngrok = tunnels[tunnelUrl];
-	delete tunnels[tunnelUrl];
-	if (!ngrok) {
-		return callback && process.nextTick(callback);
+function runTunnel(opts, cb) {
+	_runTunnel(opts, function(err, url) {
+		if (err) {
+			emitter.emit('error', err);
+			return cb(err);
+		}
+		emitter.emit('connect', url);
+		return cb(null, url);
+	});
+}
+
+function _runTunnel(opts, cb) {
+	var retries = 100;
+
+	opts.name = opts.name || String(id++);
+	
+	var retry = function() {
+		api.post(
+			{url: '/tunnels', json: opts},
+			function(err, resp, body) {
+				if (err) {
+					return cb(err);
+				}
+				var notReady = resp.statusCode === 500;
+				if (notReady) {
+					return retries-- ?
+						setTimeout(retry, 100) :
+						cb(new Error(body));
+				}
+				var url = body && body.public_url;
+				if (!url) {
+					var err = new Error(JSON.stringify(body));
+					return cb(err);
+				}
+				tunnels[url] = body.name;
+				return cb(null, url);
+			});
+	};
+
+	if (opts.authtoken) {
+		return authtoken(opts.authtoken, retry);
 	}
-	ngrok.once('exit', function() {
-		emitter.emit('disconnect');  
-		return callback && callback();
+
+	retry();	
+}
+
+function authtoken(token, cb) {
+	var a = spawn(
+		bin,
+		['authtoken', token],
+		{cwd: __dirname + '/bin'});
+	a.stdout.once('data', cb);
+	a.stderr.once('data', cb);
+}
+
+function disconnect(url, cb) {
+	cb = cb || noop;
+	if (typeof url === 'function') {
+		cb = url;
+		url = null;
+	}
+	if (!api) {
+		return cb();
+	}
+	if (url) {
+		return api.del(
+			'tunnels/' + tunnels[url],
+			function(err, resp, body) {
+				if (err || resp.statusCode !== 204) {
+					return cb(err || new Error(body));
+				}
+				delete tunnels[url];
+				return cb();
+			});
+	}
+
+	return async.each(
+		Object.keys(tunnels),
+		disconnect,
+		function(err) {
+			if (err) {
+				emitter.emit('error', err);
+				return cb(err);
+			}
+			emitter.emit('disconnect');
+			return cb();
+		});
+}
+
+function kill(cb) {
+	cb = cb || noop;
+	if (!ngrok) {
+		return cb();
+	}
+	ngrok.on('exit', function() {
+		api = null;
+		emitter.emit('disconnect');
+		return cb();
 	});
 	return ngrok.kill();
 }
 
-for(var key in emitter ) {
+var exports = {
+	connect: connect,
+	disconnect: disconnect,
+	kill: kill
+};
+
+for(var key in emitter) {
 	exports[key] = emitter[key];
 }
-exports.connect = connect;
-exports.disconnect = disconnect;
 
 module.exports = exports;

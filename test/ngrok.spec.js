@@ -5,17 +5,17 @@ var request = require('request');
 var URL = require('url');
 
 var port = 8080;
-var authtoken = '9qh-WUj4noglhhjqe_-Q';
+var authtoken = '3VF2Ln9PfRjRYwcsGQ6Pe_4rZqDcKrB1Srzrs1CGkFr';
 var localUrl = 'http://localhost:' + port;
 var tunnelUrl, respBody;
 
 describe('starting local http server', function() {
 
-	before(function() {
+	before(function(done) {
 		http.createServer(function (req, res) {
 			res.writeHead(200);
 			res.end('oki-doki: ' + req.url);
-		}).listen(port);
+		}).listen(port, done);
 	});
 
 	describe('calling local server directly', function() {
@@ -41,7 +41,7 @@ describe('starting local http server', function() {
 			});
 
 			it('should return url pointing to ngrok domain', function(){
-				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/);
+				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
 			});
 
 			describe('calling local server through ngrok', function() {
@@ -98,7 +98,7 @@ describe('starting local http server', function() {
 			});
 
 			it('should return ngrok url with a given subdomain', function(){
-				expect(tunnelUrl).to.equal('https://' + uniqDomain + '.ngrok.com');
+				expect(tunnelUrl).to.equal('https://' + uniqDomain + '.ngrok.io');
 			});
 
 			describe('calling local server through ngrok', function() {
@@ -131,9 +131,7 @@ describe('starting local http server', function() {
 				});
 
 				it('should return an error that the tunnel is already established', function () {
-					expect(error)
-						.to.be.an.instanceof(Error)
-						.to.match(/ngrok: The tunnel (.*) is already registered/);
+					expect(error).to.be.an.instanceof(Error);
 				});
 			});
 
@@ -156,18 +154,18 @@ describe('starting local http server', function() {
 				});
 
 				it('should be able to connect and return the same ngrok url', function(){
-					expect(tunnelUrl).to.equal('https://' + uniqDomain + '.ngrok.com');
+					expect(tunnelUrl).to.equal('https://' + uniqDomain + '.ngrok.io');
 				});
 			});
 		});
 
-		describe('connecting to ngrok with authtoken and httpauth', function () {
+		describe('connecting to ngrok with authtoken and auth', function () {
 			
 			before(function (done) {
 				ngrok.connect({
 					port: port,
 					authtoken: authtoken,
-					httpauth: 'oki:doki'
+					auth: 'oki:doki'
 				}, function(err, url){
 					tunnelUrl = url;
 					done(err);
@@ -175,7 +173,7 @@ describe('starting local http server', function() {
 			});
 
 			it('should return url pointing to ngrok domain', function(){
-				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.com/);
+				expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
 			});
 
 			describe('calling local server through ngrok without http authorization', function() {
