@@ -4,9 +4,9 @@
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npm install decompress-zip && node ./install-ngrok.js",
     "test": "node ./node_modules/mocha/bin/_mocha",
-    "postinstall": "node ./postinstall.js",
-    "postupdate": "node ./postinstall.js"
+    "postupdate": "node ./install-ngrok.js"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "async": "^0.9.0",
-    "decompress-zip": "0.1.0",
     "lock": "^0.1.2",
     "request": "^2.55.0"
   },
