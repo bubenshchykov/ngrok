@@ -20,7 +20,7 @@ $ ngrok http 8080
 *Attention, authtoken is required now because of a tricky ngrok [bug #27](https://github.com/bubenshchykov/ngrok/issues/27).* Please go to ngrok 2.0 dashboard and obtain an authtoken. Authtoken for ngrok 1.0 won't work. Many advanced features of the ngrok.com service anyway require authtoken, so it's a good think anyway.
 
 You can pass it as option with each `connect` or set it once for further tunnels
-```javascript```
+```javascript
 ngrok.authtoken(token, function(err, token) {}); // or bash ./ngrok authtoken THE_TOKEN
 ```
 
