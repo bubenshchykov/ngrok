@@ -16,6 +16,18 @@ $ npm install ngrok -g
 $ ngrok http 8080
 ```
 
+## authtoken
+*Attention, authtoken is required now because of a tricky ngrok [bug #27](https://github.com/bubenshchykov/ngrok/issues/27).* Please go to ngrok 2.0 dashboard and obtain an authtoken. Authtoken for ngrok 1.0 won't work. Many advanced features of the ngrok.com service anyway require authtoken, so it's a good think anyway.
+
+You can pass it as option with each `connect` or set it once for further tunnels
+```javascript```
+ngrok.authtoken(token, function(err, token) {});
+```
+or
+```bash
+./ngrok authtoken THE_TOKEN
+```
+
 ## connect
 ```javascript
 var ngrok = require('ngrok');
@@ -46,14 +58,6 @@ The ngrok and all tunnels will be killed when node process is done. To stop the 
 ngrok.disconnect(url); // stops one
 ngrok.disconnect(); // stops all
 ngrok.kill(); // kills ngrok process
-```
-
-## authtoken
-Many advanced features of the ngrok.com service require that you sign up for an account and use authtoken. The authtoken you specify is not the same as the one you used for ngrok 1.0 - module versions prior to 0.2. Your 2.0 ngrok authtoken is available on your ngrok 2.0 dashboard.
-
-You can pass it as option with each `connect` or set it once for further tunnels
-```javascript```
-ngrok.authtoken(token, function(err, token) {});
 ```
 
 ## emitter
