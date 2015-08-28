@@ -6,7 +6,7 @@ var util = require('util');
 var https = require('https');
 var DecompressZip = require('decompress-zip');
 
-var source = 'https://dl.ngrok.com/ngrok_2.0.17_';
+var source = 'https://dl.ngrok.com/ngrok_2.0.19_';
 var files = {
 	darwinia32:	source + 'darwin_386.zip',
 	darwinx64:	source + 'darwin_amd64.zip',
@@ -43,7 +43,7 @@ function unzipFile(file) {
 		.extract({path: path})
 		.once('error', function(e) {
 			console.error('ngrok - error unpacking binary', e);
-			process.exit(1);     
+			process.exit(1);
 		})
 		.once('extract', function(log) {
 			var suffix = os.platform() === 'win32' ? '.exe' : '';
