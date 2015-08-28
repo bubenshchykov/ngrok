@@ -21,9 +21,8 @@ $ ngrok http 8080
 
 You can pass it as option with each `connect` or set it once for further tunnels
 ```javascript```
-ngrok.authtoken(token, function(err, token) {});
+ngrok.authtoken(token, function(err, token) {}); // or bash ./ngrok authtoken THE_TOKEN
 ```
-or do it from bash ```./ngrok authtoken THE_TOKEN```
 
 ## connect
 ```javascript
