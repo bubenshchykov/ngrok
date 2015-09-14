@@ -26,13 +26,21 @@ function connect(opts, cb) {
 	}
 
 	lock('ngrok', function(release) {
-		runNgrok(opts, release(function(err) {
-			if (err) {
-				emitter.emit('error', err);
-				return cb(err);
-			}
-			runTunnel(opts, cb)
-		}));
+		function run() {
+			runNgrok(opts, release(function(err) {
+				if (err) {
+					emitter.emit('error', err);
+					return cb(err);
+				}
+				runTunnel(opts, cb)
+			}));
+		}
+
+		if (opts.authtoken) {
+			authtoken(opts.authtoken, run);
+		} else {
+			run();
+		}
 	});	
 }
 
@@ -134,10 +142,6 @@ function _runTunnel(opts, cb) {
 				return cb(null, url);
 			});
 	};
-
-	if (opts.authtoken) {
-		return authtoken(opts.authtoken, retry);
-	}
 
 	retry();	
 }
