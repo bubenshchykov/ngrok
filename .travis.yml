@@ -5,6 +5,5 @@ node_js:
   - "0.11"
 os:
   - linux
-  - osx
 before_script:
   - npm install
