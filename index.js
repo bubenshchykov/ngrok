@@ -4,13 +4,14 @@ var Emitter = require('events').EventEmitter;
 var platform = require('os').platform();
 var lock = require('lock')();
 var async = require('async');
+var uuid = require('node-uuid');
 
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 
 var noop = function() {};
 var emitter = new Emitter().on('error', noop);
-var ngrok, api, tunnels = {}, id = 0;
+var ngrok, api, tunnels = {};
 
 function connect(opts, cb) {
 
@@ -118,7 +119,7 @@ function runTunnel(opts, cb) {
 
 function _runTunnel(opts, cb) {
 	var retries = 100;
-	opts.name = String(opts.name || id++);
+	opts.name = String(opts.name || uuid.v4());
 	
 	var retry = function() {
 		api.post(

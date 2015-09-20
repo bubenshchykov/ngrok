@@ -3,10 +3,11 @@ var http = require('http');
 var net = require('net');
 var request = require('request');
 var URL = require('url');
+var uuid = require('node-uuid');
 
 var port = 8080;
 var authtoken = '3VF2Ln9PfRjRYwcsGQ6Pe_4rZqDcKrB1Srzrs1CGkFr';
-var localUrl = 'http://localhost:' + port;
+var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 
 describe('starting local http server', function() {
@@ -84,7 +85,7 @@ describe('starting local http server', function() {
 		});
 
 		describe('connecting to ngrok with authtoken and subdomain', function () {
-			var uniqDomain = 'koko-' + Math.random().toString(36).slice(-4); 
+			var uniqDomain = 'koko-' + uuid.v4();
 			
 			before(function (done) {
 				ngrok.connect({
@@ -268,7 +269,7 @@ describe('starting local tcp server', function () {
 
 describe('setting authtoken, connecting with subdomain ', function () {
 
-	var uniqDomain = 'koko-' + Math.random().toString(36).slice(-4); 
+	var uniqDomain = 'koko-' + uuid.v4();
 	var token;
 
 	before(function(done) {
