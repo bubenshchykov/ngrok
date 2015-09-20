@@ -212,14 +212,11 @@ describe('starting local http server', function() {
 
 describe('starting local tcp server', function () {
 		
-	var tcpServer;
 	var tcpServerPort;
 	before(function(done) {
-		tcpServer = net.createServer(function(socket) {
+		var tcpServer = net.createServer(function(socket) {
 			socket.end('oki-doki: tcp');
-		});
-		// bind to some new port
-		tcpServer.listen(0, function() {
+		}).listen(0, '127.0.0.1', function() {
 			tcpServerPort = tcpServer.address().port;
 			done();
 		});
@@ -250,17 +247,16 @@ describe('starting local tcp server', function () {
 		describe('calling local tcp server through ngrok', function() {
 			var socketData;
 			var socket;
-			before(function(done) {
+			
+			before(function (done) {
 				var socket = net.connect(
 					tunnelUrlParts.port,
-					tunnelUrlParts.hostname,
-					function() {
-						socket.once('data', function(data) {
-							socketData = data.toString();
-							done();
-						});
-					}
+					tunnelUrlParts.hostname
 				);
+				socket.once('data', function(data) {
+					socketData = data.toString();
+					done();
+				});
 			});
 
 			it('should be able to connect through the tunnel', function() {
