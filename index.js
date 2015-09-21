@@ -204,15 +204,9 @@ function kill(cb) {
 	return ngrok.kill();
 }
 
-var exports = {
-	connect: connect,
-	disconnect: disconnect,
-	authtoken: authtoken,
-	kill: kill
-};
+emitter.connect = connect;
+emitter.disconnect = disconnect;
+emitter.authtoken = authtoken;
+emitter.kill = kill;
 
-for (var key in emitter) {
-	exports[key] = emitter[key];
-}
-
-module.exports = exports;
+module.exports = emitter;
