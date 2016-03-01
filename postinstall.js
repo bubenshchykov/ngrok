@@ -6,8 +6,11 @@ var util = require('util');
 var https = require('https');
 var DecompressZip = require('decompress-zip');
 
-var source = (process.env.npm_config_ngrok_cdnurl ||
-	process.env.NGROK_CDNURL || 'https://dl.ngrok.com') + '/ngrok_2.0.19_';
+var cdn = process.env.npm_config_ngrok_cdnurl ||
+	process.env.NGROK_CDNURL ||
+	'https://dl.ngrok.com';
+
+var source = cdn + '/ngrok_2.0.19_';
 
 
 var files = {
