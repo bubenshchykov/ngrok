@@ -6,7 +6,10 @@ var util = require('util');
 var https = require('https');
 var DecompressZip = require('decompress-zip');
 
-var source = 'https://dl.ngrok.com/ngrok_2.0.19_';
+var source = (process.env.npm_config_ngrok_cdnurl ||
+	process.env.NGROK_CDNURL || 'https://dl.ngrok.com') + '/ngrok_2.0.19_';
+
+
 var files = {
 	darwinia32:	source + 'darwin_386.zip',
 	darwinx64:	source + 'darwin_amd64.zip',
