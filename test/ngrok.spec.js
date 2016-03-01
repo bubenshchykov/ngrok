@@ -187,7 +187,7 @@ describe('starting local http server', function() {
 				});
 
 				it('should return error message', function() {
-					expect(respBody).to.contain('Authorization required');
+					expect(respBody).to.contain('Unauthorized');
 				});
 
 			});
