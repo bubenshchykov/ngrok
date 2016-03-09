@@ -174,6 +174,7 @@ function disconnect(url, cb) {
 					return cb(err || new Error(body));
 				}
 				delete tunnels[url];
+				emitter.emit('tunnel-disconnect', url);
 				return cb();
 			});
 	}
