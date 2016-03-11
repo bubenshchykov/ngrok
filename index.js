@@ -34,7 +34,6 @@ function connect(opts, cb) {
 				return cb(err);
 			}
 			runNgrok(opts, release(function(err) {
-				console.log('Error', err);
 				if (err) {
 					emitter.emit('error', err);
 					return cb(err);
@@ -98,7 +97,8 @@ function runNgrok(opts, cb) {
 
 	ngrok.stderr.once('data', function (data) {
 		var info = data.toString().substring(0, 10000);
-		return cb(new Error(info));
+		console.log(info);
+		//return cb(new Error(info));
 	});
 
 	ngrok.on('close', function () {
@@ -124,7 +124,6 @@ function runTunnel(opts, cb) {
 function _runTunnel(opts, cb) {
 	var retries = 100;
 	opts.name = String(opts.name || uuid.v4());
-	console.log('creating tunnel', opts);
 	var retry = function() {
 		api.post(
 			{url: 'api/tunnels', json: opts},
@@ -132,7 +131,6 @@ function _runTunnel(opts, cb) {
 				if (err) {
 					return cb(err);
 				}
-				console.log('resp', body);
 				var notReady = resp.statusCode === 500;
 				if (notReady) {
 					return retries-- ?
