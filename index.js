@@ -152,11 +152,11 @@ function authtoken(token, cb) {
 		bin,
 		['authtoken', token],
 		{cwd: __dirname + '/bin'});
-	a.stdout.once('data', done.bind(this, null, token));
+	a.stdout.once('data', done.bind(null, null, token));
 	a.stderr.once('data', done);
 
 	function done(err, token) {
-		console.log('AUTHTOKEN', err, token);
+		console.log('AUTHTOKEN', err.toString(), token);
 		cb(err, token);
 		a.kill();
 	}
