@@ -29,7 +29,7 @@ if (!fs.existsSync(path)) {
 }
 
 var which = os.platform() + os.arch();
-var downloadFile = cdn + '/a/b87faFPKrii/ngrok-2.1.1-linux-amd64.tar.gz';//files[which];
+var downloadFile = files[which];
 var packedFile = path + (downloadFile.indexOf('.zip') > -1 ? 'ngrok.zip' : 'ngrok.tar');
 https.get(downloadFile, function(resp) {
 	var save = fs.createWriteStream(packedFile);
