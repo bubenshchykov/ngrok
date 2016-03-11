@@ -17,7 +17,7 @@ $ ngrok http 8080
 ```
 
 ## authtoken
-Guest consumers without authtoken can create basic http/https/tcp tunnel. For custom subdomains and more you can obtain authtoken by signing up at [ngrol.com](https://ngrok.com)
+You can create basic http/https/tcp tunnel without any authentication. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com)
 
 You can pass authtoken as option with each ```connect``` or set it once for further tunnels
 ```javascript
