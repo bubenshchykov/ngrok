@@ -1,6 +1,14 @@
 var ngrok = require('..');
+var util = require('./util');
 
-describe('using ngrok as event emitter', function ( ) {
+describe('ensuring no authtoken set, using ngrok as event emitter', function ( ) {
+
+	before(function(done) {
+		ngrok.kill(function() {
+			util.removeAuthtoken();
+			done();
+		});
+	});
 
 	describe('connecting to ngrok', function ( ) {
 		var connected, tunnelUrl;
