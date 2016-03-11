@@ -34,6 +34,7 @@ function connect(opts, cb) {
 				return cb(err);
 			}
 			runNgrok(opts, release(function(err) {
+				console.log('Error', err);
 				if (err) {
 					emitter.emit('error', err);
 					return cb(err);
