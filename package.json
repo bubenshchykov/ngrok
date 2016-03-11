@@ -8,10 +8,6 @@
     "postinstall": "node ./postinstall.js",
     "postupdate": "node ./postinstall.js"
   },
-  "files": [
-    "index.js",
-    "postinstall.js"
-  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/bubenshchykov/ngrok.git"
