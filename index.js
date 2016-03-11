@@ -99,16 +99,16 @@ function runNgrok(opts, cb) {
 	ngrok.stderr.on('data', function (data) {
 		var info = data.toString().substring(0, 10000);
 		console.log('ONERR', info);
-		return cb(new Error(info));
+		//return cb(new Error(info));
 	});
 
 	ngrok.on('close', function () {
 		return emitter.emit('close');
 	});
 
-	process.on('exit', function() {
-		kill();
-	});
+	// process.on('exit', function() {
+	// 	kill();
+	// });
 }
 
 function runTunnel(opts, cb) {
