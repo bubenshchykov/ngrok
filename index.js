@@ -27,16 +27,13 @@ function connect(opts, cb) {
 		return runTunnel(opts, cb);
 	}
 
-	console.log('lock');
 	lock('ngrok', function(release) {
 		function run(err) {
 			if (err) {
 				emitter.emit('error', err);
 				return cb(err);
 			}
-			console.log('inside lock');
 			runNgrok(opts, release(function(err) {
-				console.log('release lock');
 				if (err) {
 					emitter.emit('error', err);
 					return cb(err);
@@ -126,7 +123,7 @@ function runTunnel(opts, cb) {
 function _runTunnel(opts, cb) {
 	var retries = 100;
 	opts.name = String(opts.name || uuid.v4());
-	
+	console.log('creating tunnel', opts);
 	var retry = function() {
 		api.post(
 			{url: 'api/tunnels', json: opts},
@@ -134,6 +131,7 @@ function _runTunnel(opts, cb) {
 				if (err) {
 					return cb(err);
 				}
+				console.log('resp', body);
 				var notReady = resp.statusCode === 500;
 				if (notReady) {
 					return retries-- ?
