@@ -10,19 +10,16 @@ var cdn = process.env.npm_config_ngrok_cdnurl ||
 	process.env.NGROK_CDNURL ||
 	'https://bin.equinox.io/a/bZszyrZZM3G';
 
-var source = cdn + '/ngrok-2.1.1-';
-
-
 var files = {
-	darwinia32:	source + 'darwin-386.zip',
-	darwinx64:	source + 'darwin-amd64.zip',
-	linuxarm:	source + 'linux-arm.zip',
-	linuxia32:	source + 'linux-386.zip',
-	linuxx64:	source + 'linux-amd64.zip',
-	win32ia32:	source + 'windows-386.zip',
-	win32x64:	source + 'windows-amd64.zip',
-	freebsdia32:	source + 'freebsd-386.zip',
-	freebsdx64:	source + 'freebsd-amd64.zip'
+	darwinia32:	'https://bin.equinox.io/a/hU5xF8ZzQgp/ngrok-2.1.1-darwin-386.zip',
+	darwinx64:	'https://bin.equinox.io/a/bZszyrZZM3G/ngrok-2.1.1-darwin-amd64.zip',
+	linuxarm:	'https://bin.equinox.io/a/e7Ywipw6GyW/ngrok-2.1.1-linux-arm.tar.gz',
+	linuxia32:	'https://bin.equinox.io/a/4vkGbFY6yNM/ngrok-2.1.1-linux-386.tar.gz',
+	linuxx64:	'https://bin.equinox.io/a/b87faFPKrii/ngrok-2.1.1-linux-amd64.tar.gz',
+	win32ia32:	'https://bin.equinox.io/a/54cQjE1obr2/ngrok-2.1.1-windows-386.zip',
+	win32x64:	'https://bin.equinox.io/a/chRZWPptE7w/ngrok-2.1.1-windows-amd64.zip',
+	freebsdia32:	'https://bin.equinox.io/a/jUNkpcemJAZ/ngrok-2.1.1-freebsd-386.tar.gz',
+	freebsdx64:	'https://bin.equinox.io/a/kPYrp5NGZsQ/ngrok-2.1.1-freebsd-amd64.tar.gz'
 };
 
 var path = __dirname + '/bin/';
