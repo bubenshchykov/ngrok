@@ -5,7 +5,7 @@ var fs = require('fs');
 var util = require('util');
 var https = require('https');
 var DecompressZip = require('decompress-zip');
-var tar = require('tar');
+var tar = require('tar.gz');
 
 var cdn = process.env.npm_config_ngrok_cdnurl ||
 	process.env.NGROK_CDNURL ||
@@ -29,13 +29,14 @@ if (!fs.existsSync(path)) {
 }
 
 var which = os.platform() + os.arch();
-var downloadFile = files[which];
+var downloadFile = cdn + '/a/b87faFPKrii/ngrok-2.1.1-linux-amd64.tar.gz';//files[which];
+var packedFile = path + (downloadFile.indexOf('.zip') > -1 ? 'ngrok.zip' : 'ngrok.tar');
 https.get(downloadFile, function(resp) {
-	var save = fs.createWriteStream(path + 'ngrok.zip');
+	var save = fs.createWriteStream(packedFile);
 	resp.pipe(save)
 		.on('finish', function() {
 			console.log('ngrok - binary downloaded (' + downloadFile + ')...');
-			extract(path + 'ngrok.zip');
+			extract();
 		})
 		.on('error', function(e) {
 			console.error('ngrok - error downloading binary', e);
@@ -43,17 +44,17 @@ https.get(downloadFile, function(resp) {
 		});
 });
 
-function extract(file) {
+function extract() {
 	if (downloadFile.indexOf('.zip') > -1) {
-		new DecompressZip(file)
+		new DecompressZip(packedFile)
 			.extract({path: path})
 			.once('error', error)
 			.once('extract', finish);	
 	} else {
-		fs.createReadStream(path + 'ngrok.zip')
-			.pipe(tar.extract({path: path}))
-			.on('finish', finish)
-			.on('error', error);
+		tar().extract(packedFile, path, function(err) {
+			if (err) return error(err);
+			finish();
+		});
 	}	
 }
 
@@ -62,7 +63,7 @@ function finish() {
 	if (suffix === '.exe') {
 		fs.writeFileSync(path + 'ngrok.cmd', 'ngrok.exe');
 	}
-	fs.unlinkSync(path + 'ngrok.zip');
+	fs.unlinkSync(packedFile);
 	var target = path + 'ngrok' + suffix;
 	fs.chmodSync(target, 0755);
 	if (fs.existsSync(target) && fs.statSync(target).size > 0) {
