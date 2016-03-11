@@ -152,8 +152,13 @@ function authtoken(token, cb) {
 		bin,
 		['authtoken', token],
 		{cwd: __dirname + '/bin'});
-	a.stdout.once('data', cb.bind(this, null, token));
-	a.stderr.once('data', cb);
+	a.stdout.once('data', done.bind(null, null, token));
+	a.stderr.once('data', done);
+	
+	function done(err, token) {
+		cb(err, token);
+		a.kill();
+	}
 }
 
 function disconnect(url, cb) {
@@ -173,6 +178,7 @@ function disconnect(url, cb) {
 					return cb(err || new Error(body));
 				}
 				delete tunnels[url];
+				emitter.emit('disconnect', url);
 				return cb();
 			});
 	}
@@ -197,6 +203,7 @@ function kill(cb) {
 	}
 	ngrok.on('exit', function() {
 		api = null;
+		tunnels = {};
 		emitter.emit('disconnect');
 		return cb();
 	});
