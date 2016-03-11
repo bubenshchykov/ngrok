@@ -260,7 +260,7 @@ describe('setting paid authtoken', function() {
 				expect(tunnelUrlParts.port).to.be.ok;
 			});
 
-			xdescribe('calling local tcp server through ngrok', function() {
+			describe('calling local tcp server through ngrok', function() {
 				var socketData;
 				var socket;
 				

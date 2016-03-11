@@ -110,6 +110,7 @@ function runNgrok(opts, cb) {
 }
 
 function runTunnel(opts, cb) {
+	console.log('connecting', opts);
 	_runTunnel(opts, function(err, url) {
 		if (err) {
 			emitter.emit('error', err);
