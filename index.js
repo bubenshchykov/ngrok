@@ -27,13 +27,16 @@ function connect(opts, cb) {
 		return runTunnel(opts, cb);
 	}
 
+	console.log('lock');
 	lock('ngrok', function(release) {
 		function run(err) {
 			if (err) {
 				emitter.emit('error', err);
 				return cb(err);
 			}
+			console.log('inside lock');
 			runNgrok(opts, release(function(err) {
+				console.log('release lock');
 				if (err) {
 					emitter.emit('error', err);
 					return cb(err);
@@ -110,7 +113,6 @@ function runNgrok(opts, cb) {
 }
 
 function runTunnel(opts, cb) {
-	console.log('connecting', opts);
 	_runTunnel(opts, function(err, url) {
 		if (err) {
 			emitter.emit('error', err);
