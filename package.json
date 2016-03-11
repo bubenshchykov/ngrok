@@ -36,8 +36,5 @@
     "node-uuid": "^1.4.3",
     "request": "^2.55.0",
     "xtend": "^4.0.1"
-  },
-  "bin": {
-    "ngrok": "./bin/ngrok"
   }
 }
