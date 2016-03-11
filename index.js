@@ -97,8 +97,7 @@ function runNgrok(opts, cb) {
 
 	ngrok.stderr.on('data', function (data) {
 		var info = data.toString().substring(0, 10000);
-		console.log(info);
-		//return cb(new Error(info));
+		return cb(new Error(info));
 	});
 
 	ngrok.on('close', function () {
