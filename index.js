@@ -127,15 +127,16 @@ function _runTunnel(opts, cb) {
 		api.post(
 			{url: 'api/tunnels', json: opts},
 			function(err, resp, body) {
-				console.log('******************');
-				console.log(opts, resp.statusCode, body);
 				if (err) {
 					return cb(err);
 				}
-				var notReady = resp.statusCode === 500;
+				var notReady = resp.statusCode === 500 && /panic/.test(body) ||
+					resp.statusCode === 502 && body.details &&
+						body.details.err === 'tunnel session not ready yet';
+
 				if (notReady) {
 					return retries-- ?
-						setTimeout(retry, 100) :
+						setTimeout(retry, 200) :
 						cb(new Error(body));
 				}
 				var url = body && body.public_url;
