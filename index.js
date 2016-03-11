@@ -34,7 +34,6 @@ function connect(opts, cb) {
 				return cb(err);
 			}
 			runNgrok(opts, release(function(err) {
-				console.log('NGROK ERR', err);
 				if (err) {
 					emitter.emit('error', err);
 					return cb(err);
@@ -98,17 +97,16 @@ function runNgrok(opts, cb) {
 
 	ngrok.stderr.on('data', function (data) {
 		var info = data.toString().substring(0, 10000);
-		console.log('ONERR', info);
-		//return cb(new Error(info));
+		return cb(new Error(info));
 	});
 
 	ngrok.on('close', function () {
 		return emitter.emit('close');
 	});
 
-	// process.on('exit', function() {
-	// 	kill();
-	// });
+	process.on('exit', function() {
+		kill();
+	});
 }
 
 function runTunnel(opts, cb) {
