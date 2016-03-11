@@ -28,7 +28,11 @@ function connect(opts, cb) {
 	}
 
 	lock('ngrok', function(release) {
-		function run() {
+		function run(err) {
+			if (err) {
+				emitter.emit('error', err);
+				return cb(err);
+			}
 			runNgrok(opts, release(function(err) {
 				if (err) {
 					emitter.emit('error', err);
@@ -40,7 +44,7 @@ function connect(opts, cb) {
 
 		opts.authtoken ?
 			authtoken(opts.authtoken, run) :
-			run();
+			run(null);
 	});	
 }
 
@@ -153,10 +157,9 @@ function authtoken(token, cb) {
 		['authtoken', token],
 		{cwd: __dirname + '/bin'});
 	a.stdout.once('data', done.bind(null, null, token));
-	a.stderr.on('data', done);
+	a.stderr.once('data', done.bind(null, new Error('cant set authtoken')));
 
 	function done(err, token) {
-		console.log('AUTHTOKEN', err.toString(), token);
 		cb(err, token);
 		a.kill();
 	}
