@@ -5,6 +5,7 @@ var platform = require('os').platform();
 var lock = require('lock')();
 var async = require('async');
 var uuid = require('node-uuid');
+var xtend = require('xtend');
 
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
@@ -37,11 +38,9 @@ function connect(opts, cb) {
 			}));
 		}
 
-		if (opts.authtoken) {
-			authtoken(opts.authtoken, run);
-		} else {
+		opts.authtoken ?
+			authtoken(opts.authtoken, run) :
 			run();
-		}
 	});	
 }
 
@@ -136,7 +135,7 @@ function _runTunnel(opts, cb) {
 				}
 				var url = body && body.public_url;
 				if (!url) {
-					var err = new Error(JSON.stringify(body));
+					var err = xtend(new Error(body.msg || 'failed to start tunnel'), body);
 					return cb(err);
 				}
 				tunnels[url] = body.uri;
