@@ -156,6 +156,7 @@ function authtoken(token, cb) {
 	a.stderr.once('data', done);
 
 	function done(err, token) {
+		console.log('AUTHTOKEN', err, token);
 		cb(err, token);
 		a.kill();
 	}
