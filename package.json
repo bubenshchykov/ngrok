@@ -10,7 +10,8 @@
   },
   "files": [
     "index.js",
-    "postinstall.js"
+    "postinstall.js",
+    "bin/ngrok"
   ],
   "repository": {
     "type": "git",

@@ -1,0 +1,3 @@
+npm bin requires file to be in place
+and fails before postinstall
+so it's a stub which gets replaced then
