@@ -21,14 +21,11 @@ ngrok http 8080
 ```
 
 ## authtoken
-You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com)
+You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels.
 
-You can pass authtoken as option with each ```connect``` or set it once for further tunnels
-```javascript
-ngrok.authtoken(token, function(err, token) {});
 ```
-Or you can set it directly with ngrok
-```bash
+ngrok.authtoken(token, function(err, token) {});
+ngrok.connect({authtoken: token, ...}, function (err, url) {});
 ./ngrok authtoken <token>
 ```
 
