@@ -10,14 +10,18 @@ usage
 
 [![NPM](https://nodei.co/npm/ngrok.png?global=true&&downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ngrok/)
 
-It will download the ngrok 2.0 binary for your platform and put it into the bin folder. You can also install ngrok globally and use it directly from bash
-```shell
-$ npm install ngrok -g
-$ ngrok http 8080
+```
+var ngrok = require('ngrok');
+ngrok.connect(function (err, url) {});
+
+or
+
+npm install ngrok -g
+ngrok http 8080
 ```
 
 ## authtoken
-You can create basic http/https/tcp tunnel without any authentication. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com)
+You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com)
 
 You can pass authtoken as option with each ```connect``` or set it once for further tunnels
 ```javascript
@@ -68,7 +72,7 @@ ngrok.connect(port);
 ```
 
 ## configs
-You can use ngrok's [configurations files](https://ngrok.com/docs#config), then just pass `name` option when making a tunnel
+You can use ngrok's [configurations files](https://ngrok.com/docs#config), then just pass `name` option when making a tunnel. Configuration files allow to specify more options, eg ngrok region you want to use.
 ```
 OS X	/Users/example/.ngrok2/ngrok.yml
 Linux	/home/example/.ngrok2/ngrok.yml
@@ -77,3 +81,8 @@ Windows	C:\Users\example\.ngrok2\ngrok.yml
 
 ## inspector
 When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
+
+## how it works
+npm install downloads ngrok binaries for you platform and puts them into bin folder. You can host binaries yourself and set NGROK_CDN_URL env var before installing ngrok.
+
+First time you create tunnel ngrok process is spawned and runs until you disconnect or when parent process killed. All further tunnels are created or stopped by using internal ngrok api which usually runs on http://127.0.0.1:4040
