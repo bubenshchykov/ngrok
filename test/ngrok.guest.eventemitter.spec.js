@@ -1,7 +1,7 @@
 var ngrok = require('..');
 var util = require('./util');
 
-describe('ensuring no authtoken set, using ngrok as event emitter', function ( ) {
+describe('guest.eventemitter.spec.js - ensuring no authtoken set, using ngrok as event emitter', function ( ) {
 
 	before(function(done) {
 		ngrok.kill(function() {

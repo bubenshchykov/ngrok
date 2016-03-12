@@ -10,7 +10,7 @@ var port = 8080;
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 
-describe('ensuring no authtoken set', function() {
+describe('guest.spec.js - ensuring no authtoken set', function() {
 
 	before(function(done) {
 		ngrok.kill(function() {

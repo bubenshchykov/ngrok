@@ -19,7 +19,7 @@ var files = {
 	linuxx64:	cdn + '/a/b87faFPKrii/ngrok-2.1.1-linux-amd64.tar.gz',
 	win32ia32:	cdn + '/a/54cQjE1obr2/ngrok-2.1.1-windows-386.zip',
 	win32x64:	cdn + '/a/chRZWPptE7w/ngrok-2.1.1-windows-amd64.zip',
-	freebsdia32:cdn + '/a/jUNkpcemJAZ/ngrok-2.1.1-freebsd-386.tar.gz',
+	freebsdia32:	cdn + '/a/jUNkpcemJAZ/ngrok-2.1.1-freebsd-386.tar.gz',
 	freebsdx64:	cdn + '/a/kPYrp5NGZsQ/ngrok-2.1.1-freebsd-amd64.tar.gz'
 };
 

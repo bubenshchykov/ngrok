@@ -11,7 +11,7 @@ var authtoken = '5CnyBoBGqGPzRbXmqzBWb_5c7athHzpG24uUKANTuFW';
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 
-describe('ensuring no authtoken set', function() {
+describe('authtoken.spec.js - ensuring no authtoken set', function() {
 
 	before(function(done) {
 		ngrok.kill(done);

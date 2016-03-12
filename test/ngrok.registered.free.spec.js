@@ -11,7 +11,7 @@ var authtoken = '85we1WG4aVvAuZQFMJ1Cx_3qRinSG444A1bQQafx5ko';
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 
-describe('setting free authtoken', function() {
+describe('registered.free.spec.js - setting free authtoken', function() {
 
 	before(function(done) {
 		ngrok.kill(function() {
