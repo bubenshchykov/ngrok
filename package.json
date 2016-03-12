@@ -1,6 +1,6 @@
 {
   "name": "ngrok",
-  "version": "2.1.1",
+  "version": "2.1.4",
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "scripts": {
