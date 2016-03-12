@@ -41,7 +41,6 @@ ngrok.connect(9090, function (err, url) {}); // https://757c1652.ngrok.io -> htt
 ngrok.connect({proto: 'tcp', addr: 22}, function (err, url) {}); // tcp://0.tcp.ngrok.io:48590
 ngrok.connect(opts, function(err, url) {});
 ```
-First connect spawns the ngrok process so each next tunnel is created much faster.
 
 ## options
 ```javascript
