@@ -17,8 +17,14 @@ var bins = {
 	freebsdx64:	cdn + '/a/kPYrp5NGZsQ/ngrok-2.1.1-freebsd-amd64.tar.gz'
 };
 
-var which = os.platform() + os.arch();
-var hostedFile = bins[which];
+var arch = os.platform() + os.arch();
+var hostedFile = bins[arch];
+
+if (!hostedFile) {
+	console.error('ngrok - platform ' + arch + ' is not supported.');
+	process.exit(1);
+}
+
 var isZip = /.zip$/.test(hostedFile);
 var localPath = __dirname + '/bin/';
 var localFile = localPath + (isZip ? 'ngrok.zip' : 'ngrok.tar');
