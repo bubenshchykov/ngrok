@@ -99,6 +99,22 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 				});
 			});
 
+			describe('connecting to ngrok with custom region', function () {
+
+				before(ngrok.kill);
+
+				before(function (done) {
+					ngrok.connect({region: 'eu'}, function(err, url){
+						tunnelUrl = url;
+						done(err);
+					});
+				});
+
+				it('should return url pointing to ngrok eu region', function(){
+					expect(tunnelUrl).to.match(/https:\/\/.(.*).eu.ngrok.io/);
+				});
+			});
+
 			describe('connecting to ngrok with subdomain', function () {
 				var uniqDomain = 'koko-' + uuid.v4();
 				var error;

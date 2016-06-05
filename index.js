@@ -71,6 +71,10 @@ function defaults(opts) {
 		opts.auth = opts.httpauth;
 	}
 
+	if (['us', 'eu', 'au', 'ap'].indexOf(opts.region) === -1) {
+		opts.region = 'us';
+	}
+
 	return opts;
 }
 
@@ -81,7 +85,7 @@ function runNgrok(opts, cb) {
 	
 	ngrok = spawn(
 			bin,
-			['start', '--none', '--log=stdout'],
+			['start', '--none', '--log=stdout', '--region=' + opts.region],
 			{cwd: __dirname + '/bin'});
 	
 	ngrok.stdout.on('data', function (data) {
