@@ -45,12 +45,15 @@ ngrok.connect({
 	proto: 'http', // http|tcp|tls
 	addr: 8080, // port or network address
 	auth: 'user:pwd', // http basic authentication for tunnel
-	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io,
-	authtoken: '12345' // your authtoken from ngrok.com
+	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
+	authtoken: '12345', // your authtoken from ngrok.com
+	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us
 }, function (err, url) {});
 ```
 
 Other options: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
+
+Notes on regions: the region you used making first tunnel will be used for all subsequent tunnels too. If you need to create tunnels with different regions, use ngrok.kill() between calls - it will reset previous region setting.
 
 ## disconnect
 The ngrok and all tunnels will be killed when node process is done. To stop the tunnels use

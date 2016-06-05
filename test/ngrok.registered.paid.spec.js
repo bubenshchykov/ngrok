@@ -203,7 +203,7 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 					});
 
 					it('should return error message', function() {
-						expect(respBody).to.contain('Unauthorized');
+						expect(respBody).to.contain('Authorization Failed');
 					});
 
 				});
