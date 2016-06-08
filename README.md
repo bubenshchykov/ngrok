@@ -53,7 +53,7 @@ ngrok.connect({
 
 Other options: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
 
-Notes on regions: the region you used making first tunnel will be used for all subsequent tunnels too. If you need to create tunnels with different regions, use ngrok.kill() between calls - it will reset previous region setting.
+Note on regions: region used in first tunnel will be used for all next tunnels too.
 
 ## disconnect
 The ngrok and all tunnels will be killed when node process is done. To stop the tunnels use
