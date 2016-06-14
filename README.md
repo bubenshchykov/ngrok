@@ -63,6 +63,8 @@ ngrok.disconnect(); // stops all
 ngrok.kill(); // kills ngrok process
 ```
 
+Note on http tunnels: by default bind_tls is true, so whenever you use http proto two tunnels are created - http and https. If you disconnect https tunnel, http tunnel remains open. You might want to close them both by passing http-version url, or simply by disconnecting all in one go ```ngrok.disconnect()```.
+
 ## emitter
 Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
 ```javascript
