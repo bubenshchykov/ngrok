@@ -79,10 +79,25 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 							ngrok.disconnect(done);
 						});
 
-						describe('calling local server through discconected ngrok', function() {
+						describe('calling local server through discconected https ngrok', function() {
 
 							before(function(done) {
 								request.get(tunnelUrl + '/ngrok', function (err, resp, body) {
+									respBody = body;
+									done(err);
+								});
+							});
+
+							it('should return error message', function() {
+								expect(respBody).to.match(/Tunnel (.)* not found/);
+							});
+
+						});
+
+						describe('calling local server through discconected http ngrok', function() {
+
+							before(function(done) {
+								request.get(tunnelUrl.replace('https', 'http') + '/ngrok', function (err, resp, body) {
 									respBody = body;
 									done(err);
 								});

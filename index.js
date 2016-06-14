@@ -149,6 +149,9 @@ function _runTunnel(opts, cb) {
 					return cb(err);
 				}
 				tunnels[url] = body.uri;
+				if (opts.proto === 'http' && opts.bind_tls !== false) {
+					tunnels[url.replace('https', 'http')] = body.uri + ' (http)';
+				}
 				return cb(null, url);
 			});
 	};
