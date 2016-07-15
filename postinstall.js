@@ -17,7 +17,7 @@ var bins = {
 	freebsdx64:	cdn + '/a/kPYrp5NGZsQ/ngrok-2.1.1-freebsd-amd64.tar.gz'
 };
 
-var arch = os.platform() + os.arch();
+var arch = process.env.NGROK_ARCH || (os.platform() + os.arch());
 var hostedFile = bins[arch];
 
 if (!hostedFile) {
