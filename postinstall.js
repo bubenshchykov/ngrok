@@ -1,38 +1,37 @@
 var os = require('os');
 var fs = require('fs');
-var tar = require('tar.gz');
 var Zip = require('decompress-zip');
 var request = require('request');
 
 var cdn = process.env.NGROK_CDN_URL || 'https://bin.equinox.io';
-var bins = {
-	darwinia32:	cdn + '/a/hU5xF8ZzQgp/ngrok-2.1.1-darwin-386.zip',
-	darwinx64:	cdn + '/a/bZszyrZZM3G/ngrok-2.1.1-darwin-amd64.zip',
-	linuxarm:	cdn + '/a/e7Ywipw6GyW/ngrok-2.1.1-linux-arm.tar.gz',
-	linuxia32:	cdn + '/a/4vkGbFY6yNM/ngrok-2.1.1-linux-386.tar.gz',
-	linuxx64:	cdn + '/a/b87faFPKrii/ngrok-2.1.1-linux-amd64.tar.gz',
-	win32ia32:	cdn + '/a/54cQjE1obr2/ngrok-2.1.1-windows-386.zip',
-	win32x64:	cdn + '/a/chRZWPptE7w/ngrok-2.1.1-windows-amd64.zip',
-	freebsdia32:	cdn + '/a/jUNkpcemJAZ/ngrok-2.1.1-freebsd-386.tar.gz',
-	freebsdx64:	cdn + '/a/kPYrp5NGZsQ/ngrok-2.1.1-freebsd-amd64.tar.gz'
+var cdnPath = process.env.NGROK_CDN_PATH || '/c/4VmDzA7iaHb/ngrok-stable-';
+var cdnFiles = {
+	darwinia32:	cdn + cdnPath + 'darwin-386.zip',
+	darwinx64:	cdn + cdnPath + 'darwin-amd64.zip',
+	linuxarm:	cdn + cdnPath + 'linux-arm.zip',
+	linuxia32:	cdn + cdnPath + 'linux-386.zip',
+	linuxx64:	cdn + cdnPath + 'inux-amd64.zip',
+	win32ia32:	cdn + cdnPath + 'windows-386.zip',
+	win32x64:	cdn + cdnPath + 'windows-amd64.zip',
+	freebsdia32:	cdn + cdnPath + 'freebsd-386.zip',
+	freebsdx64:	cdn + cdnPath + 'freebsd-amd64.zip'
 };
 
 var arch = process.env.NGROK_ARCH || (os.platform() + os.arch());
-var hostedFile = bins[arch];
+var cdnFile = cdnFiles[arch];
 
-if (!hostedFile) {
+if (!cdnFile) {
 	console.error('ngrok - platform ' + arch + ' is not supported.');
 	process.exit(1);
 }
 
-var isZip = /.zip$/.test(hostedFile);
 var localPath = __dirname + '/bin/';
-var localFile = localPath + (isZip ? 'ngrok.zip' : 'ngrok.tar');
+var localFile = localPath + 'ngrok.zip';
 
-console.log('ngrok - downloading binary ' + hostedFile + ' ...');
+console.log('ngrok - downloading binary ' + cdnFile + ' ...');
 
 request
-	.get(hostedFile)
+	.get(cdnFile)
 	.pipe(fs.createWriteStream(localFile))
 	.on('finish', function() {
 		console.log('ngrok - binary downloaded...');
@@ -44,27 +43,20 @@ request
 	});
 
 function extract() {
-	isZip ?
-		new Zip(localFile).extract({path: localPath})
-			.once('error', error)
-			.once('extract', finish) :
-		tar().extract(localFile, localPath, function(err) {
-			if (err) return error(err);
-			finish();
+	new Zip(localFile).extract({path: localPath})
+		.once('error', error)
+		.once('extract', function() {
+			var suffix = os.platform() === 'win32' ? '.exe' : '';
+			if (suffix === '.exe')
+				fs.writeFileSync(localPath + 'ngrok.cmd', 'ngrok.exe');
+			fs.unlinkSync(localFile);
+			var target = localPath + 'ngrok' + suffix;
+			fs.chmodSync(target, 0755);
+			if (!fs.existsSync(target) || fs.statSync(target).size <= 0)
+				return error(new Error('corrupted file ' + target));
+			console.log('ngrok - binary unpacked.');
+			process.exit(0);
 		});
-}
-
-function finish() {
-	var suffix = os.platform() === 'win32' ? '.exe' : '';
-	if (suffix === '.exe')
-		fs.writeFileSync(localPath + 'ngrok.cmd', 'ngrok.exe');
-	fs.unlinkSync(localFile);
-	var target = localPath + 'ngrok' + suffix;
-	fs.chmodSync(target, 0755);
-	if (!fs.existsSync(target) || fs.statSync(target).size <= 0)
-		return error(new Error('corrupted file ' + target));
-	console.log('ngrok - binary unpacked.');
-	process.exit(0);
 }
 
 function error(e) {

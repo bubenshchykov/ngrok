@@ -7,7 +7,7 @@ var uuid = require('node-uuid');
 var util = require('./util');
 
 var port = 8080;
-var authtoken = '85we1WG4aVvAuZQFMJ1Cx_3qRinSG444A1bQQafx5ko';
+var authtoken = process.env.NGROK_AUTHTOKEN_FREE;
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 
@@ -100,26 +100,6 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 					});
 
-				});
-			});
-
-			describe('connecting to ngrok with subdomain', function () {
-				var uniqDomain = 'koko-' + uuid.v4();
-				var error;
-
-				before(function (done) {
-					ngrok.connect({
-						port: port,
-						subdomain: uniqDomain
-					}, function(err, url){
-						error = err;
-						done();
-					});
-				});
-
-				it('should return error', function(){
-					expect(error.msg).to.equal('failed to start tunnel');
-					expect(error.details.err).to.contain('Only paid plans may bind custom subdomains');
 				});
 			});
 

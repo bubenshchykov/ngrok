@@ -7,7 +7,7 @@ var uuid = require('node-uuid');
 var util = require('./util');
 
 var port = 8080;
-var authtoken = '5CnyBoBGqGPzRbXmqzBWb_5c7athHzpG24uUKANTuFW';
+var authtoken = process.env.NGROK_AUTHTOKEN_PAID;
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 

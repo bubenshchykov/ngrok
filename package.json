@@ -1,6 +1,6 @@
 {
   "name": "ngrok",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "scripts": {
@@ -40,7 +40,6 @@
     "lock": "^0.1.2",
     "node-uuid": "^1.4.3",
     "request": "^2.55.0",
-    "tar.gz": "^1.0.3",
     "xtend": "^4.0.1"
   },
   "bin": {
