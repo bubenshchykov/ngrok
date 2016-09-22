@@ -10,7 +10,7 @@ var cdnFiles = {
 	darwinx64:	cdn + cdnPath + 'darwin-amd64.zip',
 	linuxarm:	cdn + cdnPath + 'linux-arm.zip',
 	linuxia32:	cdn + cdnPath + 'linux-386.zip',
-	linuxx64:	cdn + cdnPath + 'inux-amd64.zip',
+	linuxx64:	cdn + cdnPath + 'linux-amd64.zip',
 	win32ia32:	cdn + cdnPath + 'windows-386.zip',
 	win32x64:	cdn + cdnPath + 'windows-amd64.zip',
 	freebsdia32:	cdn + cdnPath + 'freebsd-386.zip',
