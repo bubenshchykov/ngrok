@@ -3,7 +3,7 @@ var http = require('http');
 var net = require('net');
 var request = require('request');
 var URL = require('url');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var util = require('./util');
 
 var port = 8080;
@@ -38,7 +38,7 @@ describe('authtoken.spec.js - ensuring no authtoken set', function() {
 
 		describe('connecting to ngrok with authtoken and subdomain', function () {
 			var uniqDomain = 'koko-' + uuid.v4();
-			
+
 			before(function (done) {
 				ngrok.connect({
 					port: port,
@@ -68,6 +68,6 @@ describe('authtoken.spec.js - ensuring no authtoken set', function() {
 				});
 
 			});
-		});	
+		});
 	});
 });

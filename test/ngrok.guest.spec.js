@@ -3,7 +3,7 @@ var http = require('http');
 var net = require('net');
 var request = require('request');
 var URL = require('url');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var util = require('./util');
 
 var port = 8080;
@@ -35,7 +35,7 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 		});
 
 		describe('calling local server directly', function() {
-			
+
 			before(function(done) {
 				request.get(localUrl + '/local', function (err, resp, body) {
 					respBody = body;
@@ -133,7 +133,7 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 			describe('connecting to ngrok with subdomain', function () {
 				var uniqDomain = 'koko-' + uuid.v4();
 				var error;
-				
+
 				before(function (done) {
 					ngrok.connect({
 						port: port,

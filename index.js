@@ -4,7 +4,7 @@ var Emitter = require('events').EventEmitter;
 var platform = require('os').platform();
 var lock = require('lock')();
 var async = require('async');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var xtend = require('xtend');
 
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
@@ -45,7 +45,7 @@ function connect(opts, cb) {
 		opts.authtoken ?
 			authtoken(opts.authtoken, run) :
 			run(null);
-	});	
+	});
 }
 
 function defaults(opts) {
@@ -54,7 +54,7 @@ function defaults(opts) {
 	if (typeof opts === 'function') {
 		opts = {proto: 'http', addr: 80};
 	}
-	
+
 	if (typeof opts !== 'object') {
 		opts = {proto: 'http', addr: opts};
 	}
@@ -82,12 +82,12 @@ function runNgrok(opts, cb) {
 	if (api) {
 		return cb();
 	}
-	
+
 	ngrok = spawn(
 			bin,
 			['start', '--none', '--log=stdout', '--region=' + opts.region],
 			{cwd: __dirname + '/bin'});
-	
+
 	ngrok.stdout.on('data', function (data) {
 		var addr = data.toString().match(ready);
 		if (addr) {
@@ -156,7 +156,7 @@ function _runTunnel(opts, cb) {
 			});
 	};
 
-	retry();	
+	retry();
 }
 
 function authtoken(token, cb) {
