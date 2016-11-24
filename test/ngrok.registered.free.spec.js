@@ -3,7 +3,7 @@ var http = require('http');
 var net = require('net');
 var request = require('request');
 var URL = require('url');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var util = require('./util');
 
 var port = 8080;

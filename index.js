@@ -4,7 +4,7 @@ var Emitter = require('events').EventEmitter;
 var platform = require('os').platform();
 var lock = require('lock')();
 var async = require('async');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var xtend = require('xtend');
 
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
