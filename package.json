@@ -39,8 +39,7 @@
     "decompress-zip": "^0.3.0",
     "lock": "^0.1.2",
     "request": "^2.55.0",
-    "uuid": "^3.0.0",
-    "xtend": "^4.0.1"
+    "uuid": "^3.0.0"
   },
   "bin": {
     "ngrok": "./bin/ngrok"
