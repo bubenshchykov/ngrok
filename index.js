@@ -5,6 +5,7 @@ var platform = require('os').platform();
 var lock = require('lock')();
 var async = require('async');
 var uuid = require('uuid');
+var url = require('url');
 
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
@@ -113,13 +114,13 @@ function runNgrok(opts, cb) {
 }
 
 function runTunnel(opts, cb) {
-	_runTunnel(opts, function(err, url) {
+	_runTunnel(opts, function(err, publicUrl, uiUrl) {
 		if (err) {
 			emitter.emit('error', err);
 			return cb(err);
 		}
-		emitter.emit('connect', url);
-		return cb(null, url);
+		emitter.emit('connect', publicUrl, uiUrl);
+		return cb(null, publicUrl, uiUrl);
 	});
 }
 
@@ -142,16 +143,18 @@ function _runTunnel(opts, cb) {
 						setTimeout(retry, 200) :
 						cb(new Error(body));
 				}
-				var url = body && body.public_url;
-				if (!url) {
+				var publicUrl = body && body.public_url;
+				if (!publicUrl) {
 					var err = Object.assign(new Error(body.msg || 'failed to start tunnel'), body);
 					return cb(err);
 				}
-				tunnels[url] = body.uri;
+				tunnels[publicUrl] = body.uri;
 				if (opts.proto === 'http' && opts.bind_tls !== false) {
-					tunnels[url.replace('https', 'http')] = body.uri + ' (http)';
+					tunnels[publicUrl.replace('https', 'http')] = body.uri + ' (http)';
 				}
-				return cb(null, url);
+				var uiUrl = url.parse(resp.request.uri);
+				uiUrl = uiUrl.resolve('/').slice(0, -1);
+				return cb(null, publicUrl, uiUrl);
 			});
 	};
 
@@ -173,24 +176,24 @@ function authtoken(token, cb) {
 	}
 }
 
-function disconnect(url, cb) {
+function disconnect(publicUrl, cb) {
 	cb = cb || noop;
-	if (typeof url === 'function') {
-		cb = url;
-		url = null;
+	if (typeof publicUrl === 'function') {
+		cb = publicUrl;
+		publicUrl = null;
 	}
 	if (!api) {
 		return cb();
 	}
-	if (url) {
+	if (publicUrl) {
 		return api.del(
-			tunnels[url],
+			tunnels[publicUrl],
 			function(err, resp, body) {
 				if (err || resp.statusCode !== 204) {
 					return cb(err || new Error(body));
 				}
-				delete tunnels[url];
-				emitter.emit('disconnect', url);
+				delete tunnels[publicUrl];
+				emitter.emit('disconnect', publicUrl);
 				return cb();
 			});
 	}
