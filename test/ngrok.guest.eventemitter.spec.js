@@ -11,11 +11,12 @@ describe('guest.eventemitter.spec.js - ensuring no authtoken set, using ngrok as
 	});
 
 	describe('connecting to ngrok', function ( ) {
-		var connected, tunnelUrl;
+		var connected, tunnelUrl, webAddrUrl;
 		before(function(done) {
-			ngrok.once('connect', function (url) {
+			ngrok.once('connect', function (url, uiUrl) {
 				connected = true;
 				tunnelUrl = url;
+				webAddrUrl = uiUrl;
 				done();
 			});
 			ngrok.connect();
@@ -27,6 +28,10 @@ describe('guest.eventemitter.spec.js - ensuring no authtoken set, using ngrok as
 
 		it('should pass tunnel url with a "connect" event', function ( ) {
 			expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
+		});
+
+		it('should pass web ui url with a "connect" event', function ( ) {
+			expect(webAddrUrl).to.match(/^http:\/\/127\.0\.0\.1:4040$/);
 		});
 	});
 
