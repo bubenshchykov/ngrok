@@ -43,7 +43,7 @@ function connect(opts, cb) {
 		}
 
 		opts.authtoken ?
-			authtoken(opts.authtoken, opts.configPath, run) :
+			authtoken(opts.authtoken, run) :
 			run(null);
 	});
 }
@@ -83,9 +83,14 @@ function runNgrok(opts, cb) {
 		return cb();
 	}
 
+	var start = ['start', '--none', '--log=stdout', '--region=' + opts.region];
+	if (opts.configPath) {
+		start.push('-config=' + opts.configPath);
+	}
+
 	ngrok = spawn(
 			bin,
-			['start', '--none', '--log=stdout', '--region=' + opts.region, '-config=' + opts.configPath],
+			start,
 			{cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
@@ -161,11 +166,11 @@ function _runTunnel(opts, cb) {
 	retry();
 }
 
-function authtoken(token, configPath, cb) {
+function authtoken(token, cb) {
 	cb = cb || noop;
 	var a = spawn(
 		bin,
-		['authtoken', token, '-config=' + configPath],
+		['authtoken', token],
 		{cwd: __dirname + '/bin'});
 	a.stdout.once('data', done.bind(null, null, token));
 	a.stderr.once('data', done.bind(null, new Error('cant set authtoken')));
