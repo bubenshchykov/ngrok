@@ -8,7 +8,7 @@ var util = require('./util');
 
 var port = 8080;
 var localUrl = 'http://127.0.0.1:' + port;
-var tunnelUrl, respBody;
+var tunnelUrl, respBody, error;
 
 describe('guest.spec.js - ensuring no authtoken set', function() {
 
@@ -147,6 +147,21 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 				it('should return error', function(){
 					expect(error.msg).to.equal('failed to start tunnel');
 					expect(error.details.err).to.contain('Only paid plans may bind custom subdomains');
+				});
+
+			});
+
+			describe('connecting to ngrok with web_addr:false (disabling) ngrok api and ui)', function () {
+
+				before(function (done) {
+					ngrok.connect({web_addr: false}, function(err, url) {
+						error = err;
+						done();
+					});
+				});
+
+				it('should return error', function () {
+					expect(error.message).to.contain('web_addr:false is not supported');
 				});
 
 			});

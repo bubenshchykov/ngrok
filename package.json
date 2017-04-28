@@ -1,6 +1,6 @@
 {
   "name": "ngrok",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "scripts": {
@@ -30,12 +30,12 @@
     "url": "https://github.com/bubenshchykov/ngrok/issues"
   },
   "devDependencies": {
-    "chai": "~1.8.1",
+    "chai": "~3.5.0",
     "homedir": "^0.6.0",
-    "mocha": "~1.14.0"
+    "mocha": "~3.3.0"
   },
   "dependencies": {
-    "async": "^0.9.0",
+    "async": "^2.3.0",
     "decompress-zip": "^0.3.0",
     "lock": "^0.1.2",
     "request": "^2.55.0",

@@ -22,6 +22,12 @@ function connect(opts, cb) {
 
 	cb = cb || noop;
 	opts = defaults(opts);
+	var optsError = validate(opts);
+
+	if (optsError) {
+		emitter.emit('error', optsError);
+		return cb(optsError);
+	}
 
 	if (api) {
 		return runTunnel(opts, cb);
@@ -76,6 +82,13 @@ function defaults(opts) {
 	}
 
 	return opts;
+}
+
+function validate(opts) {
+	if (opts.web_addr === false || opts.web_addr === 'false') {
+		return new Error('web_addr:false is not supported, module depends on internal ngrok api');
+	}
+	return false;
 }
 
 function runNgrok(opts, cb) {
