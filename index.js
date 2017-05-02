@@ -171,7 +171,7 @@ function authtoken(token, cb, configPath) {
 	cb = cb || noop;
 	var authtoken = ['authtoken', token];
 	if (configPath) {
-		authtoken.push('--config=', configPath);
+		authtoken.push('--config=' + configPath);
 	}
 	var a = spawn(
 		bin,
