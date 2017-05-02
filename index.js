@@ -9,6 +9,7 @@ var url = require('url');
 
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+var inUse = /address already in use/;
 
 var noop = function() {};
 var emitter = new Emitter().on('error', noop);
@@ -95,13 +96,17 @@ function runNgrok(opts, cb) {
 			{cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
-		var addr = data.toString().match(ready);
+		var stringified = data.toString();
+		var addr = stringified.match(ready);
+		var addrInUse = stringified.match(inUse);
 		if (addr) {
 			api = request.defaults({
 				baseUrl: 'http://' + addr[1],
 				json: true
 			});
 			cb();
+		} else if (addrInUse) {
+			cb(new Error(stringified.substring(0, 10000)));
 		}
 	});
 
