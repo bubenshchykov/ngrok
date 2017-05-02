@@ -1,0 +1,4 @@
+hack for global install:
+npm install -g requires bin file to be present
+otherwise it fails before postinstall
+so it's a stub replaced by ngrok binary during install
