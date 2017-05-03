@@ -74,16 +74,14 @@ ngrok.connect(port);
 ```
 
 ## configs
-You can use ngrok's [configurations files](https://ngrok.com/docs#config), then just pass `name` option when making a tunnel. Configuration files allow to specify more options, eg ngrok region you want to use.
+You can use ngrok's [configurations files](https://ngrok.com/docs#config), and just pass `name` option when making a tunnel. Configuration files allow to store tunnel options. Ngrok looks for them here:
 ```
 OS X	/Users/example/.ngrok2/ngrok.yml
 Linux	/home/example/.ngrok2/ngrok.yml
 Windows	C:\Users\example\.ngrok2\ngrok.yml
 ```
-Or you can path a custom config path when making a tunnel
-```
-ngrok.connect({name: 'megatunnel', configPath: '~/git/project/ngrok.yml'}, function(err, url) {});
-```
+You can specify a custom `configPath` when making a tunnel.
+
 ## inspector
 When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
 
