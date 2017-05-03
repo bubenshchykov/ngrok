@@ -9,6 +9,7 @@ var url = require('url');
 
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+var inUse = /address already in use/;
 
 var noop = function() {};
 var emitter = new Emitter().on('error', noop);
@@ -49,8 +50,9 @@ function connect(opts, cb) {
 		}
 
 		opts.authtoken ?
-			authtoken(opts.authtoken, run) :
+			authtoken(opts.authtoken, run, opts.configPath) :
 			run(null);
+
 	});
 }
 
@@ -96,19 +98,28 @@ function runNgrok(opts, cb) {
 		return cb();
 	}
 
+	var start = ['start', '--none', '--log=stdout', '--region=' + opts.region];
+	if (opts.configPath) {
+		start.push('--config=' + opts.configPath);
+	}
+
 	ngrok = spawn(
 			bin,
-			['start', '--none', '--log=stdout', '--region=' + opts.region],
+			start,
 			{cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
-		var addr = data.toString().match(ready);
+		var stringified = data.toString();
+		var addr = stringified.match(ready);
+		var addrInUse = stringified.match(inUse);
 		if (addr) {
 			api = request.defaults({
 				baseUrl: 'http://' + addr[1],
 				json: true
 			});
 			cb();
+		} else if (addrInUse) {
+			cb(new Error(stringified.substring(0, 10000)));
 		}
 	});
 
@@ -174,11 +185,15 @@ function _runTunnel(opts, cb) {
 	retry();
 }
 
-function authtoken(token, cb) {
+function authtoken(token, cb, configPath) {
 	cb = cb || noop;
+	var authtoken = ['authtoken', token];
+	if (configPath) {
+		authtoken.push('--config=' + configPath);
+	}
 	var a = spawn(
 		bin,
-		['authtoken', token],
+		authtoken,
 		{cwd: __dirname + '/bin'});
 	a.stdout.once('data', done.bind(null, null, token));
 	a.stderr.once('data', done.bind(null, new Error('cant set authtoken')));
