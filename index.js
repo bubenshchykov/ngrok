@@ -109,17 +109,16 @@ function runNgrok(opts, cb) {
 			{cwd: __dirname + '/bin'});
 
 	ngrok.stdout.on('data', function (data) {
-		var stringified = data.toString();
-		var addr = stringified.match(ready);
-		var addrInUse = stringified.match(inUse);
+		var msg = data.toString();
+		var addr = msg.match(ready);
 		if (addr) {
 			api = request.defaults({
 				baseUrl: 'http://' + addr[1],
 				json: true
 			});
 			cb();
-		} else if (addrInUse) {
-			cb(new Error(stringified.substring(0, 10000)));
+		} else if (msg.match(inUse)) {
+			cb(new Error(msg.substring(0, 10000)));
 		}
 	});
 

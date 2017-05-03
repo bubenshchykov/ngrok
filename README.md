@@ -47,7 +47,8 @@ ngrok.connect({
 	auth: 'user:pwd', // http basic authentication for tunnel
 	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
 	authtoken: '12345', // your authtoken from ngrok.com
-	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us
+	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us,
+	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
 }, function (err, url) {});
 ```
 
@@ -79,7 +80,10 @@ OS X	/Users/example/.ngrok2/ngrok.yml
 Linux	/home/example/.ngrok2/ngrok.yml
 Windows	C:\Users\example\.ngrok2\ngrok.yml
 ```
-
+Or you can path a custom config path when making a tunnel
+```
+ngrok.connect({name: 'megatunnel', configPath: '~/git/project/ngrok.yml'}, function(err, url) {});
+```
 ## inspector
 When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
 
