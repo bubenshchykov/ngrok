@@ -93,6 +93,7 @@ function validate(opts) {
 	return false;
 }
 
+
 function runNgrok(opts, cb) {
 	if (api) {
 		return cb();
@@ -108,6 +109,7 @@ function runNgrok(opts, cb) {
 			start,
 			{cwd: __dirname + '/bin'});
 
+
 	ngrok.stdout.on('data', function (data) {
 		var msg = data.toString();
 		var addr = msg.match(ready);
@@ -116,16 +118,23 @@ function runNgrok(opts, cb) {
 				baseUrl: 'http://' + addr[1],
 				json: true
 			});
-			cb();
+			done();
 		} else if (msg.match(inUse)) {
-			cb(new Error(msg.substring(0, 10000)));
+			done(new Error(msg.substring(0, 10000)));
 		}
 	});
 
 	ngrok.stderr.on('data', function (data) {
 		var info = data.toString().substring(0, 10000);
-		return cb(new Error(info));
+		done(new Error(info));
 	});
+
+
+	function done(err) {
+		ngrok.stdout.removeAllListeners('data');
+		ngrok.stderr.removeAllListeners('data');
+		cb(err);
+	}
 
 	ngrok.on('close', function () {
 		return emitter.emit('close');
