@@ -10,14 +10,12 @@ var url = require('url');
 var bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 var ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 var inUse = /address already in use/;
-var stopListening = false;
 
 var noop = function() {};
 var emitter = new Emitter().on('error', noop);
 var ngrok, api, tunnels = {};
 
 function connect(opts, cb) {
-	stopListening = false;
 
 	if (typeof opts === 'function') {
 		cb = opts;
@@ -95,6 +93,7 @@ function validate(opts) {
 	return false;
 }
 
+
 function runNgrok(opts, cb) {
 	if (api) {
 		return cb();
@@ -110,27 +109,32 @@ function runNgrok(opts, cb) {
 			start,
 			{cwd: __dirname + '/bin'});
 
+
 	ngrok.stdout.on('data', function (data) {
-		if (stopListening) return;
 		var msg = data.toString();
 		var addr = msg.match(ready);
 		if (addr) {
-			stopListening = true;
 			api = request.defaults({
 				baseUrl: 'http://' + addr[1],
 				json: true
 			});
-			cb();
+			done();
 		} else if (msg.match(inUse)) {
-			stopListening = true;
-			cb(new Error(msg.substring(0, 10000)));
+			done(new Error(msg.substring(0, 10000)));
 		}
 	});
 
 	ngrok.stderr.on('data', function (data) {
 		var info = data.toString().substring(0, 10000);
-		return cb(new Error(info));
+		done(new Error(info));
 	});
+
+
+	function done(err) {
+		ngrok.stdout.removeAllListeners('data');
+		ngrok.stderr.removeAllListeners('data');
+		cb(err);
+	}
 
 	ngrok.on('close', function () {
 		return emitter.emit('close');
