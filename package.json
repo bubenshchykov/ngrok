@@ -32,7 +32,7 @@
   "devDependencies": {
     "chai": "~3.5.0",
     "homedir": "^0.6.0",
-    "mocha": "~3.3.0"
+    "mocha": "~3.4.2"
   },
   "dependencies": {
     "async": "^2.3.0",
