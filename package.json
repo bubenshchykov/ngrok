@@ -3,6 +3,7 @@
   "version": "2.2.10",
   "description": "node wrapper for ngrok",
   "main": "index.js",
+  "types": "ngrok.d.ts",
   "scripts": {
     "test": "node ./node_modules/mocha/bin/_mocha",
     "postinstall": "node ./postinstall.js",
