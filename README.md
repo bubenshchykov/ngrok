@@ -1,4 +1,4 @@
-ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok)
+ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok) ![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg)
 =====
 
 ![alt ngrok.com](https://ngrok.com/static/img/overview.png)
