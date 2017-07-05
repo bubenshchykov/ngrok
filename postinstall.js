@@ -1,7 +1,7 @@
 var os = require('os');
 var fs = require('fs');
 var Zip = require('decompress-zip');
-var request = require('request');
+var rrs = require('request-retry-stream');
 
 var cdn = process.env.NGROK_CDN_URL || 'https://bin.equinox.io';
 var cdnPath = process.env.NGROK_CDN_PATH || '/c/4VmDzA7iaHb/ngrok-stable-';
@@ -31,8 +31,13 @@ var localFile = localPath + 'ngrok.zip';
 
 console.log('ngrok - downloading binary ' + cdnFile + ' ...');
 
-request
-	.get(cdnFile)
+rrs.get({
+		url: cdnFile,
+		attempts: 3,
+		delay: 500,
+		timeout: 2000,
+		logFunction: console.warn
+	})
 	.pipe(fs.createWriteStream(localFile))
 	.on('finish', function() {
 		console.log('ngrok - binary downloaded...');

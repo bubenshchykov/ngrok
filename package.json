@@ -1,6 +1,6 @@
 {
   "name": "ngrok",
-  "version": "2.2.11",
+  "version": "2.2.12",
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "types": "ngrok.d.ts",
@@ -33,14 +33,15 @@
   "devDependencies": {
     "chai": "~3.5.0",
     "homedir": "^0.6.0",
-    "mocha": "~3.4.2"
+    "mocha": "~3.4.2",
+    "request": "^2.55.0"
   },
   "dependencies": {
     "@types/node": "^7.0.31",
     "async": "^2.3.0",
     "decompress-zip": "^0.3.0",
     "lock": "^0.1.2",
-    "request": "^2.55.0",
+    "request-retry-stream": "^2.0.0",
     "uuid": "^3.0.0"
   },
   "bin": {
