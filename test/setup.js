@@ -5,4 +5,4 @@ if (!process.env.NGROK_AUTHTOKEN_PAID || !process.env.NGROK_AUTHTOKEN_FREE) {
 
 var chai = require('chai');
 global.expect = chai.expect;
-chai.config.includeStack = true;
+chai.Assertion.includeStack = true;
