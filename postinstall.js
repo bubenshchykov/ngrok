@@ -1,5 +1,6 @@
 var os = require('os');
 var fs = require('fs');
+var readline = require('readline');
 var Zip = require('decompress-zip');
 var request = require('request');
 
@@ -73,11 +74,36 @@ function extract(cb) {
 
 function install(cb) {
 	console.log('ngrok - downloading binary ' + cdnFile);
+	var total = 0;
+	var downloaded = 0;
+	var shouldClearLine = false;
+
+	var showProgress = function () {
+		if (shouldClearLine) {
+			readline.clearLine(process.stdout);
+			readline.cursorTo(process.stdout, 0);
+		}
+
+		var progress = downloaded + (total ? ('/' + total) : '');
+		process.stdout.write('ngrok - downloading progress: ' + progress);
+		shouldClearLine= true;
+	}
+
+	var outputStream = fs.createWriteStream(localFile);
+
 	request
 		.get(cdnFile)
-		.pipe(fs.createWriteStream(localFile))
-		.on('finish', function() {
-			console.log('ngrok - binary downloaded to ' + localFile);
+		.on('response', function (res) {
+			total = res.headers['content-length'];
+			total > 0 && showProgress();
+		})
+		.on('data', function (data) {
+			downloaded += data.length;
+			showProgress();
+			outputStream.write(data);
+		})
+		.on('complete', function () {
+			console.log('\nngrok - binary downloaded to ' + localFile);
 			extract(cb);
 		})
 		.on('error', function(e) {
