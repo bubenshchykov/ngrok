@@ -23,11 +23,6 @@ var cdnFiles = {
 var arch = process.env.NGROK_ARCH || (os.platform() + os.arch());
 var cdnFile = cdnFiles[arch];
 
-if (!cdnFile) {
-	console.error('ngrok - platform ' + arch + ' is not supported.');
-	process.exit(1);
-}
-
 var binPath = path.join(__dirname, 'bin');
 var localPath;
 try {
@@ -44,6 +39,9 @@ install();
 function install () {
 	if (fs.existsSync(localFile) && fs.statSync(localFile).size) {
 		extract(retry)
+	} else if (!cdnFile) {
+		console.error('ngrok - platform ' + arch + ' is not supported.');
+		process.exit(1);
 	} else {
 		download(retry);
 	}
