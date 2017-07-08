@@ -1,5 +1,6 @@
 var os = require('os');
 var fs = require('fs');
+var path = require('path');
 var readline = require('readline');
 var Zip = require('decompress-zip');
 var request = require('request');
@@ -27,8 +28,16 @@ if (!cdnFile) {
 	process.exit(1);
 }
 
-var localPath = __dirname + '/bin/';
-var localFile = localPath + 'ngrok.zip';
+var binPath = path.join(__dirname, 'bin');
+var localPath;
+try {
+	localPath = path.join(os.homedir(), '.ngrok');
+	fs.existsSync(localPath) || fs.mkdirSync(localPath);
+} catch (err) {
+	localPath = binPath;
+}
+
+var localFile = path.join(localPath, 'ngrok.zip');
 
 install();
 
@@ -60,13 +69,13 @@ function install () {
 
 function extract(cb) {
 	console.log('ngrok - unpacking binary')
-	new Zip(localFile).extract({path: localPath})
+	new Zip(localFile).extract({path: binPath})
 		.once('error', error)
 		.once('extract', function() {
 			var suffix = os.platform() === 'win32' ? '.exe' : '';
 			if (suffix === '.exe')
-				fs.writeFileSync(localPath + 'ngrok.cmd', 'ngrok.exe');
-			var target = localPath + 'ngrok' + suffix;
+				fs.writeFileSync(path.join(binPath, 'ngrok.cmd'), 'ngrok.exe');
+			var target = path.join(binPath, 'ngrok' + suffix);
 			fs.chmodSync(target, 0755);
 			if (!fs.existsSync(target) || fs.statSync(target).size <= 0)
 				return error(new Error('corrupted file ' + target));
