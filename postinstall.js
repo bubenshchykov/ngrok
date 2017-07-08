@@ -31,8 +31,8 @@ try {
 } catch (err) {
 	localPath = binPath;
 }
-
-var localFile = path.join(localPath, 'ngrok.zip');
+var localFileName = new Buffer(cdnFile).toString('base64');
+var localFile = path.join(localPath, localFileName + '.zip');
 
 install();
 
