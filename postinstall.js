@@ -42,10 +42,33 @@ function retry(err) {
 	if (err) {
 		console.warn('ngrok - install failed, retrying');
 		return setTimeout(function() {
-			install(retry);	
+			install(retry);
 		}, 500);
 	}
 	process.exit(0);
+}
+
+function extract(cb) {
+	console.log('ngrok - unpacking binary')
+	new Zip(localFile).extract({path: localPath})
+		.once('error', error)
+		.once('extract', function() {
+			var suffix = os.platform() === 'win32' ? '.exe' : '';
+			if (suffix === '.exe')
+				fs.writeFileSync(localPath + 'ngrok.cmd', 'ngrok.exe');
+			fs.unlinkSync(localFile);
+			var target = localPath + 'ngrok' + suffix;
+			fs.chmodSync(target, 0755);
+			if (!fs.existsSync(target) || fs.statSync(target).size <= 0)
+				return error(new Error('corrupted file ' + target));
+			console.log('ngrok - binary unpacked to ' + target);
+			cb(null);
+		});
+
+	function error(e) {
+		console.warn('ngrok - error unpacking binary', e);
+		cb(e);
+	}
 }
 
 function install(cb) {
@@ -55,33 +78,10 @@ function install(cb) {
 		.pipe(fs.createWriteStream(localFile))
 		.on('finish', function() {
 			console.log('ngrok - binary downloaded to ' + localFile);
-			extract();
+			extract(cb);
 		})
 		.on('error', function(e) {
 			console.warn('ngrok - error downloading binary', e);
 			cb(e);
 		});
-
-	function extract() {
-		console.log('ngrok - unpacking binary')
-		new Zip(localFile).extract({path: localPath})
-			.once('error', error)
-			.once('extract', function() {
-				var suffix = os.platform() === 'win32' ? '.exe' : '';
-				if (suffix === '.exe')
-					fs.writeFileSync(localPath + 'ngrok.cmd', 'ngrok.exe');
-				fs.unlinkSync(localFile);
-				var target = localPath + 'ngrok' + suffix;
-				fs.chmodSync(target, 0755);
-				if (!fs.existsSync(target) || fs.statSync(target).size <= 0)
-					return error(new Error('corrupted file ' + target));
-				console.log('ngrok - binary unpacked to ' + target);
-				cb(null);
-			});
-	}
-
-	function error(e) {
-		console.warn('ngrok - error unpacking binary', e);
-		cb(e);
-	}
 }
