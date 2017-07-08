@@ -29,24 +29,33 @@ if (!cdnFile) {
 
 var localPath = __dirname + '/bin/';
 var localFile = localPath + 'ngrok.zip';
-var attempts = 0;
-var maxAttempts = 3;
 
-install(retry);
+install();
 
-function retry(err) {
-	attempts++;
-	if (err && attempts === maxAttempts) {
-		console.error('ngrok - install failed', err);
-		return process.exit(1);
+function install () {
+	if (fs.existsSync(localFile) && fs.statSync(localFile).size) {
+		extract(retry)
+	} else {
+		download(retry);
 	}
-	if (err) {
-		console.warn('ngrok - install failed, retrying');
-		return setTimeout(function() {
-			install(retry);
-		}, 500);
+
+	var attempts = 0;
+	var maxAttempts = 3;
+
+	function retry(err) {
+		attempts++;
+		if (err && attempts === maxAttempts) {
+			console.error('ngrok - install failed', err);
+			return process.exit(1);
+		}
+		if (err) {
+			console.warn('ngrok - install failed, retrying');
+			return setTimeout(function() {
+				download(retry);
+			}, 500);
+		}
+		process.exit(0);
 	}
-	process.exit(0);
 }
 
 function extract(cb) {
@@ -57,7 +66,6 @@ function extract(cb) {
 			var suffix = os.platform() === 'win32' ? '.exe' : '';
 			if (suffix === '.exe')
 				fs.writeFileSync(localPath + 'ngrok.cmd', 'ngrok.exe');
-			fs.unlinkSync(localFile);
 			var target = localPath + 'ngrok' + suffix;
 			fs.chmodSync(target, 0755);
 			if (!fs.existsSync(target) || fs.statSync(target).size <= 0)
@@ -72,7 +80,7 @@ function extract(cb) {
 	}
 }
 
-function install(cb) {
+function download(cb) {
 	console.log('ngrok - downloading binary ' + cdnFile);
 	var total = 0;
 	var downloaded = 0;
