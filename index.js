@@ -79,10 +79,6 @@ function defaults(opts) {
 		opts.auth = opts.httpauth;
 	}
 
-	if (['us', 'eu', 'au', 'ap'].indexOf(opts.region) === -1) {
-		opts.region = 'us';
-	}
-
 	return opts;
 }
 
@@ -99,7 +95,12 @@ function runNgrok(opts, cb) {
 		return cb();
 	}
 
-	var start = ['start', '--none', '--log=stdout', '--region=' + opts.region];
+	var start = ['start', '--none', '--log=stdout'];
+
+	if (opts.region) {
+		start.push('--region=' + opts.region);
+	}
+
 	if (opts.configPath) {
 		start.push('--config=' + opts.configPath);
 	}
