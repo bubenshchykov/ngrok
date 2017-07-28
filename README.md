@@ -1,4 +1,4 @@
-ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok) ![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg)
+ngrok [![Build Status](https://travis-ci.org/bubenshchykov/ngrok.png?branch=master)](https://travis-ci.org/bubenshchykov/ngrok) ![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg) [![npm](https://img.shields.io/npm/v/ngrok.svg)]() [![npm](https://img.shields.io/npm/dm/ngrok.svg)]()
 =====
 
 ![alt ngrok.com](https://ngrok.com/static/img/overview.png)
@@ -8,9 +8,8 @@ Ngrok exposes your localhost to the web. https://ngrok.com/
 usage
 ===
 
-[![NPM](https://nodei.co/npm/ngrok.png?global=true&&downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ngrok/)
-
 ```
+npm install ngrok
 var ngrok = require('ngrok');
 ngrok.connect(function (err, url) {});
 
