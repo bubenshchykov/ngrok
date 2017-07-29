@@ -3,8 +3,6 @@ ngrok [![Build Status](https://img.shields.io/travis/bubenshchykov/ngrok/master.
 
 ![alt ngrok.com](https://ngrok.com/static/img/overview.png)
 
-Ngrok exposes your localhost to the web. https://ngrok.com/
-
 usage
 ===
 
