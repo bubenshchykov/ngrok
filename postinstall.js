@@ -122,7 +122,7 @@ function download(cb) {
 			var readStream = fs.createReadStream(tempFile);
 			readStream
 				.pipe(fs.createWriteStream(localFile))
-				.on('finish', () => extract(cb));
+				.on('finish', function () { extract(cb) });
 		})
 		.on('error', function(e) {
 			console.warn('ngrok - error downloading binary', e);
