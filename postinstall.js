@@ -34,6 +34,10 @@ try {
 var localFileName = new Buffer(cdnFile).toString('base64');
 var localFile = path.join(localPath, localFileName + '.zip');
 
+process.on('uncaughtException', function (err) {
+  console.error('ngrok - install failed', err);
+});
+
 install();
 
 function install () {
