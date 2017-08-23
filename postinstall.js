@@ -102,9 +102,10 @@ function download(cb) {
 		var progress = downloaded + (total ? ('/' + total) : '');
 		process.stdout.write('ngrok - downloading progress: ' + progress);
 		shouldClearLine= true;
-	}
+	};
+
 	var tempFile = path.join(os.tmpdir(), 'ngrok.zip');
-	var outputStream = fs.createWriteStream(tempFile);
+	var outputStream = fs.createWriteStream(tempFile).on('error', cb);
 
 	request
 		.get(cdnFile)
@@ -119,10 +120,13 @@ function download(cb) {
 		})
 		.on('complete', function () {
 			console.log('\nngrok - binary downloaded to ' + localFile);
-			var readStream = fs.createReadStream(tempFile);
+			var readStream = fs.createReadStream(tempFile).on('error', cb);
+			var writeStream = fs.createWriteStream(localFile).on('error', cb);
 			readStream
-				.pipe(fs.createWriteStream(localFile))
-				.on('finish', () => extract(cb));
+				.pipe(writeStream)
+				.on('finish', function() {
+					extract(cb);
+				});
 		})
 		.on('error', function(e) {
 			console.warn('ngrok - error downloading binary', e);
