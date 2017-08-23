@@ -34,6 +34,10 @@ try {
 var localFileName = new Buffer(cdnFile).toString('base64');
 var localFile = path.join(localPath, localFileName + '.zip');
 
+process.on('uncaughtException', function (err) {
+  console.error('ngrok - install failed', err);
+});
+
 install();
 
 function install () {
@@ -122,7 +126,7 @@ function download(cb) {
 			var readStream = fs.createReadStream(tempFile);
 			readStream
 				.pipe(fs.createWriteStream(localFile))
-				.on('finish', () => extract(cb));
+				.on('finish', function () { extract(cb) });
 		})
 		.on('error', function(e) {
 			console.warn('ngrok - error downloading binary', e);
