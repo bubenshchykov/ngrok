@@ -8,4 +8,5 @@ os:
   - linux
 script:
   - npm test
-  - echo 'testing global install..' && npm i -g
+  - echo 'testing global install without cache..' && export NGROK_IGNORE_CACHE=true && npm i -g && ngrok -v
+  - echo 'testing global install with cache..' && export NGROK_IGNORE_CACHE=false && npm i -g && ngrok -v

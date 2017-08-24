@@ -33,11 +33,12 @@ try {
 }
 var localFileName = new Buffer(cdnFile).toString('base64');
 var localFile = path.join(localPath, localFileName + '.zip');
+var ignoreCache = process.env.NGROK_IGNORE_CACHE === 'true';
 
 install();
 
 function install () {
-	if (fs.existsSync(localFile) && fs.statSync(localFile).size) {
+	if (!ignoreCache && fs.existsSync(localFile) && fs.statSync(localFile).size) {
 		extract(retry)
 	} else if (!cdnFile) {
 		console.error('ngrok - platform ' + arch + ' is not supported.');
