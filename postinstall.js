@@ -104,15 +104,16 @@ function download(cb) {
 		shouldClearLine = true;
 	};
 
-	var outputStream = fs.createWriteStream(localFile)
-		.on('error', function(e) {
-			console.log('ngrok - error storing binary to local file', e);
-			cb(e);
-		});
-
-	request
+	var downloadStream = request
 		.get(cdnFile)
 		.on('response', function (res) {
+			if (!/2\d\d/.test(res.statusCode)) {
+				res.pause();
+				return downloadStream.emit('error', new Error('wrong status code: ' + res.statusCode));
+			}
+
+			res.pipe(outputStream);
+
 			total = res.headers['content-length'];
 			total > 0 && showProgress();
 		})
@@ -120,13 +121,18 @@ function download(cb) {
 			downloaded += data.length;
 			showProgress();
 		})
-		.pipe(outputStream)
-		.on('finish', function () {
-			console.log('\nngrok - binary downloaded to ' + localFile);
-			extract(cb);
-		})
 		.on('error', function(e) {
 			console.warn('ngrok - error downloading binary', e);
 			cb(e);
+		});
+
+	var outputStream = fs.createWriteStream(localFile)
+		.on('error', function(e) {
+			console.log('ngrok - error storing binary to local file', e);
+			cb(e);
+		})
+		.on('finish', function () {
+			console.log('\nngrok - binary downloaded to ' + localFile);
+			extract(cb);
 		});
 }
