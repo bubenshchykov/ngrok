@@ -12,7 +12,8 @@
   "files": [
     "index.js",
     "postinstall.js",
-    "bin/ngrok"
+    "bin/ngrok",
+    "ngrok.d.ts"
   ],
   "repository": {
     "type": "git",
