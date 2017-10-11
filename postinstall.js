@@ -71,7 +71,7 @@ function extract(cb) {
 	new Zip(localFile).extract({path: binPath})
 		.once('error', error)
 		.once('extract', function() {
-			var suffix = os.platform() === 'win32' ? '.exe' : '';
+			var suffix = arch.indexOf('win32') === 0 ? '.exe' : '';
 			if (suffix === '.exe')
 				fs.writeFileSync(path.join(binPath, 'ngrok.cmd'), 'ngrok.exe');
 			var target = path.join(binPath, 'ngrok' + suffix);
