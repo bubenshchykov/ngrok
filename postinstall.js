@@ -27,7 +27,7 @@ var binPath = path.join(__dirname, 'bin');
 var localPath;
 try {
 	localPath = path.join(os.homedir(), '.ngrok');
-	fs.existsSync(localPath) || fs.mkdirSync(localPath);
+	fs.existsSync(localPath) && fs.statSync(localPath).isDirectory() || fs.mkdirSync(localPath);
 } catch (err) {
 	localPath = binPath;
 }
