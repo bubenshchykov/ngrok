@@ -137,6 +137,12 @@ function runNgrok(opts, cb) {
 		cb(err);
 	}
 
+	ngrok.on('exit', function () {
+		api = null;
+		tunnels = {};
+		emitter.emit('disconnect');
+	});
+
 	ngrok.on('close', function () {
 		return emitter.emit('close');
 	});
@@ -254,9 +260,6 @@ function kill(cb) {
 		return cb();
 	}
 	ngrok.on('exit', function() {
-		api = null;
-		tunnels = {};
-		emitter.emit('disconnect');
 		return cb();
 	});
 	return ngrok.kill();
