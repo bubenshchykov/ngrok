@@ -46,10 +46,12 @@ ngrok.connect({
 	authtoken: '12345', // your authtoken from ngrok.com
 	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us,
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
+	binPath: ['app.asar', 'app.asar.unpacked'] // custom path replacement when using for production in electron
 }, function (err, url) {});
 ```
 
 Other options: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
+
 
 Note on regions: region used in first tunnel will be used for all next tunnels too.
 
