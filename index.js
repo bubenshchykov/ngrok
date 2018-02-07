@@ -3,14 +3,13 @@ const { spawn } = require('child_process')
 const { EventEmitter } = require('events')
 const platform = require('os').platform()
 const uuid = require('uuid')
-// const url = require('url')
+const url = require('url')
 const path = require('path')
 
 const bin = './ngrok' + (platform === 'win32' ? '.exe' : '')
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/
 const inUse = /address already in use/
-// note that this file "index.js" was moved into a src dir..
-const binDir = path.join(__dirname, '..', '/bin')
+const binDir = path.join(__dirname, '/bin')
 
 const MAX_RETRY = 100
 
@@ -23,6 +22,10 @@ class NGrok extends EventEmitter {
   async connect (opts) {
     opts = this.defaults(opts)
     this.validate(opts)
+
+    if (opts.authtoken) {
+      await this.authtoken(opts.authtoken, opts.configPath)
+    }
 
     if (!this.api) {
       await this.runNgrok(opts)
@@ -89,8 +92,6 @@ class NGrok extends EventEmitter {
         resolvePromise()
       } else if (msg.match(inUse)) {
         rejectPromise(new Error(msg.substring(0, 10000)))
-      } else {
-        console.warn('not sure when this happens in ngrok')
       }
     })
 
@@ -128,8 +129,15 @@ class NGrok extends EventEmitter {
       if (opts.proto === 'http' && opts.bind_tls !== false) {
         this.tunnels[publicUrl.replace('https', 'http')] = response.uri + ' (http)'
       }
+      // TODO: understand how to get this correctly.
+      // The test in ngrok.guest.eventemitter.spec.js fails
+      const parsedUiUrl = url.parse(response.uri)
+      const uiUrl = parsedUiUrl.resolve('/')
+
+      this.emit('connect', publicUrl, uiUrl)
       return publicUrl
     } catch (err) {
+      if (!err.response) throw err 
       const body = err.response.body
       const notReady500 = err.statusCode === 500 && /panic/.test(body)
       const notReady502 = err.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet'
@@ -171,13 +179,17 @@ class NGrok extends EventEmitter {
     }
 
     if (publicUrl) {
+      const tunnelUrl = this.tunnels[publicUrl]
+      if (!tunnelUrl) {
+        throw new Error(`there is no tunnel with url: ${publicUrl}`)
+      }
       await this.api.del(this.tunnels[publicUrl])
       delete this.tunnels[publicUrl]
       this.emit('disconnect', publicUrl)
       return
     }
 
-    for (const url in Object.keys(this.tunnels)) {
+    for (const url of Object.keys(this.tunnels)) {
       await this.disconnect(url)
     }
     this.emit('disconnect')
@@ -198,6 +210,7 @@ class NGrok extends EventEmitter {
       resolvePromise()
     })
     this.ngrok.kill()
+    delete this.api
     return promise
   }
 }

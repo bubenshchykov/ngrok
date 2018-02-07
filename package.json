@@ -38,13 +38,15 @@
   },
   "dependencies": {
     "@types/node": "^8.0.19",
-    "async": "^2.3.0",
     "decompress-zip": "^0.3.0",
-    "lock": "^0.1.2",
     "request": "^2.55.0",
+    "request-promise-native": "^1.0.5",
     "uuid": "^3.0.0"
   },
   "bin": {
     "ngrok": "./bin/ngrok"
+  },
+  "engines": {
+    "node": ">=8.3.0"
   }
 }

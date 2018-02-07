@@ -1,7 +1,7 @@
-var ngrok = require('..');
+var Ngrok = require('..');
 var http = require('http');
 var net = require('net');
-var request = require('request');
+var request = require('request-promise-native');
 var URL = require('url');
 var uuid = require('uuid');
 var util = require('./util');
@@ -9,14 +9,13 @@ var util = require('./util');
 var port = 8080;
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody, error;
+const ngrok = new Ngrok()
 
 describe('guest.spec.js - ensuring no authtoken set', function() {
 
-	before(function(done) {
-		ngrok.kill(function() {
-			util.removeAuthtoken();
-			done();
-		})
+	before(async function() {
+		await ngrok.kill()
+		util.removeAuthtoken();
 	});
 
 	describe('starting local http server', function() {
@@ -30,17 +29,14 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 			}).listen(port, done);
 		});
 
-		after(function(done) {
+		after(function (done) {
 			server.close(done.bind(null, null));
 		});
 
 		describe('calling local server directly', function() {
 			
-			before(function(done) {
-				request.get(localUrl + '/local', function (err, resp, body) {
-					respBody = body;
-					done(err);
-				});
+			before(async function () {
+				respBody = await request.get(localUrl + '/local');
 			});
 
 			it('should return oki-doki', function() {
@@ -49,11 +45,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 			describe('connecting to ngrok with port specified', function () {
 
-				before(function (done) {
-					ngrok.connect(port, function(err, url){
-						tunnelUrl = url;
-						done(err);
-					});
+				before(async function () {
+					tunnelUrl = await ngrok.connect(port)
 				});
 
 				it('should return url pointing to ngrok domain', function(){
@@ -62,11 +55,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 				describe('calling local server through ngrok', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok', function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(async function () {
+						respBody = await request.get(tunnelUrl + '/ngrok');
 					});
 
 					it('should return oki-doki too', function() {
@@ -75,17 +65,18 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 					describe('disconnecting from ngrok', function () {
 
-						before(function(done) {
-							ngrok.disconnect(done);
+						before(async function () {
+							await ngrok.disconnect();
 						});
 
 						describe('calling local server through discconected https ngrok', function() {
 
-							before(function(done) {
-								request.get(tunnelUrl + '/ngrok', function (err, resp, body) {
-									respBody = body;
-									done(err);
-								});
+							before(async function () {
+								try {
+									await request.get(tunnelUrl + '/ngrok')
+								} catch (err) {
+									respBody = err.response.body
+								}
 							});
 
 							it('should return error message', function() {
@@ -96,11 +87,12 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 						describe('calling local server through discconected http ngrok', function() {
 
-							before(function(done) {
-								request.get(tunnelUrl.replace('https', 'http') + '/ngrok', function (err, resp, body) {
-									respBody = body;
-									done(err);
-								});
+							before(async function () {
+								try {
+									await request.get(tunnelUrl.replace('https', 'http') + '/ngrok');
+								} catch (err) {
+									respBody = err.response.body
+								}
 							});
 
 							it('should return error message', function() {
@@ -116,13 +108,10 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 			describe('connecting to ngrok with custom region', function () {
 
-				before(ngrok.kill);
+				before(async () => await ngrok.kill());
 
-				before(function (done) {
-					ngrok.connect({region: 'eu'}, function(err, url){
-						tunnelUrl = url;
-						done(err);
-					});
+				before(async function () {
+					tunnelUrl = await ngrok.connect({region: 'eu'})
 				});
 
 				it('should return url pointing to ngrok eu region', function(){
@@ -134,30 +123,32 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 				var uniqDomain = 'koko-' + uuid.v4();
 				var error;
 				
-				before(function (done) {
-					ngrok.connect({
-						port: port,
-						subdomain: uniqDomain
-					}, function(err){
-						error = err;
-						done();
-					});
+				before(async function () {
+					try {
+						await ngrok.connect({
+							port: port,
+							subdomain: uniqDomain
+						});
+					} catch (err) {
+						error = err
+					}
 				});
 
 				it('should return error', function(){
-					expect(error.msg).to.equal('failed to start tunnel');
-					expect(error.details.err).to.contain('Only paid plans may bind custom subdomains');
+					expect(error.response.body.msg).to.equal('failed to start tunnel');
+					expect(error.response.body.details.err).to.contain('Only paid plans may bind custom subdomains');
 				});
 
 			});
 
 			describe('connecting to ngrok with web_addr:false (disabling) ngrok api and ui)', function () {
 
-				before(function (done) {
-					ngrok.connect({web_addr: false}, function(err, url) {
+				before(async function () {
+					try {
+						await ngrok.connect({web_addr: false})
+					} catch (err) {
 						error = err;
-						done();
-					});
+					}
 				});
 
 				it('should return error', function () {
