@@ -96,6 +96,7 @@ function runNgrok(opts, cb) {
 	}
 
 	var start = ['start', '--none', '--log=stdout'];
+	var dir = __dirname;
 
 	if (opts.region) {
 		start.push('--region=' + opts.region);
@@ -105,10 +106,14 @@ function runNgrok(opts, cb) {
 		start.push('--config=' + opts.configPath);
 	}
 
+	if (opts.binPath) {
+		dir = dir.replace(opts.binPath[0], opts.binPath[1])
+	}
+
 	ngrok = spawn(
 			bin,
 			start,
-			{cwd: __dirname + '/bin'});
+			{cwd: dir + '/bin'});
 
 
 	ngrok.stdout.on('data', function (data) {
