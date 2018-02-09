@@ -46,7 +46,7 @@ ngrok.connect({
 	authtoken: '12345', // your authtoken from ngrok.com
 	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us,
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
-	binPath: ['app.asar', 'app.asar.unpacked'] // custom path replacement when using for production in electron
+	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // custom path replacement when using for production in electron
 }, function (err, url) {});
 ```
 
