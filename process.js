@@ -97,7 +97,8 @@ async function setAuthtoken (token, configPath) {
 	const authtoken = ['authtoken', token]
 	if (configPath) authtoken.push('--config=' + configPath);
 
-	const ngrok = spawn(bin, authtoken, {cwd: binDir});
+	let dir = __dirname + '/bin';
+	const ngrok = spawn(bin, authtoken, {cwd: dir});
 
 	const killed = new Promise((resolve, reject) => {
 		ngrok.stdout.once('data', () => resolve());

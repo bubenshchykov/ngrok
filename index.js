@@ -56,6 +56,7 @@ async function connectRetry (opts, retryCount = 0) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     return connectRetry(opts, ++retryCount);
   }
+ }
 
 function isRetriable (err) {
   if (!err.response) return false; 

@@ -17,6 +17,8 @@ npm install ngrok -g
 ngrok http 8080
 ```
 
+This module uses native promises and async-await. For callback-based implementation use version 2.2.3'
+
 ## authtoken
 You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
 
