@@ -1,22 +1,23 @@
-var ngrok = require('..');
-var http = require('http');
-var net = require('net');
-var request = require('request');
-var URL = require('url');
-var uuid = require('uuid');
-var util = require('./util');
+const colors = require('colors/safe');
+const ngrok = require('..');
+const http = require('http');
+const net = require('net');
+const request = require('request');
+const URL = require('url');
+const uuid = require('uuid');
+const util = require('./util');
 
-var port = 8080;
-var authtoken = process.env.NGROK_AUTHTOKEN_PAID;
-var localUrl = 'http://127.0.0.1:' + port;
-var tunnelUrl, respBody;
+const port = 8080;
+const authtoken = process.env.NGROK_AUTHTOKEN_PAID;
+const localUrl = 'http://127.0.0.1:' + port;
+let tunnelUrl, respBody;
 
-describe('registered.paid.spec.js - setting paid authtoken', function() {
+(authtoken ? describe : describe.skip)
+('registered.paid.spec.js - setting paid authtoken', function() {
 
-	before(function(done) {
-		ngrok.kill(function() {
-			ngrok.authtoken(authtoken, done);
-		});
+	before(async function() {
+		await ngrok.kill();
+		await ngrok.authtoken(authtoken);
 	});
 
 	after(function() {
@@ -25,7 +26,7 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 	describe('starting local http server', function() {
 
-		var server;
+		let server;
 
 		before(function(done) {
 			server = http.createServer(function (req, res) {
@@ -53,11 +54,8 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 			describe('connecting to ngrok with port specified', function () {
 
-				before(function (done) {
-					ngrok.connect(port, function(err, url){
-						tunnelUrl = url;
-						done(err);
-					});
+				before(async () => {
+					tunnelUrl = await ngrok.connect(port);
 				});
 
 				it('should return url pointing to ngrok domain', function(){
@@ -79,9 +77,7 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 					describe('disconnecting from ngrok', function () {
 
-						before(function(done) {
-							ngrok.disconnect(done);
-						});
+						before(async () => await ngrok.disconnect());
 
 						describe('calling local server through discconected ngrok', function() {
 
@@ -104,15 +100,12 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 			});
 
 			describe('connecting to ngrok with subdomain', function () {
-				var uniqDomain = 'koko-' + uuid.v4();
+				const uniqDomain = 'koko-' + uuid.v4();
 				
-				before(function (done) {
-					ngrok.connect({
+				before(async () => {
+					tunnelUrl = await ngrok.connect({
 						port: port,
 						subdomain: uniqDomain
-					}, function(err, url){
-						tunnelUrl = url;
-						done(err);
 					});
 				});
 
@@ -136,16 +129,17 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 				});
 
 				describe('connecting to ngrok with same subdomain again', function () {
-					var error;
+					let error;
 
-					before(function (done) {
-						ngrok.connect({
-							port: port,
-							subdomain: uniqDomain
-						}, function(err, url){
+					before(async () =>  {
+						try {
+							tunnelUrl = await ngrok.connect({
+								port: port,
+								subdomain: uniqDomain
+							});
+						} catch(err) {
 							error = err;
-							done();
-						});
+						}
 					});
 
 					it('should return an error that the tunnel is already established', function () {
@@ -155,19 +149,14 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 				});
 
 				describe('disconnecting from ngrok and connecting with same subdomain again', function () {
-					var error;
+					let error;
 
-					before(function(done) {
-						ngrok.disconnect(done);
-					});
+					before(async () => await ngrok.disconnect());
 
-					before(function (done) {
-						ngrok.connect({
+					before(async () =>  {
+						tunnelUrl = await ngrok.connect({
 							port: port,
 							subdomain: uniqDomain
-						}, function(err, url){
-							error = err;
-							done();
 						});
 					});
 
@@ -179,13 +168,10 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 			describe('connecting to ngrok with auth', function () {
 				
-				before(function (done) {
-					ngrok.connect({
+				before(async () => {
+					tunnelUrl = await ngrok.connect({
 						port: port,
 						auth: 'oki:doki'
-					}, function(err, url){
-						tunnelUrl = url;
-						done(err);
 					});
 				});
 
@@ -229,9 +215,9 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 	describe('starting local tcp server', function () {
 			
-		var tcpServerPort;
+		let tcpServerPort;
 		before(function(done) {
-			var tcpServer = net.createServer(function(socket) {
+			const tcpServer = net.createServer(function(socket) {
 				socket.end('oki-doki: tcp');
 			}).listen(0, '127.0.0.1', function() {
 				tcpServerPort = tcpServer.address().port;
@@ -240,16 +226,13 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 		});
 
 		describe('connecting to ngrok by tcp', function() {
-			var tunnelUrlParts;
-			before(function (done) {
-				ngrok.connect({
+			let tunnelUrlParts;
+			before(async () =>  {
+				tunnelUrl = await ngrok.connect({
 					proto: 'tcp',
 					port: tcpServerPort
-				}, function(err, url){
-					tunnelUrl = url;
-					tunnelUrlParts = URL.parse(tunnelUrl);
-					done(err);
 				});
+				tunnelUrlParts = URL.parse(tunnelUrl);
 			});
 
 			it('should return ngrok url with tcp protocol', function() {
@@ -261,8 +244,8 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 			});
 
 			describe('calling local tcp server through ngrok', function() {
-				var socketData;
-				var socket;
+				let socketData;
+				let socket;
 				
 				before(function (done) {
 					net.connect(+tunnelUrlParts.port, tunnelUrlParts.hostname)

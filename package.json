@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "ngrok.d.ts",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/_mocha",
+    "test": "node ./node_modules/mocha/bin/_mocha --exit",
     "postinstall": "node ./postinstall.js",
     "postupdate": "node ./postinstall.js"
   },
@@ -33,18 +33,21 @@
   },
   "devDependencies": {
     "chai": "~3.5.0",
+    "colors": "^1.1.2",
     "homedir": "^0.6.0",
-    "mocha": "~3.4.2"
+    "mocha": "^5.0.1"
   },
   "dependencies": {
     "@types/node": "^8.0.19",
-    "async": "^2.3.0",
     "decompress-zip": "^0.3.0",
-    "lock": "^0.1.2",
-    "request": "^2.55.0",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
     "uuid": "^3.0.0"
   },
   "bin": {
     "ngrok": "./bin/ngrok"
+  },
+  "engines": {
+    "node": ">=8.3.0"
   }
 }

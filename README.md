@@ -8,8 +8,8 @@ usage
 
 ```
 npm install ngrok
-var ngrok = require('ngrok');
-ngrok.connect(function (err, url) {});
+const ngrok = require('ngrok');
+const url = await ngrok.connect();
 
 or
 
@@ -17,60 +17,52 @@ npm install ngrok -g
 ngrok http 8080
 ```
 
+This module uses node>=8.3.0 with async-await. For callback-based version use [2.3.0](https://github.com/bubenshchykov/ngrok/blob/330674233e3ec77688bb692bf1eb007810c4e30d/README.md)
+
 ## authtoken
 You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
 
 ```
-ngrok.authtoken(token, function(err, token) {});
-ngrok.connect({authtoken: token, ...}, function (err, url) {});
+await ngrok.authtoken(token);
+await ngrok.connect({authtoken: token, ...});
 ngrok authtoken <token>
 ```
 
 ## connect
 ```javascript
-var ngrok = require('ngrok');
-
-ngrok.connect(function (err, url) {}); // https://757c1652.ngrok.io -> http://localhost:80
-ngrok.connect(9090, function (err, url) {}); // https://757c1652.ngrok.io -> http://localhost:9090
-ngrok.connect({proto: 'tcp', addr: 22}, function (err, url) {}); // tcp://0.tcp.ngrok.io:48590
-ngrok.connect(opts, function(err, url) {});
+const url = await ngrok.connect(); // https://757c1652.ngrok.io -> http://localhost:80
+const url = await ngrok.connect(9090); // https://757c1652.ngrok.io -> http://localhost:9090
+const url = await ngrok.connect({proto: 'tcp', addr: 22}); // tcp://0.tcp.ngrok.io:48590
+const url = await ngrok.connect(opts);
 ```
 
 ## options
 ```javascript
-ngrok.connect({
+const url = await ngrok.connect({
 	proto: 'http', // http|tcp|tls
 	addr: 8080, // port or network address
 	auth: 'user:pwd', // http basic authentication for tunnel
 	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
 	authtoken: '12345', // your authtoken from ngrok.com
-	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us,
+	region: 'us', // one of ngrok regions (us, eu, au, ap), defaults to us,
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
-	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // custom path replacement when using for production in electron
-}, function (err, url) {});
+	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // path replacer when using for production in electron
+});
 ```
 
 Other options: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
-
 
 Note on regions: region used in first tunnel will be used for all next tunnels too.
 
 ## disconnect
 The ngrok and all tunnels will be killed when node process is done. To stop the tunnels use
 ```javascript
-ngrok.disconnect(url); // stops one
-ngrok.disconnect(); // stops all
-ngrok.kill(); // kills ngrok process
+await ngrok.disconnect(url); // stops one
+await ngrok.disconnect(); // stops all
+await ngrok.kill(); // kills ngrok process
 ```
 
 Note on http tunnels: by default bind_tls is true, so whenever you use http proto two tunnels are created - http and https. If you disconnect https tunnel, http tunnel remains open. You might want to close them both by passing http-version url, or simply by disconnecting all in one go ```ngrok.disconnect()```.
-
-## emitter
-Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
-```javascript
-ngrok.once('connect', function (url) {};
-ngrok.connect(port);
-```
 
 ## configs
 You can use ngrok's [configurations files](https://ngrok.com/docs#config), and just pass `name` option when making a tunnel. Configuration files allow to store tunnel options. Ngrok looks for them here:
@@ -91,3 +83,5 @@ First time you create tunnel ngrok process is spawned and runs until you disconn
 
 ## contributors
 Please run ```git update-index --assume-unchanged bin/ngrok``` to not override [ngrok stub](https://github.com/bubenshchykov/ngrok/blob/master/bin/ngrok) in your pr. Unfortunately it can't be gitignored.
+
+Test suite covers basics usage without authtoken, as well as features available for free and paid authtokens. You can supply your own tokens into env vars, otherwise warning given and some specs are ignored (locally and in PR builds). Travis supplies real tokens to master branch and runs all specs always.
