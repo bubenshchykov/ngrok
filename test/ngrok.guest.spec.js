@@ -1,14 +1,14 @@
-var ngrok = require('..');
-var http = require('http');
-var net = require('net');
-var request = require('request-promise-native');
-var URL = require('url');
-var uuid = require('uuid');
-var util = require('./util');
+const ngrok = require('..');
+const http = require('http');
+const net = require('net');
+const request = require('request-promise-native');
+const URL = require('url');
+const uuid = require('uuid');
+const util = require('./util');
 
-var port = 8080;
-var localUrl = 'http://127.0.0.1:' + port;
-var tunnelUrl, respBody, error;
+const port = 8080;
+const localUrl = 'http://127.0.0.1:' + port;
+let tunnelUrl, respBody, error;
 
 describe('guest.spec.js - ensuring no authtoken set', function() {
 
@@ -19,7 +19,7 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 	describe('starting local http server', function() {
 
-		var server;
+		let server;
 
 		before(function(done) {
 			server = http.createServer(function (req, res) {
@@ -127,8 +127,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 			});
 
 			describe('connecting to ngrok with subdomain', function () {
-				var uniqDomain = 'koko-' + uuid.v4();
-				var error;
+				const uniqDomain = 'koko-' + uuid.v4();
+				let error;
 				
 				before(async function () {
 					try {

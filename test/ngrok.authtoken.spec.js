@@ -1,15 +1,15 @@
-var ngrok = require('..');
-var http = require('http');
-var net = require('net');
-var request = require('request');
-var URL = require('url');
-var uuid = require('uuid');
-var util = require('./util');
+const ngrok = require('..');
+const http = require('http');
+const net = require('net');
+const request = require('request');
+const URL = require('url');
+const uuid = require('uuid');
+const util = require('./util');
 
-var port = 8080;
+const port = 8080;
 const authtoken = process.env.NGROK_AUTHTOKEN_PAID;
-var localUrl = 'http://127.0.0.1:' + port;
-var tunnelUrl, respBody;
+const localUrl = 'http://127.0.0.1:' + port;
+let tunnelUrl, respBody;
 
 
 (authtoken ? describe : describe.skip)
@@ -25,7 +25,7 @@ var tunnelUrl, respBody;
 
 	describe('starting local http server', function() {
 
-		var server;
+		let server;
 
 		before(function(done) {
 			server = http.createServer(function (req, res) {
@@ -39,7 +39,7 @@ var tunnelUrl, respBody;
 		});
 
 		describe('connecting to ngrok with authtoken and subdomain', function () {
-			var uniqDomain = 'koko-' + uuid.v4();
+			const uniqDomain = 'koko-' + uuid.v4();
 			
 			before(async () => {
 				tunnelUrl = await ngrok.connect({

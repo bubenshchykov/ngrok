@@ -1,6 +1,6 @@
-var homedir = require('homedir');
-var path = require('path');
-var fs = require('fs');
+const homedir = require('homedir');
+const path = require('path');
+const fs = require('fs');
 
 function removeAuthtoken() {
 	try {

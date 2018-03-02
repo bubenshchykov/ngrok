@@ -1,15 +1,15 @@
-var ngrok = require('..');
-var http = require('http');
-var net = require('net');
-var request = require('request');
-var URL = require('url');
-var uuid = require('uuid');
-var util = require('./util');
+const ngrok = require('..');
+const http = require('http');
+const net = require('net');
+const request = require('request');
+const URL = require('url');
+const uuid = require('uuid');
+const util = require('./util');
 
-var port = 8080;
-var authtoken = process.env.NGROK_AUTHTOKEN_FREE || '6oQGYSXQuj7hdWDfxbpp3_2hWhQtZSq8yiJZDETQLUc';
-var localUrl = 'http://127.0.0.1:' + port;
-var tunnelUrl, respBody;
+const port = 8080;
+const authtoken = process.env.NGROK_AUTHTOKEN_FREE || '6oQGYSXQuj7hdWDfxbpp3_2hWhQtZSq8yiJZDETQLUc';
+const localUrl = 'http://127.0.0.1:' + port;
+let tunnelUrl, respBody;
 
 describe('registered.free.spec.js - setting free authtoken', function() {
 
@@ -24,7 +24,7 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 	describe('starting local http server', function() {
 
-		var server;
+		let server;
 
 		before(function(done) {
 			server = http.createServer(function (req, res) {
@@ -146,9 +146,9 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 	describe('starting local tcp server', function () {
 			
-		var tcpServerPort;
+		let tcpServerPort;
 		before(function(done) {
-			var tcpServer = net.createServer(function(socket) {
+			const tcpServer = net.createServer(function(socket) {
 				socket.end('oki-doki: tcp');
 			}).listen(0, '127.0.0.1', function() {
 				tcpServerPort = tcpServer.address().port;
@@ -157,7 +157,7 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 		});
 
 		describe('connecting to ngrok by tcp', function() {
-			var tunnelUrlParts;
+			let tunnelUrlParts;
 			before(async () => {
 				tunnelUrl = await ngrok.connect({
 					proto: 'tcp',
@@ -175,8 +175,8 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 			});
 
 			describe('calling local tcp server through ngrok', function() {
-				var socketData;
-				var socket;
+				let socketData;
+				let socket;
 				
 				before(function (done) {
 					net.connect(+tunnelUrlParts.port, tunnelUrlParts.hostname)

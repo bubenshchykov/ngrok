@@ -16,6 +16,6 @@ if (!env.NGROK_AUTHTOKEN_PAID) console.log(colors.magenta(
 	'Warning: no process.env.NGROK_AUTHTOKEN_PAID found, skipping related specs'
 ));
 
-var chai = require('chai');
+const chai = require('chai');
 global.expect = chai.expect;
 chai.config.includeStack = true;

@@ -6,10 +6,6 @@ const bin = './ngrok' + (platform === 'win32' ? '.exe' : '')
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/
 const inUse = /address already in use/
 
-
-
-
-
 let processPromise, activeProcess;
 
 /*
