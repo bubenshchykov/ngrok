@@ -33,8 +33,9 @@
   },
   "devDependencies": {
     "chai": "~3.5.0",
+    "colors": "^1.1.2",
     "homedir": "^0.6.0",
-    "mocha": "~3.4.2"
+    "mocha": "^5.0.1"
   },
   "dependencies": {
     "@types/node": "^8.0.19",

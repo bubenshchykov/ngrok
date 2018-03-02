@@ -1,3 +1,4 @@
+const colors = require('colors/safe');
 var ngrok = require('..');
 var http = require('http');
 var net = require('net');
@@ -7,11 +8,12 @@ var uuid = require('uuid');
 var util = require('./util');
 
 var port = 8080;
-var authtoken = process.env.NGROK_AUTHTOKEN_PAID;
+const authtoken = process.env.NGROK_AUTHTOKEN_PAID;
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 
-describe('registered.paid.spec.js - setting paid authtoken', function() {
+(authtoken ? describe : describe.skip)
+('registered.paid.spec.js - setting paid authtoken', function() {
 
 	before(async function() {
 		await ngrok.kill();
@@ -137,7 +139,6 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 							});
 						} catch(err) {
 							error = err;
-							console.log(err);
 						}
 					});
 

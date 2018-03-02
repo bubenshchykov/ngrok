@@ -7,11 +7,13 @@ var uuid = require('uuid');
 var util = require('./util');
 
 var port = 8080;
-var authtoken = process.env.NGROK_AUTHTOKEN_PAID;
+const authtoken = process.env.NGROK_AUTHTOKEN_PAID;
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody;
 
-describe('authtoken.spec.js - ensuring no authtoken set', function() {
+
+(authtoken ? describe : describe.skip)
+('authtoken.spec.js - ensuring no authtoken set', function() {
 
 	before(async () => {
 		await ngrok.kill();

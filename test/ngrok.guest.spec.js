@@ -52,6 +52,14 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 					expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
 				});
 
+				describe('getting internal api wrapper', () => {
+					let api;
+					before(() => api = ngrok.getApi());
+					it('should give you ngrok api url', () => {
+						expect(api).to.be.ok;
+					})
+				});
+
 				describe('calling local server through ngrok', function() {
 
 					before(async function () {
@@ -134,8 +142,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 				});
 
 				it('should return error', function(){
-					expect(error.response.body.msg).to.equal('failed to start tunnel');
-					expect(error.response.body.details.err).to.contain('Only paid plans may bind custom subdomains');
+					expect(error.msg).to.equal('failed to start tunnel');
+					expect(error.details.err).to.contain('Only paid plans may bind custom subdomains');
 				});
 
 			});

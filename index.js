@@ -40,10 +40,9 @@ async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
     const response = await internalApi.post({url: 'api/tunnels', json: opts});
-    console.log(response);
-    const publicUrl = response.public_url
+    const publicUrl = response.public_url;
     if (!publicUrl) {
-      throw new Error(response.msg || 'failed to start tunnel')
+      throw new Error('failed to start tunnel')
     }
     tunnels[publicUrl] = response.uri;
     if (opts.proto === 'http' && opts.bind_tls !== false) {
@@ -52,7 +51,7 @@ async function connectRetry (opts, retryCount = 0) {
     return publicUrl;
   } catch (err) {
     if (!isRetriable(err) || retryCount >= MAX_RETRY) {
-      throw err;
+      throw err.error || err.response;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
     return connectRetry(opts, ++retryCount);
@@ -85,8 +84,8 @@ async function disconnect (publicUrl) {
   return Promise.all(disconnectAll);
 }
 
-function getApiUrl() {
-  if (internalApi) return 'koko';
+function getApi() {
+  return internalApi;
 }
 
 async function kill ()  {
@@ -101,5 +100,5 @@ module.exports = {
   disconnect,
   kill,
   authtoken: setAuthtoken,
-  getApiUrl
+  getApi
 };
