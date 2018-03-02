@@ -39,7 +39,6 @@
   "dependencies": {
     "@types/node": "^8.0.19",
     "decompress-zip": "^0.3.0",
-    "request": "^2.55.0",
     "request-promise-native": "^1.0.5",
     "uuid": "^3.0.0"
   },

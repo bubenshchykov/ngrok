@@ -1,4 +1,4 @@
-var Ngrok = require('..');
+var ngrok = require('..');
 var http = require('http');
 var net = require('net');
 var request = require('request-promise-native');
@@ -9,12 +9,11 @@ var util = require('./util');
 var port = 8080;
 var localUrl = 'http://127.0.0.1:' + port;
 var tunnelUrl, respBody, error;
-const ngrok = new Ngrok()
 
 describe('guest.spec.js - ensuring no authtoken set', function() {
 
 	before(async function() {
-		await ngrok.kill()
+		await ngrok.kill();
 		util.removeAuthtoken();
 	});
 
@@ -106,7 +105,7 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 				});
 			});
 
-			describe('connecting to ngrok with custom region', function () {
+			describe.only('connecting to ngrok with custom region', function () {
 
 				before(async () => await ngrok.kill());
 

@@ -39,6 +39,7 @@ install();
 
 function install () {
 	if (!ignoreCache && fs.existsSync(localFile) && fs.statSync(localFile).size) {
+		console.log('ngrok - cached download found at ' + localFile);
 		extract(retry)
 	} else if (!cdnFile) {
 		console.error('ngrok - platform ' + arch + ' is not supported.');
