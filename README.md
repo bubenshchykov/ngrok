@@ -17,7 +17,7 @@ npm install ngrok -g
 ngrok http 8080
 ```
 
-This module uses promises and async-await. For callback-based version use 2.3.0'
+This module uses node>=8.3.0 with async-await. For callback-based version use [2.3.0](https://github.com/bubenshchykov/ngrok/blob/330674233e3ec77688bb692bf1eb007810c4e30d/README.md)
 
 ## authtoken
 You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
@@ -84,4 +84,4 @@ First time you create tunnel ngrok process is spawned and runs until you disconn
 ## contributors
 Please run ```git update-index --assume-unchanged bin/ngrok``` to not override [ngrok stub](https://github.com/bubenshchykov/ngrok/blob/master/bin/ngrok) in your pr. Unfortunately it can't be gitignored.
 
-Test suite runs basics methods for no-authtoken account, free authtoken (more features) and paid authtoken (premium features). You can supply your own tokens into env vars, otherwise first two scenarious will be tested only.
+Test suite covers basics usage without authtoken, as well as features available for free and paid authtokens. You can supply your own tokens into env vars, otherwise warning given and some specs are ignored (locally and in PR builds). Travis supplies real tokens to master branch and runs all specs always.
