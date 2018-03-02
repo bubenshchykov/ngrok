@@ -105,7 +105,7 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 				});
 			});
 
-			describe.only('connecting to ngrok with custom region', function () {
+			describe('connecting to ngrok with custom region', function () {
 
 				before(async () => await ngrok.kill());
 

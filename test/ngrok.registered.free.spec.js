@@ -13,10 +13,9 @@ var tunnelUrl, respBody;
 
 describe('registered.free.spec.js - setting free authtoken', function() {
 
-	before(function(done) {
-		ngrok.kill(function() {
-			ngrok.authtoken(authtoken, done);
-		});
+	before(async () => {
+		await ngrok.kill();
+		await ngrok.authtoken(authtoken);
 	});
 
 	after(function() {
@@ -53,11 +52,8 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 			describe('connecting to ngrok with port specified', function () {
 
-				before(function (done) {
-					ngrok.connect(port, function(err, url){
-						tunnelUrl = url;
-						done(err);
-					});
+				before(async () => {
+					tunnelUrl = await ngrok.connect(port);
 				});
 
 				it('should return url pointing to ngrok domain', function(){
@@ -79,9 +75,7 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 					describe('disconnecting from ngrok', function () {
 
-						before(function(done) {
-							ngrok.disconnect(done);
-						});
+						before(async () => await ngrok.disconnect());
 
 						describe('calling local server through discconected ngrok', function() {
 
@@ -105,13 +99,10 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 			describe('connecting to ngrok with auth', function () {
 				
-				before(function (done) {
-					ngrok.connect({
+				before(async () => {
+					tunnelUrl = await ngrok.connect({
 						port: port,
 						auth: 'oki:doki'
-					}, function(err, url){
-						tunnelUrl = url;
-						done(err);
 					});
 				});
 
@@ -167,15 +158,12 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 		describe('connecting to ngrok by tcp', function() {
 			var tunnelUrlParts;
-			before(function (done) {
-				ngrok.connect({
+			before(async () => {
+				tunnelUrl = await ngrok.connect({
 					proto: 'tcp',
 					port: tcpServerPort
-				}, function(err, url){
-					tunnelUrl = url;
-					tunnelUrlParts = URL.parse(tunnelUrl);
-					done(err);
 				});
+				tunnelUrlParts = URL.parse(tunnelUrl)
 			});
 
 			it('should return ngrok url with tcp protocol', function() {

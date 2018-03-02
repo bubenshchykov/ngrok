@@ -13,10 +13,9 @@ var tunnelUrl, respBody;
 
 describe('registered.paid.spec.js - setting paid authtoken', function() {
 
-	before(function(done) {
-		ngrok.kill(function() {
-			ngrok.authtoken(authtoken, done);
-		});
+	before(async function() {
+		await ngrok.kill();
+		await ngrok.authtoken(authtoken);
 	});
 
 	after(function() {
@@ -53,11 +52,8 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 			describe('connecting to ngrok with port specified', function () {
 
-				before(function (done) {
-					ngrok.connect(port, function(err, url){
-						tunnelUrl = url;
-						done(err);
-					});
+				before(async () => {
+					tunnelUrl = await ngrok.connect(port);
 				});
 
 				it('should return url pointing to ngrok domain', function(){
@@ -79,9 +75,7 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 					describe('disconnecting from ngrok', function () {
 
-						before(function(done) {
-							ngrok.disconnect(done);
-						});
+						before(async () => await ngrok.disconnect());
 
 						describe('calling local server through discconected ngrok', function() {
 
@@ -106,13 +100,10 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 			describe('connecting to ngrok with subdomain', function () {
 				var uniqDomain = 'koko-' + uuid.v4();
 				
-				before(function (done) {
-					ngrok.connect({
+				before(async () => {
+					tunnelUrl = await ngrok.connect({
 						port: port,
 						subdomain: uniqDomain
-					}, function(err, url){
-						tunnelUrl = url;
-						done(err);
 					});
 				});
 
@@ -138,14 +129,16 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 				describe('connecting to ngrok with same subdomain again', function () {
 					var error;
 
-					before(function (done) {
-						ngrok.connect({
-							port: port,
-							subdomain: uniqDomain
-						}, function(err, url){
+					before(async () =>  {
+						try {
+							tunnelUrl = await ngrok.connect({
+								port: port,
+								subdomain: uniqDomain
+							});
+						} catch(err) {
 							error = err;
-							done();
-						});
+							console.log(err);
+						}
 					});
 
 					it('should return an error that the tunnel is already established', function () {
@@ -157,17 +150,12 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 				describe('disconnecting from ngrok and connecting with same subdomain again', function () {
 					var error;
 
-					before(function(done) {
-						ngrok.disconnect(done);
-					});
+					before(async () => await ngrok.disconnect());
 
-					before(function (done) {
-						ngrok.connect({
+					before(async () =>  {
+						tunnelUrl = await ngrok.connect({
 							port: port,
 							subdomain: uniqDomain
-						}, function(err, url){
-							error = err;
-							done();
 						});
 					});
 
@@ -179,13 +167,10 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 			describe('connecting to ngrok with auth', function () {
 				
-				before(function (done) {
-					ngrok.connect({
+				before(async () => {
+					tunnelUrl = await ngrok.connect({
 						port: port,
 						auth: 'oki:doki'
-					}, function(err, url){
-						tunnelUrl = url;
-						done(err);
 					});
 				});
 
@@ -241,15 +226,12 @@ describe('registered.paid.spec.js - setting paid authtoken', function() {
 
 		describe('connecting to ngrok by tcp', function() {
 			var tunnelUrlParts;
-			before(function (done) {
-				ngrok.connect({
+			before(async () =>  {
+				tunnelUrl = await ngrok.connect({
 					proto: 'tcp',
 					port: tcpServerPort
-				}, function(err, url){
-					tunnelUrl = url;
-					tunnelUrlParts = URL.parse(tunnelUrl);
-					done(err);
 				});
+				tunnelUrlParts = URL.parse(tunnelUrl);
 			});
 
 			it('should return ngrok url with tcp protocol', function() {

@@ -7,7 +7,25 @@ const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/
 const inUse = /address already in use/
 const binDir = path.join(__dirname, '/bin');
 
-let runningProcess;
+let processPromise, activeProcess;
+
+/*
+  ngrok process runs internal ngrok api
+  and should be spawned only ONCE 
+  (respawn allowed if it fails or .kill method called)
+*/
+
+async function startProcessSafe(opts) {
+  if (processPromise) return processPromise; 
+  try {
+    processPromise = startProcess(opts);
+    return await processPromise;
+  }
+  catch(ex) {
+    processPromise = null;
+    throw ex;
+  }
+}
 
 async function startProcess (opts) {
   const start = ['start', '--none', '--log=stdout']
@@ -23,7 +41,7 @@ async function startProcess (opts) {
   });
 
   ngrok.stdout.on('data', data => {
-    const msg = data.toString()
+    const msg = data.toString();
     const addr = msg.match(ready)
     if (addr) {
       resolve(`http://${addr[1]}`);
@@ -41,7 +59,7 @@ async function startProcess (opts) {
 
   try {
     const url = await apiUrl;
-    runningProcess = ngrok;
+    activeProcess = ngrok;
     return url;      
   }
   catch(ex) {
@@ -52,16 +70,17 @@ async function startProcess (opts) {
     ngrok.stdout.removeAllListeners('data');
     ngrok.stderr.removeAllListeners('data');
   }
-};
+}
 
 function killProcess ()  {
-  if (!runningProcess) return;
+  if (!activeProcess) return;
   return new Promise(resolve => {
-    runningProcess.on('exit', () => {
-      runningProcess = null;
+    activeProcess.on('exit', () => {
+      processPromise = null;
+      activeProcess = null;
       resolve();
     });
-    runningProcess.kill();
+    activeProcess.kill();
   });
 }
 
@@ -84,19 +103,8 @@ async function setAuthtoken (token, configPath) {
   }
 }
 
-// todo 
-const singleton = factory => {
-  let promise;
-  return (...args) => {
-    if (promise) return promise;  
-    promise = factory(args);
-    promise.catch(ex => promise = null);
-    return promise;
-  };
-};
-
 module.exports = {
-  startProcess: singleton(startProcess),
+  startProcess: startProcessSafe,
   killProcess,
   setAuthtoken
 };

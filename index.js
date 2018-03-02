@@ -8,10 +8,10 @@ let internalApi;
 let tunnels = {};
 
 async function connect (opts) {
-  opts = defaults(opts)
-  validate(opts)
+  opts = defaults(opts);
+  validate(opts);
   if (opts.authtoken) {
-    await setAuthtoken(opts.authtoken, opts.configPath)
+    await setAuthtoken(opts.authtoken, opts.configPath);
   }
   if (!internalApi) {
     const url = await startProcess(opts);
@@ -39,7 +39,7 @@ function validate  (opts) {
 async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
-    const response = await internalApi.post({url: 'api/tunnels', json: opts})
+    const response = await internalApi.post({url: 'api/tunnels', json: opts});
     const publicUrl = response.public_url
     if (!publicUrl) {
       throw new Error(response.msg || 'failed to start tunnel')
@@ -84,8 +84,8 @@ async function disconnect (publicUrl) {
   return Promise.all(disconnectAll);
 }
 
-async function getApiUrl() {
-
+function getApiUrl() {
+  if (internalApi) return 'koko';
 }
 
 async function kill ()  {

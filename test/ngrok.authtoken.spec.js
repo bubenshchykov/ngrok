@@ -13,8 +13,8 @@ var tunnelUrl, respBody;
 
 describe('authtoken.spec.js - ensuring no authtoken set', function() {
 
-	before(function(done) {
-		ngrok.kill(done);
+	before(async () => {
+		await ngrok.kill();
 	});
 
 	after(function() {
@@ -39,14 +39,11 @@ describe('authtoken.spec.js - ensuring no authtoken set', function() {
 		describe('connecting to ngrok with authtoken and subdomain', function () {
 			var uniqDomain = 'koko-' + uuid.v4();
 			
-			before(function (done) {
-				ngrok.connect({
+			before(async () => {
+				tunnelUrl = await ngrok.connect({
 					port: port,
 					subdomain: uniqDomain,
 					authtoken: authtoken
-				}, function(err, url){
-					tunnelUrl = url;
-					done(err);
 				});
 			});
 
