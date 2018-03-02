@@ -40,6 +40,7 @@ async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
     const response = await internalApi.post({url: 'api/tunnels', json: opts});
+    console.log(response);
     const publicUrl = response.public_url
     if (!publicUrl) {
       throw new Error(response.msg || 'failed to start tunnel')
