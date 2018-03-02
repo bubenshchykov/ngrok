@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "ngrok.d.ts",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/_mocha",
+    "test": "node ./node_modules/mocha/bin/_mocha --exit",
     "postinstall": "node ./postinstall.js",
     "postupdate": "node ./postinstall.js"
   },
