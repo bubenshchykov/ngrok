@@ -39,14 +39,14 @@ const url = await ngrok.connect(opts);
 ## options
 ```javascript
 const url = await ngrok.connect({
-	proto: 'http',			// http|tcp|tls
-	addr: 8080,					// port or network address
-	auth: 'user:pwd', 	// http basic authentication for tunnel
-	subdomain: 'alex', 	// reserved tunnel name https://alex.ngrok.io
+	proto: 'http', // http|tcp|tls
+	addr: 8080, // port or network address
+	auth: 'user:pwd', // http basic authentication for tunnel
+	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
 	authtoken: '12345', // your authtoken from ngrok.com
-	region: 'us' 				// one of ngrok regions (us, eu, au, ap), defaults to us,
+	region: 'us', // one of ngrok regions (us, eu, au, ap), defaults to us,
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
-	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // custom path replacement when using for production in electron
+	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // path replacer when using for production in electron
 });
 ```
 
