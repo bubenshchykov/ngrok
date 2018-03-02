@@ -8,8 +8,8 @@ usage
 
 ```
 npm install ngrok
-var ngrok = require('ngrok');
-ngrok.connect(function (err, url) {});
+const ngrok = require('ngrok');
+const url = await ngrok.connect();
 
 or
 
@@ -21,8 +21,8 @@ ngrok http 8080
 You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
 
 ```
-ngrok.authtoken(token, function(err, token) {});
-ngrok.connect({authtoken: token, ...}, function (err, url) {});
+await ngrok.authtoken(token);
+const url = await ngrok.connect({authtoken: token, ...});
 ngrok authtoken <token>
 ```
 
@@ -30,15 +30,15 @@ ngrok authtoken <token>
 ```javascript
 var ngrok = require('ngrok');
 
-ngrok.connect(function (err, url) {}); // https://757c1652.ngrok.io -> http://localhost:80
-ngrok.connect(9090, function (err, url) {}); // https://757c1652.ngrok.io -> http://localhost:9090
-ngrok.connect({proto: 'tcp', addr: 22}, function (err, url) {}); // tcp://0.tcp.ngrok.io:48590
-ngrok.connect(opts, function(err, url) {});
+const url = await ngrok.connect(); // https://757c1652.ngrok.io -> http://localhost:80
+const url = await ngrok.connect(9090); // https://757c1652.ngrok.io -> http://localhost:9090
+const url = await ngrok.connect({proto: 'tcp', addr: 22}); // tcp://0.tcp.ngrok.io:48590
+const url = await ngrok.connect(opts);
 ```
 
 ## options
 ```javascript
-ngrok.connect({
+const url = await ngrok.connect({
 	proto: 'http', // http|tcp|tls
 	addr: 8080, // port or network address
 	auth: 'user:pwd', // http basic authentication for tunnel
@@ -47,7 +47,7 @@ ngrok.connect({
 	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us,
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
 	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // custom path replacement when using for production in electron
-}, function (err, url) {});
+});
 ```
 
 Other options: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
@@ -58,19 +58,12 @@ Note on regions: region used in first tunnel will be used for all next tunnels t
 ## disconnect
 The ngrok and all tunnels will be killed when node process is done. To stop the tunnels use
 ```javascript
-ngrok.disconnect(url); // stops one
-ngrok.disconnect(); // stops all
-ngrok.kill(); // kills ngrok process
+await ngrok.disconnect(url); // stops one
+await ngrok.disconnect(); // stops all
+await ngrok.kill(); // kills ngrok process
 ```
 
 Note on http tunnels: by default bind_tls is true, so whenever you use http proto two tunnels are created - http and https. If you disconnect https tunnel, http tunnel remains open. You might want to close them both by passing http-version url, or simply by disconnecting all in one go ```ngrok.disconnect()```.
-
-## emitter
-Also you can use ngrok as an event emitter, it fires "connect", "disconnect" and "error" events
-```javascript
-ngrok.once('connect', function (url) {};
-ngrok.connect(port);
-```
 
 ## configs
 You can use ngrok's [configurations files](https://ngrok.com/docs#config), and just pass `name` option when making a tunnel. Configuration files allow to store tunnel options. Ngrok looks for them here:
