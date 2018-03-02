@@ -14,7 +14,7 @@ let processPromise, activeProcess;
 	(respawn allowed if it fails or .kill method called)
 */
 
-async function startProcessOnce(opts) {
+async function getProcess(opts) {
 	if (processPromise) return processPromise; 
 	try {
 		processPromise = startProcess(opts);
@@ -110,7 +110,7 @@ async function setAuthtoken (token, configPath) {
 }
 
 module.exports = {
-	startProcess: startProcessOnce,
+	getProcess,
 	killProcess,
 	setAuthtoken
 };

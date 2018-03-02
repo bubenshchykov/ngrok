@@ -1,6 +1,6 @@
 const request = require('request-promise-native')
 const uuid = require('uuid')
-const {startProcess, killProcess, setAuthtoken} = require('./process');
+const {getProcess, killProcess, setAuthtoken} = require('./process');
 
 const MAX_RETRY = 100
 
@@ -13,10 +13,8 @@ async function connect (opts) {
   if (opts.authtoken) {
     await setAuthtoken(opts.authtoken, opts.configPath);
   }
-  if (!internalApi) {
-    const url = await startProcess(opts);
-    internalApi = request.defaults({baseUrl: url});
-  }  
+  const url = await getProcess(opts);
+  internalApi = request.defaults({baseUrl: url});
   return connectRetry(opts);
 }
 
