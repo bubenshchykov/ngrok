@@ -5,7 +5,10 @@ const platform = require('os').platform();
 const bin = './ngrok' + (platform === 'win32' ? '.exe' : '')
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/
 const inUse = /address already in use/
-const binDir = path.join(__dirname, '/bin');
+
+
+
+
 
 let processPromise, activeProcess;
 
@@ -32,7 +35,12 @@ async function startProcess (opts) {
 	if (opts.region) start.push('--region=' + opts.region);
 	if (opts.configPath) start.push('--config=' + opts.configPath);
 
-	const ngrok = spawn(bin, start, {cwd: binDir})
+	let dir = __dirname + '/bin';
+	if (opts.binPathReplacer && opts.binPathReplacer[0] && opts.binPathReplacer[1]) {
+		dir = dir.replace(opts.binPathReplacer[0], opts.binPathReplacer[1]);
+	}
+	
+	const ngrok = spawn(bin, start, {cwd: dir})
 	
 	let resolve, reject;
 	const apiUrl = new Promise((res, rej) => {   
@@ -55,6 +63,11 @@ async function startProcess (opts) {
 		reject(new Error(msg));
 	})
 
+	ngrok.on('exit', function () {
+		processPromise = null;
+		activeProcess = null;
+	});
+
 	process.on('exit', async () => await killProcess());
 
 	try {
@@ -75,11 +88,7 @@ async function startProcess (opts) {
 function killProcess ()  {
 	if (!activeProcess) return;
 	return new Promise(resolve => {
-		activeProcess.on('exit', () => {
-			processPromise = null;
-			activeProcess = null;
-			resolve();
-		});
+		activeProcess.on('exit', () => resolve());
 		activeProcess.kill();
 	});
 }
