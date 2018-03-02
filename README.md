@@ -24,7 +24,7 @@ You can create basic http-https-tcp tunnel without authtoken. For custom subdoma
 
 ```
 await ngrok.authtoken(token);
-const url = await ngrok.connect({authtoken: token, ...});
+await ngrok.connect({authtoken: token, ...});
 ngrok authtoken <token>
 ```
 
