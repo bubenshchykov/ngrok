@@ -17,7 +17,7 @@ npm install ngrok -g
 ngrok http 8080
 ```
 
-This module uses native promises and async-await. For callback-based implementation use version 2.2.3'
+This module uses promises and async-await. For callback-based version use 2.3.0'
 
 ## authtoken
 You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
@@ -30,8 +30,6 @@ ngrok authtoken <token>
 
 ## connect
 ```javascript
-var ngrok = require('ngrok');
-
 const url = await ngrok.connect(); // https://757c1652.ngrok.io -> http://localhost:80
 const url = await ngrok.connect(9090); // https://757c1652.ngrok.io -> http://localhost:9090
 const url = await ngrok.connect({proto: 'tcp', addr: 22}); // tcp://0.tcp.ngrok.io:48590
@@ -41,19 +39,18 @@ const url = await ngrok.connect(opts);
 ## options
 ```javascript
 const url = await ngrok.connect({
-	proto: 'http', // http|tcp|tls
-	addr: 8080, // port or network address
-	auth: 'user:pwd', // http basic authentication for tunnel
-	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
+	proto: 'http',			// http|tcp|tls
+	addr: 8080,					// port or network address
+	auth: 'user:pwd', 	// http basic authentication for tunnel
+	subdomain: 'alex', 	// reserved tunnel name https://alex.ngrok.io
 	authtoken: '12345', // your authtoken from ngrok.com
-	region: 'us' // one of ngrok regions (us, eu, au, ap), defaults to us,
+	region: 'us' 				// one of ngrok regions (us, eu, au, ap), defaults to us,
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
 	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // custom path replacement when using for production in electron
 });
 ```
 
 Other options: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr` - read [here](https://ngrok.com/docs)
-
 
 Note on regions: region used in first tunnel will be used for all next tunnels too.
 
@@ -86,3 +83,5 @@ First time you create tunnel ngrok process is spawned and runs until you disconn
 
 ## contributors
 Please run ```git update-index --assume-unchanged bin/ngrok``` to not override [ngrok stub](https://github.com/bubenshchykov/ngrok/blob/master/bin/ngrok) in your pr. Unfortunately it can't be gitignored.
+
+Test suite runs basics methods for no-authtoken account, free authtoken (more features) and paid authtoken (premium features). You can supply your own tokens into env vars, otherwise first two scenarious will be tested only.
