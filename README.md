@@ -25,6 +25,9 @@ You can create basic http-https-tcp tunnel without authtoken. For custom subdoma
 ```
 await ngrok.authtoken(token);
 await ngrok.connect({authtoken: token, ...});
+
+or
+
 ngrok authtoken <token>
 ```
 
@@ -39,12 +42,12 @@ const url = await ngrok.connect(opts);
 ## options
 ```javascript
 const url = await ngrok.connect({
-	proto: 'http', // http|tcp|tls
-	addr: 8080, // port or network address
+	proto: 'http', // http|tcp|tls, defaults to http
+	addr: 8080, // port or network address, defaultst to 80
 	auth: 'user:pwd', // http basic authentication for tunnel
 	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
 	authtoken: '12345', // your authtoken from ngrok.com
-	region: 'us', // one of ngrok regions (us, eu, au, ap), defaults to us,
+	region: 'us', // one of ngrok regions (us, eu, au, ap), defaults to us
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
 	binPathReplacer: ['app.asar/bin', 'app.asar.unpacked/bin'] // path replacer when using for production in electron
 });
@@ -75,6 +78,12 @@ You can specify a custom `configPath` when making a tunnel.
 
 ## inspector
 When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
+Same url hosts internal (clien api)[https://ngrok.com/docs#client-api]. You can get it as wrapped request and manage tunnels yourself.
+```javascript
+const url = await ngrok.connect();
+const api = ngrok.getApi();
+const tunnels = await api.get('api/tunnels');
+```
 
 ## how it works
 npm install downloads ngrok binaries for you platform and puts them into bin folder. You can host binaries yourself and set NGROK_CDN_URL env var before installing ngrok. Or you can force specific arch by setting NGROK_ARCH, eg NGROK_ARCH=freebsdia32
