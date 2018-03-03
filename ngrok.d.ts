@@ -1,15 +1,46 @@
-/// <reference types="node" />
+/**
+ * Creates a ngrok tunnel.
+ * E.g:
+ *     const url = await ngrok.connect(); // https://757c1652.ngrok.io -> http://localhost:80
+ *     const url = await ngrok.connect(9090); // https://757c1652.ngrok.io -> http://localhost:9090
+ *     const url = await ngrok.connect({ proto: 'tcp', addr: 22 }); // tcp://0.tcp.ngrok.io:48590
+ *
+ * @param options Optional. Port number or options.
+ */
+export function connect(options?: number | INgrokOptions): Promise<string>;
 
-declare const ngrok: Ngrok;
+/**
+ * Stops a tunnel, or all of them if no URL is passed.
+ *
+ * /!\ ngrok and all opened tunnels will be killed when the node process is done.
+ *
+ * /!\ Note on HTTP tunnels: by default bind_tls is true, so whenever you use http proto two tunnels are created:
+ *     http and https. If you disconnect https tunnel, http tunnel remains open.
+ *     You might want to close them both by passing http-version url, or simply by disconnecting all in one,
+ *     with ngrok.disconnect().
+ *
+ * @param url The URL of the specific tunnel to disconnect -- if not passed, kills them all.
+ */
+export function disconnect(url?: string): Promise<void>;
 
-declare type NgrokToken = string;
-declare type NgrokUrl = string;
+/**
+ * Kills the ngrok process.
+ */
+export function kill(): Promise<void>;
 
-declare type Callback<T> = (err?: any, result?: T) => void;
+/**
+ * You can create basic http-https-tcp tunnel without authtoken.
+ * For custom subdomains and more you should obtain authtoken by signing up at ngrok.com.
+ * E.g:
+ *     await ngrok.authtoken(token);
+ *     // or
+ *     const url = await ngrok.connect({ authtoken: token, ... });
+ *
+ * @param token
+ */
+export function authtoken(token: string): Promise<void>;
 
-declare type Ngrok = NodeJS.EventEmitter & INgrokWrapper;
-
-declare interface INgrokOptions {
+interface INgrokOptions {
     /**
      * Other "custom", indirectly-supported ngrok process options.
      *
@@ -60,65 +91,9 @@ declare interface INgrokOptions {
      * Custom path for ngrok config file.
      */
     configPath?: string;
+
+    /**
+     * Path replacer when using for production in electron.
+     */
+    binPathReplacer?: [string, string];
 }
-
-declare interface INgrokWrapper {
-    /**
-     * You can create basic http-https-tcp tunnel without authtoken.
-     * For custom subdomains and more you should obtain authtoken by signing up at ngrok.com.
-     * E.g:
-     *     ngrok.authtoken(token, (err, token) => {});
-     *     ngrok.connect({ authtoken: token, ... }, (err, url) => {});
-     *
-     * @param token
-     * @param callback
-     */
-    authtoken(token: string, callback: Callback<NgrokToken>): void;
-
-    /**
-     * Creates a ngrok HTTP tunnel to http://localhost:80.
-     * E.g. https://757c1652.ngrok.io -> http://localhost:80
-     *
-     * @param callback
-     */
-    connect(callback: Callback<NgrokUrl>): void;
-
-    /**
-     * Creates a ngrok HTTP tunnel to the specified port on localhost.
-     * E.g. https://757c1652.ngrok.io -> http://localhost:9090
-     *
-     * @param port
-     * @param callback
-     */
-    connect(port: number, callback: Callback<NgrokUrl>): void;
-
-    /**
-     * Creates a ngrok tunnel with more advanded configuration.
-     * E.g:
-     *     ngrok.connect({ proto: 'tcp', addr: 22 }, (err, url) => {});
-     *     // => tcp://0.tcp.ngrok.io:48590
-     *
-     * @param options
-     * @param callback
-     */
-    connect(options: INgrokOptions, callback: Callback<NgrokUrl>): void;
-
-    /**
-     * Stops a tunnel, or all of them if no URL is passed.
-     *
-     * /!\ Note on HTTP tunnels: by default bind_tls is true, so whenever you use http proto two tunnels are created:
-     *     http and https. If you disconnect https tunnel, http tunnel remains open.
-     *     You might want to close them both by passing http-version url, or simply by disconnecting all in one,
-     *     with ngrok.disconnect().
-     *
-     * @param url The URL of the specific tunnel to disconnect -- if not passed, kills them all.
-     */
-    disconnect(url?: string): void;
-
-    /**
-     * Kills the ngrok process.
-     */
-    kill(): void;
-}
-
-export = ngrok;
