@@ -12,6 +12,7 @@
   "files": [
     "index.js",
     "postinstall.js",
+    "process.js",
     "bin/ngrok",
     "ngrok.d.ts"
   ],
