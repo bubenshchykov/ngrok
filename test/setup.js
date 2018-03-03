@@ -1,7 +1,8 @@
 const colors = require('colors/safe');
 const env = process.env;
 
-if (env.TRAVIS_BRANCH === 'master' && (!env.NGROK_AUTHTOKEN_FREE || !env.NGROK_AUTHTOKEN_PAID)) {
+// travis master branch sets NGROK_FORCE_TOKENS=true and forces tokens to be present
+if (env.NGROK_FORCE_TOKENS && (!env.NGROK_AUTHTOKEN_FREE || !env.NGROK_AUTHTOKEN_PAID)) {
 	console.error('NGROK_AUTHTOKEN_FREE and NGROK_AUTHTOKEN_PAID not found');
 	process.exit(1);
 }

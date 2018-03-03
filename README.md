@@ -78,7 +78,7 @@ You can specify a custom `configPath` when making a tunnel.
 
 ## inspector
 When tunnel is established you can use the ngrok interface http://127.0.0.1:4040 to inspect the webhooks done via ngrok.
-Same url hosts internal (clien api)[https://ngrok.com/docs#client-api]. You can get it as wrapped request and manage tunnels yourself.
+Same url hosts internal [clien api](https://ngrok.com/docs#client-api). You can get it as wrapped request and manage tunnels yourself.
 ```javascript
 const url = await ngrok.connect();
 const api = ngrok.getApi();
