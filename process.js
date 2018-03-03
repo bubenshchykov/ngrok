@@ -1,10 +1,10 @@
-const { spawn } = require('child_process')
-const path = require('path')
+const { spawn } = require('child_process');
+const path = require('path');
 const platform = require('os').platform();
 
-const bin = './ngrok' + (platform === 'win32' ? '.exe' : '')
-const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/
-const inUse = /address already in use/
+const bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
+const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
+const inUse = /address already in use/;
 
 let processPromise, activeProcess;
 
@@ -27,14 +27,11 @@ async function getProcess(opts) {
 }
 
 async function startProcess (opts) {
-	const start = ['start', '--none', '--log=stdout']
+	let dir = __dirname + '/bin';
+	const start = ['start', '--none', '--log=stdout'];
 	if (opts.region) start.push('--region=' + opts.region);
 	if (opts.configPath) start.push('--config=' + opts.configPath);
-
-	let dir = __dirname + '/bin';
-	if (opts.binPathReplacer && opts.binPathReplacer[0] && opts.binPathReplacer[1]) {
-		dir = dir.replace(opts.binPathReplacer[0], opts.binPathReplacer[1]);
-	}
+	if (opts.binPath) dir = opts.binPath(dir);
 	
 	const ngrok = spawn(bin, start, {cwd: dir})
 	
@@ -46,7 +43,7 @@ async function startProcess (opts) {
 
 	ngrok.stdout.on('data', data => {
 		const msg = data.toString();
-		const addr = msg.match(ready)
+		const addr = msg.match(ready);
 		if (addr) {
 			resolve(`http://${addr[1]}`);
 		} else if (msg.match(inUse)) {
@@ -57,7 +54,7 @@ async function startProcess (opts) {
 	ngrok.stderr.on('data', data => {
 		const msg = data.toString().substring(0, 10000);
 		reject(new Error(msg));
-	})
+	});
 
 	ngrok.on('exit', function () {
 		processPromise = null;

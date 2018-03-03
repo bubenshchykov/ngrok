@@ -1,8 +1,6 @@
-const request = require('request-promise-native')
-const uuid = require('uuid')
+const request = require('request-promise-native');
+const uuid = require('uuid');
 const {getProcess, killProcess, setAuthtoken} = require('./process');
-
-const MAX_RETRY = 100
 
 let internalApi;
 let tunnels = {};
@@ -40,7 +38,7 @@ async function connectRetry (opts, retryCount = 0) {
     const response = await internalApi.post({url: 'api/tunnels', json: opts});
     const publicUrl = response.public_url;
     if (!publicUrl) {
-      throw new Error('failed to start tunnel')
+      throw new Error('failed to start tunnel');
     }
     tunnels[publicUrl] = response.uri;
     if (opts.proto === 'http' && opts.bind_tls !== false) {
@@ -48,7 +46,7 @@ async function connectRetry (opts, retryCount = 0) {
     }
     return publicUrl;
   } catch (err) {
-    if (!isRetriable(err) || retryCount >= MAX_RETRY) {
+    if (!isRetriable(err) || retryCount >= 100) {
       throw err.error || err.response;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -58,7 +56,7 @@ async function connectRetry (opts, retryCount = 0) {
 
 function isRetriable (err) {
   if (!err.response) return false; 
-  const body = err.response.body
+  const body = err.response.body;
   const notReady500 = err.statusCode === 500 && /panic/.test(body)
   const notReady502 = err.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
   return notReady500 || notReady502;
@@ -66,24 +64,16 @@ function isRetriable (err) {
 
 async function disconnect (publicUrl) {
   if (!internalApi) return;
-
-  if (publicUrl) {
-    const tunnelUrl = tunnels[publicUrl];
-    if (!tunnelUrl) {
-      throw new Error(`there is no tunnel with url: ${publicUrl}`)
-    }
-    await internalApi.del(tunnelUrl)
-    delete tunnels[publicUrl];
-    return;
+  if (!publicUrl) {
+  	const disconnectAll = Object.keys(tunnels).map(disconnect);
+  	return Promise.all(disconnectAll);
   }
-
-  const disconnectAll = Object.keys(tunnels).map(url => disconnect(url));
-
-  return Promise.all(disconnectAll);
-}
-
-function getApi() {
-  return internalApi;
+  const tunnelUrl = tunnels[publicUrl];
+  if (!tunnelUrl) {
+    throw new Error(`there is no tunnel with url: ${publicUrl}`)
+  }
+  await internalApi.del(tunnelUrl)
+  delete tunnels[publicUrl];
 }
 
 async function kill ()  {
@@ -93,10 +83,14 @@ async function kill ()  {
   tunnels = {}
 }
 
+function getApi() {
+  return internalApi;
+}
+
 module.exports = {
   connect,
   disconnect,
-  kill,
   authtoken: setAuthtoken,
+  kill,
   getApi
 };

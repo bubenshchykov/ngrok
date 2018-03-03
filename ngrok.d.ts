@@ -93,7 +93,7 @@ interface INgrokOptions {
     configPath?: string;
 
     /**
-     * Path replacer when using for production in electron.
+     * Custom binary path, eg for prod in electron
      */
-    binPathReplacer?: [string, string];
+    binPath?: (defaultPath: string) => string;
 }
