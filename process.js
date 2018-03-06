@@ -56,7 +56,7 @@ async function startProcess (opts) {
 		reject(new Error(msg));
 	});
 
-	ngrok.on('exit', function () {
+	ngrok.on('exit', () => {
 		processPromise = null;
 		activeProcess = null;
 	});
@@ -87,7 +87,7 @@ function killProcess ()  {
 }
 
 async function setAuthtoken (token, configPath) {
-	const authtoken = ['authtoken', token]
+	const authtoken = ['authtoken', token];
 	if (configPath) authtoken.push('--config=' + configPath);
 
 	let dir = __dirname + '/bin';

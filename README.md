@@ -6,13 +6,13 @@ ngrok [![Build Status](https://img.shields.io/travis/bubenshchykov/ngrok/master.
 usage
 ===
 
-```
+```javascript
 npm install ngrok
 const ngrok = require('ngrok');
 const url = await ngrok.connect();
-
+```
 or
-
+```bash
 npm install ngrok -g
 ngrok http 8080
 ```
@@ -20,15 +20,11 @@ ngrok http 8080
 This module uses node>=8.3.0 with async-await. For callback-based version use [2.3.0](https://github.com/bubenshchykov/ngrok/blob/330674233e3ec77688bb692bf1eb007810c4e30d/README.md)
 
 ## authtoken
-You can create basic http-https-tcp tunnel without authtoken. For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
+You can create basic http-https-tcp tunnel without [authtoken](https://ngrok.com/docs#authtoken). For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
 
 ```
 await ngrok.authtoken(token);
 await ngrok.connect({authtoken: token, ...});
-
-or
-
-ngrok authtoken <token>
 ```
 
 ## connect
@@ -86,7 +82,7 @@ const tunnels = await api.get('api/tunnels');
 ```
 
 ## how it works
-npm install downloads ngrok binaries for you platform and puts them into bin folder. You can host binaries yourself and set NGROK_CDN_URL env var before installing ngrok. Or you can force specific arch by setting NGROK_ARCH, eg NGROK_ARCH=freebsdia32
+```npm install``` downloads ngrok binary for your platform from official ngrok hosting. To host binaries yourself set NGROK_CDN_URL env var before installing ngrok. To force specific platform set NGROK_ARCH, eg NGROK_ARCH=freebsdia32
 
 First time you create tunnel ngrok process is spawned and runs until you disconnect or when parent process killed. All further tunnels are created or stopped by using internal ngrok api which usually runs on http://127.0.0.1:4040
 
