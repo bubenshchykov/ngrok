@@ -22,7 +22,7 @@ This module uses node>=8.3.0 with async-await. For callback-based version use [2
 ## authtoken
 You can create basic http-https-tcp tunnel without [authtoken](https://ngrok.com/docs#authtoken). For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
 
-```
+```javascript
 await ngrok.authtoken(token);
 await ngrok.connect({authtoken: token, ...});
 ```
