@@ -12,24 +12,20 @@ const Zip = require('decompress-zip');
 const request = require('request');
 const {Transform} = require('stream');
 
-const arch = process.env.NGROK_ARCH || (os.platform() + os.arch());
-const cdnFile = getCdnFile();
-const cachePath = getCachePath();
-const cacheFileName = new Buffer(cdnFile).toString('base64');
-const cacheFile = path.join(cachePath, cacheFileName + '.zip');
-const ignoreCache = process.env.NGROK_IGNORE_CACHE === 'true';
-const isDownloaded = !ignoreCache && fs.existsSync(cacheFile) && fs.statSync(cacheFile).size;
+const cdnUrl = getCdnUrl();
+const cacheUrl = getCacheUrl();
 const maxAttempts = 3;
 let attempts = 0;
 
-if (isDownloaded) {
-	console.log('ngrok - cached download found at ' + cacheFile);
+if (hasCache()) {
+	console.log('ngrok - cached download found at ' + cacheUrl);
 	extract(retry);
 } else {
 	download(retry);
 }
 
-function getCdnFile() {
+function getCdnUrl() {
+	const arch = process.env.NGROK_ARCH || (os.platform() + os.arch());
 	const cdn = process.env.NGROK_CDN_URL || 'https://bin.equinox.io';
 	const cdnPath = process.env.NGROK_CDN_PATH || '/c/4VmDzA7iaHb/ngrok-stable-';
 	const cdnFiles = {
@@ -44,19 +40,39 @@ function getCdnFile() {
 		freebsdia32:cdn + cdnPath + 'freebsd-386.zip',
 		freebsdx64:	cdn + cdnPath + 'freebsd-amd64.zip'
 	};
-	const file = cdnFiles[arch];
-	if (!file) {
+	const url = cdnFiles[arch];
+	if (!url) {
 		console.error('ngrok - platform ' + arch + ' is not supported.');
 		process.exit(1);
 	}
-	return file;
+	return url;
+}
+
+function getCacheUrl() {
+	let dir;
+	try {
+		dir = path.join(os.homedir(), '.ngrok');
+		if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+			fs.mkdirSync(dir);
+		}
+	} catch (err) {
+		dir = path.join(__dirname, 'bin');
+	}
+	const name = new Buffer(cdnUrl).toString('base64');
+	return path.join(dir, name + '.zip');
+}
+
+function hasCache() {
+	return process.env.NGROK_IGNORE_CACHE !== 'true'
+		&& fs.existsSync(cacheUrl)
+		&& fs.statSync(cacheUrl).size;	
 }
 
 function download(cb) {
-	console.log('ngrok - downloading binary ' + cdnFile);
+	console.log('ngrok - downloading binary ' + cdnUrl);
 
 	const downloadStream = request
-		.get(cdnFile)
+		.get(cdnUrl)
 		.on('response', res => {
 			if (!/2\d\d/.test(res.statusCode)) {
 				res.pause();
@@ -71,51 +87,15 @@ function download(cb) {
 			cb(e);
 		});
 
-	const outputStream = fs.createWriteStream(cacheFile)
+	const outputStream = fs.createWriteStream(cacheUrl)
 		.on('error', e => {
 			console.log('ngrok - error storing binary to local file', e);
 			cb(e);
 		})
 		.on('finish', () => {
-			console.log('\nngrok - binary downloaded to ' + cacheFile);
+			console.log('\nngrok - binary downloaded to ' + cacheUrl);
 			extract(cb);
 		});
-}
-
-function extract(cb) {
-	console.log('ngrok - unpacking binary');
-	const moduleBinPath = path.join(__dirname, 'bin');
-	new Zip(cacheFile).extract({path: moduleBinPath})
-		.once('error', error)
-		.once('extract', () => {
-			const suffix = arch.indexOf('win32') === 0 ? '.exe' : '';
-			if (suffix === '.exe')
-				fs.writeFileSync(path.join(moduleBinPath, 'ngrok.cmd'), 'ngrok.exe');
-			const target = path.join(moduleBinPath, 'ngrok' + suffix);
-			fs.chmodSync(target, 0755);
-			if (!fs.existsSync(target) || fs.statSync(target).size <= 0)
-				return error(new Error('corrupted file ' + target));
-			console.log('ngrok - binary unpacked to ' + target);
-			cb(null);
-		});
-
-	function error(e) {
-		console.warn('ngrok - error unpacking binary', e);
-		cb(e);
-	}
-}
-
-function retry(err) {
-	attempts++;
-	if (err && attempts === maxAttempts) {
-		console.error('ngrok - install failed', err);
-		return process.exit(1);
-	}
-	if (err) {
-		console.warn('ngrok - install failed, retrying');
-		return setTimeout(download, 500, retry);
-	}
-	process.exit(0);
 }
 
 function progressStream(msg, total) {
@@ -140,14 +120,40 @@ function progressStream(msg, total) {
 	});
 }
 
-function getCachePath() {
-	try {
-		const cachePath = path.join(os.homedir(), '.ngrok');
-		if (!fs.existsSync(cachePath) || !fs.statSync(cachePath).isDirectory()) {
-			fs.mkdirSync(cachePath);
-		}
-		return cachePath;
-	} catch (err) {
-		return path.join(__dirname, 'bin');
+function extract(cb) {
+	console.log('ngrok - unpacking binary');
+	const moduleBinPath = path.join(__dirname, 'bin');
+	new Zip(cacheUrl).extract({path: moduleBinPath})
+		.once('error', error)
+		.once('extract', () => {
+			const suffix = os.platform() === 'win32' ? '.exe' : '';
+			if (suffix === '.exe') {
+				fs.writeFileSync(path.join(moduleBinPath, 'ngrok.cmd'), 'ngrok.exe');
+			}
+			const target = path.join(moduleBinPath, 'ngrok' + suffix);
+			fs.chmodSync(target, 0755);
+			if (!fs.existsSync(target) || fs.statSync(target).size <= 0) {
+				return error(new Error('corrupted file ' + target));
+			}
+			console.log('ngrok - binary unpacked to ' + target);
+			cb(null);
+		});
+
+	function error(e) {
+		console.warn('ngrok - error unpacking binary', e);
+		cb(e);
 	}
+}
+
+function retry(err) {
+	attempts++;
+	if (err && attempts === maxAttempts) {
+		console.error('ngrok - install failed', err);
+		return process.exit(1);
+	}
+	if (err) {
+		console.warn('ngrok - install failed, retrying');
+		return setTimeout(download, 500, retry);
+	}
+	process.exit(0);
 }
