@@ -1,4 +1,4 @@
-ngrok [![Build Status](https://img.shields.io/travis/bubenshchykov/ngrok/master.svg)](https://travis-ci.org/bubenshchykov/ngrok) ![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg) [![npm](https://img.shields.io/npm/v/ngrok.svg)]() [![npm](https://img.shields.io/npm/dm/ngrok.svg)]()
+ngrok [![Build Status](https://img.shields.io/travis/bubenshchykov/ngrok/master.svg)](https://travis-ci.org/bubenshchykov/ngrok) ![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg) [![npm](https://img.shields.io/npm/v/ngrok.svg)](https://www.npmjs.com/package/ngrok) [![npm](https://img.shields.io/npm/dm/ngrok.svg)](https://www.npmjs.com/package/ngrok)
 =====
 
 ![alt ngrok.com](https://ngrok.com/static/img/overview.png)
