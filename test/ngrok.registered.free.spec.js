@@ -87,7 +87,7 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 							});
 
 							it('should return error message', function() {
-								expect(respBody).to.match(/Tunnel (.)* not found/);
+								expect(respBody).to.match(/Tunnel (.)* (not found|is closing)/);
 							});
 
 						});
