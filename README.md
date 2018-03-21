@@ -9,7 +9,9 @@ usage
 ```javascript
 npm install ngrok
 const ngrok = require('ngrok');
-const url = await ngrok.connect();
+(async function() {
+  const url = await ngrok.connect();
+})();
 ```
 or
 ```bash
