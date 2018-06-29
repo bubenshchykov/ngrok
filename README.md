@@ -84,7 +84,7 @@ const tunnels = await api.get('api/tunnels');
 ```
 
 ## proxy
-If you are behind a corporate proxy an have issues installing ngrok, you can set ```HTTP_PROXY``` or ```HTTPS_PROXY``` env var to fix it. Ngrok's posinstall uses request module to fetch binary, [and request supports this env vars](https://github.com/request/request#controlling-proxy-behaviour-using-environment-variables)
+If you are behind a corporate proxy an have issues installing ngrok, you can set ```HTTP_PROXY``` or ```HTTPS_PROXY``` env var to fix it. Ngrok's posinstall uses request module to fetch the binary, [and request supports these env vars](https://github.com/request/request#controlling-proxy-behaviour-using-environment-variables)
 
 ## how it works
 ```npm install``` downloads ngrok binary for your platform from official ngrok hosting. To host binaries yourself set NGROK_CDN_URL env var before installing ngrok. To force specific platform set NGROK_ARCH, eg NGROK_ARCH=freebsdia32
