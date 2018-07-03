@@ -21,6 +21,8 @@ ngrok http 8080
 
 This module uses node>=8.3.0 with async-await. For callback-based version use [2.3.0](https://github.com/bubenshchykov/ngrok/blob/330674233e3ec77688bb692bf1eb007810c4e30d/README.md)
 
+For global install on Linux, you might need to run ```sudo npm install --unsafe-perm -g ngrok``` due to the [nature](https://github.com/bubenshchykov/ngrok/issues/115#issuecomment-380927124) of npm postinstall script.
+
 ## authtoken
 You can create basic http-https-tcp tunnel without [authtoken](https://ngrok.com/docs#authtoken). For custom subdomains and more you should  obtain authtoken by signing up at [ngrok.com](https://ngrok.com). Once you set it, it's stored in ngrok config and used for all tunnels. Few ways:
 
