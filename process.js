@@ -1,5 +1,4 @@
 const { spawn } = require('child_process');
-const path = require('path');
 const platform = require('os').platform();
 
 const bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
@@ -33,7 +32,7 @@ async function startProcess (opts) {
 	if (opts.configPath) start.push('--config=' + opts.configPath);
 	if (opts.binPath) dir = opts.binPath(dir);
 	
-	const ngrok = spawn(bin, start, {cwd: dir})
+	const ngrok = spawn(bin, start, {cwd: dir});
 	
 	let resolve, reject;
 	const apiUrl = new Promise((res, rej) => {   
