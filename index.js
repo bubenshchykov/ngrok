@@ -9,7 +9,7 @@ async function connect (opts) {
   opts = defaults(opts);
   validate(opts);
   if (opts.authtoken) {
-    await setAuthtoken(opts.authtoken, opts.configPath);
+    await setAuthtoken(opts);
   }
   const url = await getProcess(opts);
   internalApi = request.defaults({baseUrl: url});

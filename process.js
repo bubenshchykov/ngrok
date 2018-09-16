@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const platform = require('os').platform();
 
+const defaultDir = __dirname + '/bin';
 const bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 const inUse = /address already in use/;
@@ -26,7 +27,7 @@ async function getProcess(opts) {
 }
 
 async function startProcess (opts) {
-	let dir = __dirname + '/bin';
+	let dir = defaultDir;
 	const start = ['start', '--none', '--log=stdout'];
 	if (opts.region) start.push('--region=' + opts.region);
 	if (opts.configPath) start.push('--config=' + opts.configPath);
@@ -85,11 +86,19 @@ function killProcess ()  {
 	});
 }
 
-async function setAuthtoken (token, configPath) {
-	const authtoken = ['authtoken', token];
-	if (configPath) authtoken.push('--config=' + configPath);
+/**
+ * @param {string | INgrokOptions} optsOrToken
+ */
+async function setAuthtoken (optsOrToken) {
+	const isOpts = typeof optsOrToken !== 'string'
+	const opts = isOpts ? optsOrToken : {}
+	const token = isOpts ? opts.authtoken : optsOrToken
 
-	let dir = __dirname + '/bin';
+	const authtoken = ['authtoken', token];
+	if (opts.configPath) authtoken.push('--config=' + opts.configPath);
+
+	let dir = defaultDir;
+	if (opts.binPath) dir = opts.binPath(dir)
 	const ngrok = spawn(bin, authtoken, {cwd: dir});
 
 	const killed = new Promise((resolve, reject) => {
