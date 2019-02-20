@@ -49,7 +49,7 @@ const url = await ngrok.connect({
 	authtoken: '12345', // your authtoken from ngrok.com
 	region: 'us', // one of ngrok regions (us, eu, au, ap), defaults to us
 	configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file
-	binPath: default => default.replace('/bin', '.unpacked/bin'); // custom binary path, eg for prod in electron
+	binPath: default => default.replace('app.asar', 'app.asar.unpacked'); // custom binary path, eg for prod in electron
 });
 ```
 
