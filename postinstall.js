@@ -74,8 +74,8 @@ function download(cb) {
 
 	const caString = execSync('npm config get ca', {stdio: ['ignore', 'pipe', 'pipe']})
 		.toString()
-		.replace(/\'/g, '\"');
-	const ca = caString !== 'null' ? JSON.parse(caString)[0] : undefined;
+		.replace(/\'/g, '\"')
+	const ca = caString.substring(0, 25) === '[ "-----BEGIN CERTIFICATE' ? JSON.parse(caString)[0] : undefined;
 	const options = {
 		url: cdnUrl,
 		ca
