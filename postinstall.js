@@ -11,6 +11,7 @@ const readline = require('readline');
 const Zip = require('decompress-zip');
 const request = require('request');
 const {Transform} = require('stream');
+const execSync = require('child_process').execSync;
 
 const cdnUrl = getCdnUrl();
 const cacheUrl = getCacheUrl();
@@ -71,8 +72,17 @@ function hasCache() {
 function download(cb) {
 	console.log('ngrok - downloading binary ' + cdnUrl);
 
+	const caString = execSync('npm config get ca', {stdio: ['ignore', 'pipe', 'pipe']})
+		.toString()
+		.replace(/\'/g, '\"');
+	const ca = caString !== 'null' ? JSON.parse(caString)[0] : undefined;
+	const options = {
+		url: cdnUrl,
+		ca
+	};
+
 	const downloadStream = request
-		.get(cdnUrl)
+		.get(options)
 		.on('response', res => {
 			if (!/2\d\d/.test(res.statusCode)) {
 				res.pause();
