@@ -11,8 +11,8 @@ const readline = require('readline');
 const Zip = require('decompress-zip');
 const request = require('request');
 const {Transform} = require('stream');
-const execSync = require('child_process').execSync;
 
+const cafilePath = process.env.NGROK_ROOT_CA_PATH;
 const cdnUrl = getCdnUrl();
 const cacheUrl = getCacheUrl();
 const maxAttempts = 3;
@@ -72,13 +72,7 @@ function hasCache() {
 function download(cb) {
 	console.log('ngrok - downloading binary ' + cdnUrl);
 
-	const caString = execSync('npm config get ca')
-		.toString()
-		.replace(/\'/g, '\"')
-
-	const ca = caString.substring(0, 25) === '[ "-----BEGIN CERTIFICATE' 
-		? JSON.parse(caString) 
-		: undefined;
+	const ca = tryToReadCaFile(); 
 
 	const options = {
 		url: cdnUrl,
@@ -170,4 +164,22 @@ function retry(err) {
 		return setTimeout(download, 500, retry);
 	}
 	process.exit(0);
+}
+
+function tryToReadCaFile() {
+	try {
+		const caString = fs.existsSync(cafilePath) && fs.readFileSync(cafilePath).toString();
+
+		const caContents = caString && caString
+			.split('-----END CERTIFICATE-----')
+			.filter(c => c.trim().startsWith('-----BEGIN CERTIFICATE-----'));
+
+		return caContents.length > 0 
+			? caContents 
+			: undefined;
+	}
+	catch(error) {
+		console.warn(error);
+		return undefined;
+	}
 }

@@ -86,12 +86,11 @@ const tunnels = await api.get('api/tunnels');
 ```
 
 ## proxy
-If you are behind a corporate proxy an have issues installing ngrok, you can set ```HTTP_PROXY``` or ```HTTPS_PROXY``` env var to fix it. Ngrok's posinstall uses request module to fetch the binary, [and request supports these env vars](https://github.com/request/request#controlling-proxy-behaviour-using-environment-variables)
+- If you are behind a corporate proxy an have issues installing ngrok, you can set ```HTTP_PROXY``` or ```HTTPS_PROXY``` env var to fix it. Ngrok's posinstall uses request module to fetch the binary, [and request supports these env vars](https://github.com/request/request#controlling-proxy-behaviour-using-environment-variables)
+- If you are using a CA file, set the path in the environment variable `NGROK_ROOT_CA_PATH`. The path is needed for downloading the ngrok binary in the postinstall script.
 
 ## how it works
 ```npm install``` downloads ngrok binary for your platform from official ngrok hosting. To host binaries yourself set NGROK_CDN_URL env var before installing ngrok. To force specific platform set NGROK_ARCH, eg NGROK_ARCH=freebsdia32
-
-- If you are on a corporate network, the cafile will be read from your npmrc file This uses `npm config get ca`, which will read your ca whether you've set it through `npm config set ca` or `npm config set cafile`
 
 First time you create tunnel ngrok process is spawned and runs until you disconnect or when parent process killed. All further tunnels are created or stopped by using internal ngrok api which usually runs on http://127.0.0.1:4040
 
