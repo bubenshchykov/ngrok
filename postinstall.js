@@ -72,10 +72,14 @@ function hasCache() {
 function download(cb) {
 	console.log('ngrok - downloading binary ' + cdnUrl);
 
-	const caString = execSync('npm config get ca', {stdio: ['ignore', 'pipe', 'pipe']})
+	const caString = execSync('npm config get ca')
 		.toString()
 		.replace(/\'/g, '\"')
-	const ca = caString.substring(0, 25) === '[ "-----BEGIN CERTIFICATE' ? JSON.parse(caString)[0] : undefined;
+
+	const ca = caString.substring(0, 25) === '[ "-----BEGIN CERTIFICATE' 
+		? JSON.parse(caString) 
+		: undefined;
+
 	const options = {
 		url: cdnUrl,
 		ca
