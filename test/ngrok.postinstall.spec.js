@@ -17,7 +17,7 @@ describe('postinstall', () => {
 	});
 
 	it('should run using invalid CA without crashing', done => {
-		const postinstall = child_process.fork(postinstallPath, { stdio: 'ignore' });
+		const postinstall = child_process.fork(postinstallPath);
 		postinstall.on('exit', done);
 	});
 
