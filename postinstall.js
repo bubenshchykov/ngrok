@@ -12,6 +12,7 @@ const Zip = require('decompress-zip');
 const request = require('request');
 const {Transform} = require('stream');
 
+const cafilePath = process.env.NGROK_ROOT_CA_PATH;
 const cdnUrl = getCdnUrl();
 const cacheUrl = getCacheUrl();
 const maxAttempts = 3;
@@ -71,8 +72,15 @@ function hasCache() {
 function download(cb) {
 	console.log('ngrok - downloading binary ' + cdnUrl);
 
+	const ca = tryToReadCaFile(); 
+
+	const options = {
+		url: cdnUrl,
+		ca
+	};
+
 	const downloadStream = request
-		.get(cdnUrl)
+		.get(options)
 		.on('response', res => {
 			if (!/2\d\d/.test(res.statusCode)) {
 				res.pause();
@@ -156,4 +164,22 @@ function retry(err) {
 		return setTimeout(download, 500, retry);
 	}
 	process.exit(0);
+}
+
+function tryToReadCaFile() {
+	try {
+		const caString = fs.existsSync(cafilePath) && fs.readFileSync(cafilePath).toString();
+
+		const caContents = caString && caString
+			.split('-----END CERTIFICATE-----')
+			.filter(c => c.trim().startsWith('-----BEGIN CERTIFICATE-----'));
+
+		return caContents.length > 0 
+			? caContents 
+			: undefined;
+	}
+	catch(error) {
+		console.warn(error);
+		return undefined;
+	}
 }

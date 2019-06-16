@@ -165,5 +165,9 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 			});
 
 		});
+
+		after(async () => {
+			await ngrok.kill();
+		});
 	});
 });
