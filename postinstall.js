@@ -172,7 +172,8 @@ function tryToReadCaFile() {
 
 		const caContents = caString && caString
 			.split('-----END CERTIFICATE-----')
-			.filter(c => c.trim().startsWith('-----BEGIN CERTIFICATE-----'));
+			.filter(c => c.trim().startsWith('-----BEGIN CERTIFICATE-----'))
+			.map(c => `${c}-----END CERTIFICATE-----`)
 
 		return caContents.length > 0 
 			? caContents 
