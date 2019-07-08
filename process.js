@@ -44,6 +44,13 @@ async function startProcess (opts) {
 	ngrok.stdout.on('data', data => {
 		const msg = data.toString();
 		const addr = msg.match(ready);
+		if (opts.onStatusChange) {
+			if (msg.match('client session established')) {
+				opts.onStatusChange('connected');
+			} else if (msg.match('session closed, starting reconnect loop')) {
+				opts.onStatusChange('closed');
+			}
+		}
 		if (addr) {
 			resolve(`http://${addr[1]}`);
 		} else if (msg.match(inUse)) {
@@ -73,7 +80,7 @@ async function startProcess (opts) {
 		throw ex;
 	}
 	finally {
-		ngrok.stdout.removeAllListeners('data');
+		if (!opts.onStatusChange) ngrok.stdout.removeAllListeners('data');
 		ngrok.stderr.removeAllListeners('data');
 	}
 }
