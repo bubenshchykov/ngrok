@@ -34,15 +34,15 @@
   },
   "devDependencies": {
     "chai": "~3.5.0",
-    "colors": "^1.3.2",
+    "colors": "^1.3.3",
     "homedir": "^0.6.0",
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "@types/node": "^8.10.30",
+    "@types/node": "^8.10.50",
     "decompress-zip": "^0.3.2",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.5",
+    "request-promise-native": "^1.0.7",
     "uuid": "^3.3.2"
   },
   "bin": {
