@@ -46,7 +46,6 @@ async function connectRetry (opts, retryCount = 0) {
     }
     return publicUrl;
   } catch (err) {
-      console.log(err);
     if (!isRetriable(err) || retryCount >= 100) {
       throw err.error || err.response;
     }
@@ -55,12 +54,24 @@ async function connectRetry (opts, retryCount = 0) {
   }
  }
 
+ /*
+ error:
+0|index    |    { error_code: 104,
+0|index    |      status_code: 503,
+0|index    |      msg: 'ngrok is not yet ready to start tunnels',
+0|index    |      details:
+0|index    |       { err: 'a successful ngrok tunnel session has not yet been established' } },
+
+  */
+
 function isRetriable (err) {
   if (!err.response) return false; 
   const body = err.response.body;
+  console.log("body",body);
   const notReady500 = err.statusCode === 500 && /panic/.test(body)
   const notReady502 = err.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
-  return notReady500 || notReady502;
+  const notReady503 = err.statusCode === 503 && body.details && body.details.err === 'ngrok is not yet ready to start tunnels';
+  return notReady500 || notReady502 || notReady503;
 }
 
 async function disconnect (publicUrl) {
