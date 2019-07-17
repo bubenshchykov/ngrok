@@ -59,7 +59,8 @@ function isRetriable (err) {
   const body = err.response.body;
   const notReady500 = err.statusCode === 500 && /panic/.test(body)
   const notReady502 = err.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
-  return notReady500 || notReady502;
+  const notReady503 = err.statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
+  return notReady500 || notReady502 || notReady503;
 }
 
 async function disconnect (publicUrl) {
