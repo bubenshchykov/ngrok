@@ -46,6 +46,7 @@ async function connectRetry (opts, retryCount = 0) {
     }
     return publicUrl;
   } catch (err) {
+      console.log(err);
     if (!isRetriable(err) || retryCount >= 100) {
       throw err.error || err.response;
     }
