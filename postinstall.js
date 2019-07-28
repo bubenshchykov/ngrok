@@ -34,6 +34,8 @@ function getCdnUrl() {
 		darwinx64:	cdn + cdnPath + 'darwin-amd64.zip',
 		linuxarm:		cdn + cdnPath + 'linux-arm.zip',
 		linuxarm64:	cdn + cdnPath + 'linux-arm64.zip',
+		androidarm:		cdn + cdnPath + 'linux-arm.zip',
+		androidarm64:	cdn + cdnPath + 'linux-arm64.zip',
 		linuxia32:	cdn + cdnPath + 'linux-386.zip',
 		linuxx64:		cdn + cdnPath + 'linux-amd64.zip',
 		win32ia32:	cdn + cdnPath + 'windows-386.zip',
