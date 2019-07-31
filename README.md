@@ -43,7 +43,7 @@ const url = await ngrok.connect(opts);
 ```javascript
 const url = await ngrok.connect({
 	proto: 'http', // http|tcp|tls, defaults to http
-	addr: 8080, // port or network address, defaultst to 80
+	addr: 8080, // port or network address, defaults to 80
 	auth: 'user:pwd', // http basic authentication for tunnel
 	subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
 	authtoken: '12345', // your authtoken from ngrok.com
