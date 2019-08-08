@@ -98,7 +98,12 @@ interface INgrokOptions {
     binPath?: (defaultPath: string) => string;
 
     /**
-     * Callback called when session status is changed. 
+     * Callback called when ngrok logs an event.
+     */
+    onLogEvent?: (logEventMessage: string) => any;
+
+    /**
+     * Callback called when session status is changed.
      * When connection is lost, ngrok will keep trying to reconnect.
      */
     onStatusChange?: (status: 'connected' | 'closed') => any;
