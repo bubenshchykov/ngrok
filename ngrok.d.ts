@@ -1,3 +1,5 @@
+import { CoreOptions, Request, RequestAPI, RequiredUriUrl } from 'request';
+
 /**
  * Creates a ngrok tunnel.
  * E.g:
@@ -27,6 +29,16 @@ export function disconnect(url?: string): Promise<void>;
  * Kills the ngrok process.
  */
 export function kill(): Promise<void>;
+
+/**
+ * Gets the ngrok client URL.
+ */
+export function getUrl(): string;
+
+/**
+ * Gets the ngrok client API.
+ */
+export function getApi(): RequestAPI<Request, CoreOptions, RequiredUriUrl>;
 
 /**
  * You can create basic http-https-tcp tunnel without authtoken.
@@ -60,7 +72,7 @@ interface INgrokOptions {
      *
      * @default opts.port || opts.host || 80
      */
-    addr?: string|number;
+    addr?: string | number;
 
     /**
      * HTTP Basic authentication for tunnel.
@@ -98,7 +110,7 @@ interface INgrokOptions {
     binPath?: (defaultPath: string) => string;
 
     /**
-     * Callback called when session status is changed. 
+     * Callback called when session status is changed.
      * When connection is lost, ngrok will keep trying to reconnect.
      */
     onStatusChange?: (status: 'connected' | 'closed') => any;
