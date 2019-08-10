@@ -33,7 +33,7 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 		});
 
 		describe('calling local server directly', function() {
-			
+
 			before(async function () {
 				respBody = await request.get(localUrl + '/local');
 			});
@@ -129,7 +129,7 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 			describe('connecting to ngrok with subdomain', function () {
 				const uniqDomain = 'koko-' + uuid.v4();
 				let error;
-				
+
 				before(async function () {
 					try {
 						await ngrok.connect({
@@ -164,22 +164,25 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 			});
 
-			describe('connecting to ngrok with onStatusChange callback', function() {
+			describe('connecting to ngrok with callbacks', function() {
 
 				before(async () => await ngrok.kill());
-	
-				it('should be called with correct status', async function() {	
+
+				it('should be called with correct status', async function() {
 					let resolve;
-					const statusChangePromise = new Promise(res => resolve = res);			
+					const logMessages = [];
+					const statusChangePromise = new Promise(res => resolve = res);
 					await ngrok.connect({
 						port,
+						onLogEvent: message => logMessages.push(message),
 						onStatusChange: status => {
 							if (status === 'connected') resolve();
 						},
 					});
 					await statusChangePromise;
+					expect(logMessages).to.not.be.empty;
 				});
-	
+
 			});
 
 		});
