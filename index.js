@@ -2,6 +2,7 @@ const request = require('request-promise-native');
 const uuid = require('uuid');
 const {getProcess, killProcess, setAuthtoken} = require('./process');
 
+let processUrl;
 let internalApi;
 let tunnels = {};
 
@@ -11,8 +12,9 @@ async function connect (opts) {
   if (opts.authtoken) {
     await setAuthtoken(opts);
   }
-  const url = await getProcess(opts);
-  internalApi = request.defaults({baseUrl: url});
+
+  processUrl = await getProcess(opts);
+  internalApi = request.defaults({baseUrl: processUrl});
   return connectRetry(opts);
 }
 
@@ -55,7 +57,7 @@ async function connectRetry (opts, retryCount = 0) {
  }
 
 function isRetriable (err) {
-  if (!err.response) return false; 
+  if (!err.response) return false;
   const body = err.response.body;
   const notReady500 = err.statusCode === 500 && /panic/.test(body)
   const notReady502 = err.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
@@ -84,6 +86,10 @@ async function kill ()  {
   tunnels = {}
 }
 
+function getUrl() {
+  return processUrl;
+}
+
 function getApi() {
   return internalApi;
 }
@@ -93,5 +99,6 @@ module.exports = {
   disconnect,
   authtoken: setAuthtoken,
   kill,
+  getUrl,
   getApi
 };
