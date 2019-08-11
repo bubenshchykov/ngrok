@@ -187,20 +187,23 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 			});
 
-			describe('connecting to ngrok with onStatusChange callback', function() {
+			describe('connecting to ngrok with callbacks', function() {
 
 				before(async () => await ngrok.kill());
 
 				it('should be called with correct status', async function() {
 					let resolve;
+					const logMessages = [];
 					const statusChangePromise = new Promise(res => resolve = res);
 					await ngrok.connect({
 						port,
+						onLogEvent: message => logMessages.push(message),
 						onStatusChange: status => {
 							if (status === 'connected') resolve();
 						},
 					});
 					await statusChangePromise;
+					expect(logMessages).to.not.be.empty;
 				});
 
 			});

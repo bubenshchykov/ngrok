@@ -10,12 +10,12 @@ let processPromise, activeProcess;
 
 /*
 	ngrok process runs internal ngrok api
-	and should be spawned only ONCE 
+	and should be spawned only ONCE
 	(respawn allowed if it fails or .kill method called)
 */
 
 async function getProcess(opts) {
-	if (processPromise) return processPromise; 
+	if (processPromise) return processPromise;
 	try {
 		processPromise = startProcess(opts);
 		return await processPromise;
@@ -32,11 +32,11 @@ async function startProcess (opts) {
 	if (opts.region) start.push('--region=' + opts.region);
 	if (opts.configPath) start.push('--config=' + opts.configPath);
 	if (opts.binPath) dir = opts.binPath(dir);
-	
+
 	const ngrok = spawn(bin, start, {cwd: dir});
-	
+
 	let resolve, reject;
-	const apiUrl = new Promise((res, rej) => {   
+	const apiUrl = new Promise((res, rej) => {
 		resolve = res;
 		reject = rej;
 	});
@@ -44,6 +44,9 @@ async function startProcess (opts) {
 	ngrok.stdout.on('data', data => {
 		const msg = data.toString();
 		const addr = msg.match(ready);
+		if (opts.onLogEvent) {
+			opts.onLogEvent(msg.trim());
+		}
 		if (opts.onStatusChange) {
 			if (msg.match('client session established')) {
 				opts.onStatusChange('connected');
@@ -56,7 +59,7 @@ async function startProcess (opts) {
 		} else if (msg.match(inUse)) {
 			reject(new Error(msg.substring(0, 10000)));
 		}
-	});  
+	});
 
 	ngrok.stderr.on('data', data => {
 		const msg = data.toString().substring(0, 10000);
@@ -73,14 +76,17 @@ async function startProcess (opts) {
 	try {
 		const url = await apiUrl;
 		activeProcess = ngrok;
-		return url;      
+		return url;
 	}
 	catch(ex) {
 		ngrok.kill();
 		throw ex;
 	}
 	finally {
-		if (!opts.onStatusChange) ngrok.stdout.removeAllListeners('data');
+		// Remove the stdout listeners if nobody is interested in the content.
+		if (!opts.onLogEvent && !opts.onStatusChange) {
+			ngrok.stdout.removeAllListeners('data');
+		}
 		ngrok.stderr.removeAllListeners('data');
 	}
 }
