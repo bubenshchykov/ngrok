@@ -51,6 +51,7 @@ const url = await ngrok.connect({
 	configPath: '~/git/project/ngrok.yml', // custom path for ngrok config file
 	binPath: default => default.replace('app.asar', 'app.asar.unpacked'), // custom binary path, eg for prod in electron
 	onStatusChange: status => {}, // 'closed' - connection is lost, 'connected' - reconnected
+	onLogEvent: data => {}, // returns stdout messages from ngrok process
 });
 ```
 
@@ -84,6 +85,11 @@ Same url hosts internal [client api](https://ngrok.com/docs#client-api). You can
 const url = await ngrok.connect();
 const api = ngrok.getApi();
 const tunnels = await api.get('api/tunnels');
+```
+You can also get it as string url
+```javascript
+const url = await ngrok.connect();
+const apiUrl = ngrok.getUrl();
 ```
 
 ## proxy
