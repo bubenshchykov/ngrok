@@ -101,6 +101,14 @@ const apiUrl = ngrok.getUrl();
 
 First time you create tunnel ngrok process is spawned and runs until you disconnect or when parent process killed. All further tunnels are created or stopped by using internal ngrok api which usually runs on http://127.0.0.1:4040
 
+## ngrok binary update
+If you would like to force an update of the ngrok binary directly from your software, you can require the `ngrok/download` module and call the `downloadNgrok` function directly:
+
+```javascript
+const downloadNgrok = require('ngrok/download');
+downloadNgrok(myCallbackFunc, { ignoreCache: true });
+```
+
 ## contributors
 Please run ```git update-index --assume-unchanged bin/ngrok``` to not override [ngrok stub](https://github.com/bubenshchykov/ngrok/blob/master/bin/ngrok) in your pr. Unfortunately it can't be gitignored.
 
