@@ -93,7 +93,7 @@ const apiUrl = ngrok.getUrl();
 ```
 
 ## proxy
-- If you are behind a corporate proxy an have issues installing ngrok, you can set ```HTTP_PROXY``` or ```HTTPS_PROXY``` env var to fix it. Ngrok's posinstall uses request module to fetch the binary, [and request supports these env vars](https://github.com/request/request#controlling-proxy-behaviour-using-environment-variables)
+- If you are behind a corporate proxy an have issues installing ngrok, you can set ```HTTP_PROXY``` or ```HTTPS_PROXY``` env var to fix it. Ngrok's postinstall uses request module to fetch the binary, [and request supports these env vars](https://github.com/request/request#controlling-proxy-behaviour-using-environment-variables)
 - If you are using a CA file, set the path in the environment variable `NGROK_ROOT_CA_PATH`. The path is needed for downloading the ngrok binary in the postinstall script.
 
 ## how it works
