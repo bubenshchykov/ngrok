@@ -97,7 +97,7 @@ interface INgrokOptions {
      *
      * @default 'us'
      */
-    region?: 'us' | 'eu' | 'au' | 'ap';
+    region?: 'us' | 'eu' | 'au' | 'ap' | 'sa' | 'jp' | 'in';
 
     /**
      * Custom path for ngrok config file.
