@@ -33,12 +33,12 @@ export function kill(): Promise<void>;
 /**
  * Gets the ngrok client URL.
  */
-export function getUrl(): string;
+export function getUrl(): string | null;
 
 /**
  * Gets the ngrok client API.
  */
-export function getApi(): RequestAPI<Request, CoreOptions, RequiredUriUrl>;
+export function getApi(): RequestAPI<Request, CoreOptions, RequiredUriUrl> | null;
 
 /**
  * You can create basic http-https-tcp tunnel without authtoken.
