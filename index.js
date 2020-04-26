@@ -2,8 +2,8 @@ const request = require('request-promise-native');
 const uuid = require('uuid');
 const {getProcess, killProcess, setAuthtoken} = require('./process');
 
-let processUrl;
-let internalApi;
+let processUrl = null;
+let internalApi = null;
 let tunnels = {};
 
 async function connect (opts) {
