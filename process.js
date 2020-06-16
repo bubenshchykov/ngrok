@@ -1,4 +1,6 @@
-const { spawn } = require('child_process');
+const { promisify } = require("util")
+const { spawn, exec: execCallback } = require('child_process');
+const exec = promisify(execCallback);
 const platform = require('os').platform();
 
 const defaultDir = __dirname + '/bin';
@@ -127,8 +129,16 @@ async function setAuthtoken (optsOrToken) {
 	}
 }
 
+async function getVersion(opts = {}) {
+	let dir = defaultDir;
+	if (opts.binPath) dir = opts.binPath(dir);
+	const { stdout } = await exec(`${bin} --version`, { cwd: dir });
+	return stdout.replace('ngrok version', '').trim();
+}
+
 module.exports = {
 	getProcess,
 	killProcess,
-	setAuthtoken
+	setAuthtoken,
+	getVersion
 };
