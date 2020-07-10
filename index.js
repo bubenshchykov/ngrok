@@ -1,6 +1,6 @@
 const request = require('request-promise-native');
 const uuid = require('uuid');
-const {getProcess, killProcess, setAuthtoken} = require('./process');
+const {getProcess, killProcess, setAuthtoken, getVersion} = require('./process');
 
 let processUrl = null;
 let internalApi = null;
@@ -100,5 +100,6 @@ module.exports = {
   authtoken: setAuthtoken,
   kill,
   getUrl,
-  getApi
+  getApi,
+  getVersion
 };
