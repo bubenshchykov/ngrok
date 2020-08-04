@@ -1,9 +1,8 @@
 const ngrok = require('..');
 const http = require('http');
 const net = require('net');
-const request = require('request');
+const got = require('got');
 const URL = require('url');
-const uuid = require('uuid');
 const util = require('./util');
 
 const port = 8080;
@@ -38,12 +37,9 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 		});
 
 		describe('calling local server directly', function() {
-			
-			before(function(done) {
-				request.get(localUrl + '/local', function (err, resp, body) {
-					respBody = body;
-					done(err);
-				});
+
+			before(function() {
+				return got(localUrl + '/local').text().then(body => respBody = body);
 			});
 
 			it('should return oki-doki', function() {
@@ -62,11 +58,8 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 				describe('calling local server through ngrok', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok', function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(function() {
+						return got(tunnelUrl + '/ngrok').text().then(body => respBody = body);
 					});
 
 					it('should return oki-doki too', function() {
@@ -79,11 +72,8 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 						describe('calling local server through discconected ngrok', function() {
 
-							before(function(done) {
-								request.get(tunnelUrl + '/ngrok', function (err, resp, body) {
-									respBody = body;
-									done(err);
-								});
+							before(function() {
+								return got(tunnelUrl + '/ngrok').text().then(body => respBody = body).catch(err => respBody = err.response.body)
 							});
 
 							it('should return error message', function() {
@@ -98,7 +88,6 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 			});
 
 			describe('connecting to ngrok with auth', function () {
-				
 				before(async () => {
 					tunnelUrl = await ngrok.connect({
 						port: port,
@@ -112,11 +101,8 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 				describe('calling local server through ngrok without http authorization', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok-httpauth', function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(function() {
+						return got(tunnelUrl + '/ngrok-httpauth').text().then(body => respBody = body).catch(err => respBody = err.response.body);
 					});
 
 					it('should return error message', function() {
@@ -127,11 +113,8 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 
 				describe('calling local server through ngrok with http authorization', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok-httpauth', {auth: {user: 'oki', password: 'doki'}}, function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(function() {
+						return got(tunnelUrl + '/ngrok-httpauth', {username: 'oki', password: 'doki'}).text().then(body => respBody = body);
 					});
 
 					it('should return oki-doki too', function() {
@@ -145,7 +128,7 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 	});
 
 	describe('starting local tcp server', function () {
-			
+
 		let tcpServerPort;
 		before(function(done) {
 			const tcpServer = net.createServer(function(socket) {
@@ -177,7 +160,7 @@ describe('registered.free.spec.js - setting free authtoken', function() {
 			describe('calling local tcp server through ngrok', function() {
 				let socketData;
 				let socket;
-				
+
 				before(function (done) {
 					net.connect(+tunnelUrlParts.port, tunnelUrlParts.hostname)
 						.once('data', function(data) {

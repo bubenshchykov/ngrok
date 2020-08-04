@@ -1,4 +1,4 @@
-const request = require('request-promise-native');
+const got = require('got');
 const uuid = require('uuid');
 const {getProcess, killProcess, setAuthtoken, getVersion} = require('./process');
 
@@ -14,7 +14,10 @@ async function connect (opts) {
   }
 
   processUrl = await getProcess(opts);
-  internalApi = request.defaults({baseUrl: processUrl});
+  internalApi = got.extend({
+    prefixUrl: processUrl,
+    retry: 0
+  });
   return connectRetry(opts);
 }
 
@@ -37,7 +40,7 @@ function validate  (opts) {
 async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
-    const response = await internalApi.post({url: 'api/tunnels', json: opts});
+    const response = await internalApi.post('api/tunnels', {json: opts}).json();
     const publicUrl = response.public_url;
     if (!publicUrl) {
       throw new Error('failed to start tunnel');
@@ -49,7 +52,10 @@ async function connectRetry (opts, retryCount = 0) {
     return publicUrl;
   } catch (err) {
     if (!isRetriable(err) || retryCount >= 100) {
-      throw err.error || err.response;
+      if (err.response) {
+        throw JSON.parse(err.response.body);
+      }
+      throw err.error;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
     return connectRetry(opts, ++retryCount);
@@ -58,10 +64,10 @@ async function connectRetry (opts, retryCount = 0) {
 
 function isRetriable (err) {
   if (!err.response) return false;
-  const body = err.response.body;
-  const notReady500 = err.statusCode === 500 && /panic/.test(body)
-  const notReady502 = err.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
-  const notReady503 = err.statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
+  const body = JSON.parse(err.response.body);
+  const notReady500 = err.response.statusCode === 500 && /panic/.test(body)
+  const notReady502 = err.response.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
+  const notReady503 = err.response.statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
   return notReady500 || notReady502 || notReady503;
 }
 
@@ -75,7 +81,7 @@ async function disconnect (publicUrl) {
   if (!tunnelUrl) {
     throw new Error(`there is no tunnel with url: ${publicUrl}`)
   }
-  await internalApi.del(tunnelUrl)
+  await internalApi.delete(tunnelUrl.replace(/^\//, ''))
   delete tunnels[publicUrl];
 }
 
