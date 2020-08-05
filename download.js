@@ -12,8 +12,7 @@ function downloadNgrok(callback, options) {
   const path = require('path');
   const readline = require('readline');
   const Zip = require('decompress-zip');
-  const request = require('request');
-  const { Transform } = require('stream');
+  const got = require('got');
 
   const cafilePath = options.cafilePath || process.env.NGROK_ROOT_CA_PATH;
   const cdnUrl = getCdnUrl();
@@ -22,7 +21,7 @@ function downloadNgrok(callback, options) {
   let attempts = 0;
 
   if (hasCache()) {
-    console.log('ngrok - cached download found at ' + cacheUrl);
+    console.error('ngrok - cached download found at ' + cacheUrl);
     extract(retry);
   } else {
     download(retry);
@@ -79,67 +78,51 @@ function downloadNgrok(callback, options) {
   }
 
   function download(cb) {
-    console.log('ngrok - downloading binary ' + cdnUrl);
+    console.error('ngrok - downloading binary ' + cdnUrl);
 
-    const ca = tryToReadCaFile();
+    const certificateAuthority = tryToReadCaFile();
 
-    const options = {
-      url: cdnUrl,
-      ca
-    };
-
-    const downloadStream = request
-      .get(options)
-      .on('response', res => {
+    const downloadStream = got.stream(cdnUrl, { https: { certificateAuthority }});
+    process.stderr.write("ngrok - downloading progress: ");
+    downloadStream
+      .on('response', (res) => {
         if (!/2\d\d/.test(res.statusCode)) {
           res.pause();
           return downloadStream.emit('error', new Error('wrong status code: ' + res.statusCode));
         }
-        const total = res.headers['content-length'];
-        const progress = progressStream('ngrok - downloading progress: ', total);
-        res.pipe(progress).pipe(outputStream);
       })
-      .on('error', e => {
-        console.warn('ngrok - error downloading binary', e);
-        cb(e);
+      .on("downloadProgress", ({ percent, transferred, total }) => {
+        readline.clearLine(process.stderr, 0, () => {
+          readline.cursorTo(process.stderr, 0, () => {
+            process.stderr.write(
+              `ngrok - downloading progress: ${transferred}/${total} (${(
+                percent * 100
+              ).toFixed(2)}%)`
+            );
+          });
+        });
+      })
+      .on("error", (error) => {
+        console.error("\nngrok - error downloading from URL", error);
+        cb(error);
       });
 
     const outputStream = fs
       .createWriteStream(cacheUrl)
       .on('error', e => {
-        console.log('ngrok - error storing binary to local file', e);
+        console.error('ngrok - error storing binary to local file', e);
         cb(e);
       })
       .on('finish', () => {
-        console.log('\nngrok - binary downloaded to ' + cacheUrl);
+        console.error('\nngrok - binary downloaded to ' + cacheUrl);
         extract(cb);
       });
-  }
 
-  function progressStream(msg, total) {
-    let downloaded = 0;
-    let shouldClearLine = false;
-    const log = () => {
-      if (shouldClearLine) {
-        readline.clearLine(process.stdout);
-        readline.cursorTo(process.stdout, 0);
-      }
-      let progress = downloaded + (total ? '/' + total : '');
-      process.stdout.write(msg + progress);
-      shouldClearLine = true;
-    };
-    if (total > 0) log();
-    return new Transform({
-      transform(data, enc, cb) {
-        downloaded += data.length;
-        log();
-        cb(null, data);
-      }
-    });
+    downloadStream.pipe(outputStream);
   }
 
   function extract(cb) {
-    console.log('ngrok - unpacking binary');
+    console.error('ngrok - unpacking binary');
     const moduleBinPath = path.join(__dirname, 'bin');
     new Zip(cacheUrl)
       .extract({ path: moduleBinPath })
@@ -159,7 +142,7 @@ function downloadNgrok(callback, options) {
       });
 
     function error(e) {
-      console.warn('ngrok - error unpacking binary', e);
+      console.error('ngrok - error unpacking binary', e);
       cb(e);
     }
   }
