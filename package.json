@@ -41,11 +41,8 @@
   },
   "dependencies": {
     "@types/node": "^8.10.50",
-    "@types/request": "^2.48.2",
     "decompress-zip": "^0.3.2",
     "got": "^11.5.1",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.7",
     "uuid": "^3.3.2"
   },
   "bin": {
