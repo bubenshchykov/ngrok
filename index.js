@@ -1,4 +1,4 @@
-const got = require('got');
+const { NgrokClient } = require('./client');
 const uuid = require('uuid');
 const {getProcess, killProcess, setAuthtoken, getVersion} = require('./process');
 
@@ -14,10 +14,7 @@ async function connect (opts) {
   }
 
   processUrl = await getProcess(opts);
-  internalApi = got.extend({
-    prefixUrl: processUrl,
-    retry: 0
-  });
+  internalApi = new NgrokClient(processUrl);
   return connectRetry(opts);
 }
 
@@ -40,7 +37,7 @@ function validate  (opts) {
 async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
-    const response = await internalApi.post('api/tunnels', {json: opts}).json();
+    const response = await internalApi.startTunnel(opts);
     const publicUrl = response.public_url;
     if (!publicUrl) {
       throw new Error('failed to start tunnel');
@@ -81,7 +78,7 @@ async function disconnect (publicUrl) {
   if (!tunnelUrl) {
     throw new Error(`there is no tunnel with url: ${publicUrl}`)
   }
-  await internalApi.delete(tunnelUrl.replace(/^\//, ''))
+  await internalApi.stopTunnel(tunnelUrl);
   delete tunnels[publicUrl];
 }
 
