@@ -46,11 +46,13 @@ export function getApi(): RequestAPI<Request, CoreOptions, RequiredUriUrl> | nul
  * E.g:
  *     await ngrok.authtoken(token);
  *     // or
+ *     await ngrok.authtoken({ authtoken: token, ... });
+ *     // or
  *     const url = await ngrok.connect({ authtoken: token, ... });
  *
  * @param token
  */
-export function authtoken(token: string): Promise<void>;
+export function authtoken(token: string | INgrokOptions): Promise<void>;
 
 interface INgrokOptions {
     /**
