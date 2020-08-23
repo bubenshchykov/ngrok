@@ -15,7 +15,8 @@
     "postinstall.js",
     "process.js",
     "bin/ngrok",
-    "ngrok.d.ts"
+    "ngrok.d.ts",
+    "client.js"
   ],
   "repository": {
     "type": "git",
