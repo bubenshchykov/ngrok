@@ -50,7 +50,9 @@ async function connectRetry (opts, retryCount = 0) {
   } catch (err) {
     if (!isRetriable(err) || retryCount >= 100) {
       if (err.response) {
-        throw JSON.parse(err.response.body);
+        const response = JSON.parse(err.response.body);
+        const message =  `${response.msg}\n\n${response.details.err}`;
+        throw new Error(message);
       }
       throw err.error;
     }
