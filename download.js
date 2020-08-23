@@ -82,7 +82,20 @@ function downloadNgrok(callback, options) {
 
     const certificateAuthority = tryToReadCaFile();
 
-    const downloadStream = got.stream(cdnUrl, { https: { certificateAuthority }});
+    const gotOptions = { https: { certificateAuthority }};
+
+    if (process.env.HTTPS_PROXY) {
+      try {
+        const {HttpsProxyAgent} = require('hpagent');
+        gotOptions.agent = {
+          https: new HttpsProxyAgent({ proxy: process.env.HTTPS_PROXY })
+        }
+      } catch(error) {
+        throw new Error('You have the HTTPS_PROXY environment variable set, but you are missing the optional dependency hpagent. Please install hpagent as a dependency and try again.');
+      }
+    }
+
+    const downloadStream = got.stream(cdnUrl, gotOptions);
     process.stderr.write("ngrok - downloading progress: ");
     downloadStream
       .on('response', (res) => {
