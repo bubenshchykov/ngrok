@@ -44,7 +44,7 @@ class NgrokClient {
   }
 
   startTunnel(options={}) {
-    return this.request('post', 'api/tunnels', options );
+    return this.request('post', 'api/tunnels', options);
   }
 
   tunnelDetail(name) {

@@ -208,7 +208,7 @@ declare module "ngrok" {
     listTunnels(): Promise<Ngrok.TunnelsResponse>;
     startTunnel(options: Ngrok.Options): Promise<Ngrok.Tunnel>;
     tunnelDetail(name: string): Promise<Ngrok.Tunnel>;
-    stopTunnel(tunnelUrl: string): Promise<boolean>;
+    stopTunnel(name: string): Promise<boolean>;
     listRequests(
       options: Ngrok.CapturedRequestOptions
     ): Promise<Ngrok.RequestsResponse>;
