@@ -3,7 +3,7 @@ const uuid = require('uuid');
 const {getProcess, killProcess, setAuthtoken, getVersion} = require('./process');
 
 let processUrl = null;
-let internalApi = null;
+let ngrokClient = null;
 let tunnels = {};
 
 async function connect (opts) {
@@ -14,7 +14,7 @@ async function connect (opts) {
   }
 
   processUrl = await getProcess(opts);
-  internalApi = new NgrokClient(processUrl);
+  ngrokClient = new NgrokClient(processUrl);
   return connectRetry(opts);
 }
 
@@ -37,7 +37,7 @@ function validate  (opts) {
 async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
-    const response = await internalApi.startTunnel(opts);
+    const response = await ngrokClient.startTunnel(opts);
     const publicUrl = response.public_url;
     if (!publicUrl) {
       throw new Error('failed to start tunnel');
@@ -69,7 +69,7 @@ function isRetriable (err) {
 }
 
 async function disconnect (publicUrl) {
-  if (!internalApi) return;
+  if (!ngrokClient) return;
   if (!publicUrl) {
   	const disconnectAll = Object.keys(tunnels).map(disconnect);
   	return Promise.all(disconnectAll);
@@ -78,14 +78,14 @@ async function disconnect (publicUrl) {
   if (!tunnelUrl) {
     throw new Error(`there is no tunnel with url: ${publicUrl}`)
   }
-  await internalApi.stopTunnel(tunnelUrl);
+  await ngrokClient.stopTunnel(tunnelUrl);
   delete tunnels[publicUrl];
 }
 
 async function kill ()  {
-  if (!internalApi) return;
+  if (!ngrokClient) return;
   await killProcess();
-  internalApi = null;
+  ngrokClient = null;
   tunnels = {}
 }
 
@@ -94,7 +94,7 @@ function getUrl() {
 }
 
 function getApi() {
-  return internalApi;
+  return ngrokClient;
 }
 
 module.exports = {
