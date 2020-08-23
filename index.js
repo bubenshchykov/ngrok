@@ -4,7 +4,6 @@ const {getProcess, killProcess, setAuthtoken, getVersion} = require('./process')
 
 let processUrl = null;
 let ngrokClient = null;
-let tunnels = {};
 
 async function connect (opts) {
   opts = defaults(opts);
@@ -42,10 +41,6 @@ async function connectRetry (opts, retryCount = 0) {
     if (!publicUrl) {
       throw new Error('failed to start tunnel');
     }
-    tunnels[publicUrl] = response.uri;
-    if (opts.proto === 'http' && opts.bind_tls !== false) {
-      tunnels[publicUrl.replace('https', 'http')] = response.uri + ' (http)';
-    }
     return publicUrl;
   } catch (err) {
     if (!isRetriable(err) || retryCount >= 100) {
@@ -62,26 +57,30 @@ async function connectRetry (opts, retryCount = 0) {
  }
 
 function isRetriable (err) {
-  if (!err.response) return false;
-  const body = JSON.parse(err.response.body);
-  const notReady500 = err.response.statusCode === 500 && /panic/.test(body)
-  const notReady502 = err.response.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
-  const notReady503 = err.response.statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
+  if (!err.response){
+    console.log("Inside isRetriable", err);
+    return false;
+  }
+  const statusCode = err.response.statusCode
+  const body = err.body;
+  const notReady500 = statusCode === 500 && /panic/.test(body)
+  const notReady502 = statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
+  const notReady503 = statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
   return notReady500 || notReady502 || notReady503;
 }
 
 async function disconnect (publicUrl) {
   if (!ngrokClient) return;
+  const tunnels = (await ngrokClient.listTunnels()).tunnels;
   if (!publicUrl) {
-  	const disconnectAll = Object.keys(tunnels).map(disconnect);
+  	const disconnectAll = tunnels.map(tunnel => disconnect(tunnel.public_url) );
   	return Promise.all(disconnectAll);
   }
-  const tunnelUrl = tunnels[publicUrl];
-  if (!tunnelUrl) {
+  const tunnelDetails = tunnels.find(tunnel => tunnel.public_url === publicUrl);
+  if (!tunnelDetails) {
     throw new Error(`there is no tunnel with url: ${publicUrl}`)
   }
-  await ngrokClient.stopTunnel(tunnelUrl);
-  delete tunnels[publicUrl];
+  return ngrokClient.stopTunnel(tunnelDetails.name);
 }
 
 async function kill ()  {

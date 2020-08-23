@@ -102,7 +102,7 @@ function killProcess ()  {
 }
 
 /**
- * @param {string | INgrokOptions} optsOrToken
+ * @param {string | Ngrok.Options} optsOrToken
  */
 async function setAuthtoken (optsOrToken) {
 	const isOpts = typeof optsOrToken !== 'string'
