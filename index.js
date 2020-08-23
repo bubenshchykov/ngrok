@@ -58,7 +58,6 @@ async function connectRetry (opts, retryCount = 0) {
 
 function isRetriable (err) {
   if (!err.response){
-    console.log("Inside isRetriable", err);
     return false;
   }
   const statusCode = err.response.statusCode
