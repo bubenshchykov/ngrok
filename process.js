@@ -129,6 +129,9 @@ async function setAuthtoken (optsOrToken) {
 	}
 }
 
+/**
+ * @param {INgrokOptions | undefined} opts
+ */
 async function getVersion(opts = {}) {
 	let dir = defaultDir;
 	if (opts.binPath) dir = opts.binPath(dir);
