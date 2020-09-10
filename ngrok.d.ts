@@ -54,6 +54,12 @@ export function getApi(): RequestAPI<Request, CoreOptions, RequiredUriUrl> | nul
  */
 export function authtoken(token: string | INgrokOptions): Promise<void>;
 
+/**
+ *
+ * Gets the version of the ngrok binary.
+ */
+export function getVersion(options?: INgrokOptions): Promise<string>;
+
 interface INgrokOptions {
     /**
      * Other "custom", indirectly-supported ngrok process options.
