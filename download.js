@@ -57,7 +57,9 @@ function downloadNgrok(callback, options) {
   function getCacheUrl() {
     let dir;
     try {
-      dir = path.join(os.homedir(), '.ngrok');
+      dir = os.platform() === 'win32' && process.env.APPDATA
+        ? path.join(process.env.APPDATA, 'ngrok')
+        : path.join(os.homedir(), '.ngrok');
       if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
         fs.mkdirSync(dir);
       }
