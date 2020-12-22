@@ -4,7 +4,7 @@ const exec = promisify(execCallback);
 const platform = require('os').platform();
 
 const defaultDir = __dirname + '/bin';
-const bin = './ngrok' + (platform === 'win32' ? '.exe' : '');
+const bin = platform === 'win32' ? 'ngrok.exe' : './ngrok';
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 const inUse = /address already in use/;
 
