@@ -8,7 +8,7 @@ const bin = platform === 'win32' ? 'ngrok.exe' : './ngrok';
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 const inUse = /address already in use/;
 
-let processPromise, activeProcess;
+let processPromise, activeProcess, processHasExit;
 
 /*
 	ngrok process runs internal ngrok api
@@ -73,7 +73,10 @@ async function startProcess (opts) {
 		activeProcess = null;
 	});
 
-	process.on('exit', async () => await killProcess());
+        if (!processHasExit) {
+	        process.on('exit', async () => await killProcess());
+                processHasExit = true;
+        }
 
 	try {
 		const url = await apiUrl;
