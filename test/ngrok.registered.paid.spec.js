@@ -130,8 +130,8 @@ let tunnelUrl, respBody;
 					});
 
 					it('should return an error that the tunnel is already established', function () {
-						expect(error.msg).to.equal('failed to start tunnel');
-						expect(error.details.err).to.contain('is already bound to another tunnel session');
+						expect(error.message).to.equal('failed to start tunnel');
+						expect(error.body.details.err).to.contain('is already bound to another tunnel session');
 					});
 				});
 

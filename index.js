@@ -37,19 +37,10 @@ async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
     const response = await ngrokClient.startTunnel(opts);
-    const publicUrl = response.public_url;
-    if (!publicUrl) {
-      throw new Error('failed to start tunnel');
-    }
-    return publicUrl;
+    return response.public_url;
   } catch (err) {
     if (!isRetriable(err) || retryCount >= 100) {
-      if (err.response) {
-        const response = JSON.parse(err.response.body);
-        const message =  `${response.msg}\n\n${response.details.err}`;
-        throw new Error(message);
-      }
-      throw err.error;
+      throw(err);
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
     return connectRetry(opts, ++retryCount);
