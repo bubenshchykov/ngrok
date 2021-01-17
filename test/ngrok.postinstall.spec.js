@@ -1,18 +1,27 @@
-const homedir = require('homedir');
-const path = require('path');
+const { join } = require('path');
 const fs = require('fs');
 const child_process = require('child_process');
 
-const postinstallPath = path.join(__dirname, '../postinstall.js');
-const ngrokPath = path.join(homedir(), '/.ngrok');
+const postinstallPath = join(__dirname, '../postinstall.js');
+const ngrokPath = join(__dirname, 'fixtures', '.ngrok');
+fs.mkdirSync(ngrokPath, { recursive: true });
 const certpath = `${ngrokPath}/testCert.pem`;
 
 describe('postinstall', () => {
+	before(() => {
+		process.env.NGROK_ROOT_CA_PATH = certpath;
+		process.env.NGROK_IGNORE_CACHE = 'true';
+	});
+
+	after(() => {
+		delete process.env.NGROK_IGNORE_CACHE
+		delete process.env.NGROK_ROOT_CA_PATH
+	});
+
 	describe('with no certificate', () => {
 		before(() => {
 			clearNgrokDirectory();
 			writeJunkPemFile();
-			process.env.NGROK_ROOT_CA_PATH = certpath;
 		});
 
 		it('should run using a junk file without crashing', done => {
@@ -25,7 +34,6 @@ describe('postinstall', () => {
 		before(() => {
 			clearNgrokDirectory();
 			writeVerisignCertPemFile();
-			process.env.NGROK_ROOT_CA_PATH = certpath;
 		});
 
 		it('should fail to run with an invalid certificate', done => {
@@ -44,7 +52,7 @@ describe('postinstall', () => {
 
 function clearNgrokDirectory() {
 	const files = fs.readdirSync(ngrokPath);
-	files.forEach(f => fs.unlinkSync(path.join(ngrokPath, f)));
+	files.forEach(f => fs.unlinkSync(join(ngrokPath, f)));
 }
 
 function writeJunkPemFile() {
