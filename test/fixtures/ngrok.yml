@@ -1,0 +1,5 @@
+tunnels:
+  test:
+    addr: "3000"
+    subdomain: testtunnel
+    proto: "http"

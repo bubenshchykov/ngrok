@@ -64,7 +64,7 @@ function downloadNgrok(callback, options) {
         fs.mkdirSync(dir);
       }
     } catch (err) {
-      dir = path.join(__dirname, 'bin');
+      dir = path.join(__dirname, '..', 'bin');
     }
     const name = Buffer.from(cdnUrl).toString('base64');
     return path.join(dir, name + '.zip');
@@ -136,7 +136,7 @@ function downloadNgrok(callback, options) {
 
   function extract(cb) {
     console.error('ngrok - unpacking binary');
-    const moduleBinPath = path.join(__dirname, 'bin');
+    const moduleBinPath = path.join(__dirname, '..', 'bin');
     new Zip(cacheUrl)
       .extract({ path: moduleBinPath })
       .once('error', error)

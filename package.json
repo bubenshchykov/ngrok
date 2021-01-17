@@ -44,7 +44,8 @@
     "@types/node": "^8.10.50",
     "decompress-zip": "^0.3.2",
     "got": "^11.5.1",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "yaml": "^1.10.0"
   },
   "bin": {
     "ngrok": "./bin/ngrok"

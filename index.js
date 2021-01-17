@@ -1,6 +1,7 @@
-const { NgrokClient } = require('./client');
+const { NgrokClient } = require('./src/client');
 const uuid = require('uuid');
-const {getProcess, killProcess, setAuthtoken, getVersion} = require('./process');
+const {getProcess, killProcess, setAuthtoken, getVersion} = require('./src/process');
+const { defaults, validate, isRetriable } = require("./src/utils");
 
 let processUrl = null;
 let ngrokClient = null;
@@ -17,22 +18,6 @@ async function connect (opts) {
   return connectRetry(opts);
 }
 
-function defaults (opts) {
-  opts = opts || {proto: 'http', addr: 80}
-  if (typeof opts === 'function') opts = {proto: 'http', addr: 80};
-  if (typeof opts !== 'object') opts = {proto: 'http', addr: opts};
-  if (!opts.proto) opts.proto = 'http';
-  if (!opts.addr) opts.addr = opts.port || opts.host || 80;
-  if (opts.httpauth) opts.auth = opts.httpauth;
-  return opts
-}
-
-function validate  (opts) {
-  if (opts.web_addr === false || opts.web_addr === 'false') {
-    throw new Error('web_addr:false is not supported, module depends on internal ngrok api')
-  }
-}
-
 async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
@@ -46,18 +31,6 @@ async function connectRetry (opts, retryCount = 0) {
     return connectRetry(opts, ++retryCount);
   }
  }
-
-function isRetriable (err) {
-  if (!err.response){
-    return false;
-  }
-  const statusCode = err.response.statusCode
-  const body = err.body;
-  const notReady500 = statusCode === 500 && /panic/.test(body)
-  const notReady502 = statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
-  const notReady503 = statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
-  return notReady500 || notReady502 || notReady503;
-}
 
 async function disconnect (publicUrl) {
   if (!ngrokClient) return;
