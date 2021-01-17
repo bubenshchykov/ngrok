@@ -10,13 +10,14 @@
     "postupdate": "node ./postinstall.js"
   },
   "files": [
-    "index.js",
-    "download.js",
-    "postinstall.js",
-    "process.js",
     "bin/ngrok",
+    "index.js",
     "ngrok.d.ts",
-    "client.js"
+    "postinstall.js",
+    "./src/client.js",
+    "./src/download.js",
+    "./src/process.js",
+    "./src/utils.js"
   ],
   "repository": {
     "type": "git",
