@@ -11,11 +11,11 @@
   },
   "files": [
     "bin/ngrok",
+    "download.js",
     "index.js",
     "ngrok.d.ts",
     "postinstall.js",
     "src/client.js",
-    "src/download.js",
     "src/process.js",
     "src/utils.js"
   ],

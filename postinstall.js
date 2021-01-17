@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const pkgName = require('./package.json').name;
 
-require('./src/download')(err => {
+require('./download')(err => {
   // Fix default executable path on Windows Git Bash
   if (!err && process.env.MSYSTEM && os.release().includes('10')) {
     const exeFile = path.resolve(process.env.APPDATA, path.join('npm', pkgName));
