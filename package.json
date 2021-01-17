@@ -14,10 +14,10 @@
     "index.js",
     "ngrok.d.ts",
     "postinstall.js",
-    "./src/client.js",
-    "./src/download.js",
-    "./src/process.js",
-    "./src/utils.js"
+    "src/client.js",
+    "src/download.js",
+    "src/process.js",
+    "src/utils.js"
   ],
   "repository": {
     "type": "git",
