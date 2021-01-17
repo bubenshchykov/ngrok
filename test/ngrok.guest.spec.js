@@ -1,8 +1,6 @@
 const ngrok = require('..');
 const http = require('http');
-const net = require('net');
-const request = require('request-promise-native');
-const URL = require('url');
+const got = require('got');
 const uuid = require('uuid');
 const util = require('./util');
 
@@ -34,8 +32,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 		describe('calling local server directly', function() {
 
-			before(async function () {
-				respBody = await request.get(localUrl + '/local');
+			before(function () {
+				return got(localUrl + '/local').text().then(body => respBody = body);
 			});
 
 			it('should return oki-doki', function() {
@@ -63,9 +61,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 						let tunnelResponse;
 
-						before(async () => {
-							tunnelResponse = await request.get(url + '/api/tunnels');
-							tunnelResponse = JSON.parse(tunnelResponse);
+						before(() => {
+							return got(url + '/api/tunnels', { responseType: 'json' }).json().then(body => tunnelResponse = body);
 						});
 
 						it('should give you the open tunnel uri', () => {
@@ -85,8 +82,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 				describe('calling local server through ngrok', function() {
 
-					before(async function () {
-						respBody = await request.get(tunnelUrl + '/ngrok');
+					before(function () {
+						return got(tunnelUrl + '/ngrok').text().then(body => respBody = body);
 					});
 
 					it('should return oki-doki too', function() {
@@ -101,12 +98,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 						describe('calling local server through disconnected https ngrok', function() {
 
-							before(async function () {
-								try {
-									await request.get(tunnelUrl + '/ngrok')
-								} catch (err) {
-									respBody = err.response.body
-								}
+							before(function () {
+								return got(tunnelUrl + '/ngrok').catch(err => respBody = err.response.body);
 							});
 
 							it('should return error message', function() {
@@ -117,12 +110,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 
 						describe('calling local server through disconnected http ngrok', function() {
 
-							before(async function () {
-								try {
-									await request.get(tunnelUrl.replace('https', 'http') + '/ngrok');
-								} catch (err) {
-									respBody = err.response.body
-								}
+							before(function () {
+								return got(tunnelUrl.replace('https', 'http') + '/ngrok').catch(err => respBody = err.response.body);
 							});
 
 							it('should return error message', function() {
@@ -165,8 +154,8 @@ describe('guest.spec.js - ensuring no authtoken set', function() {
 				});
 
 				it('should return error', function(){
-					expect(error.msg).to.equal('failed to start tunnel');
-					expect(error.details.err).to.contain('Only paid plans may bind custom subdomains');
+					expect(error.message).to.contain('failed to start tunnel');
+					expect(error.body.details.err).to.contain('Only paid plans may bind custom subdomains');
 				});
 
 			});

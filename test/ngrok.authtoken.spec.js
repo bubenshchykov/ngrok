@@ -1,8 +1,6 @@
 const ngrok = require('..');
 const http = require('http');
-const net = require('net');
-const request = require('request');
-const URL = require('url');
+const got = require('got');
 const uuid = require('uuid');
 const util = require('./util');
 
@@ -40,7 +38,7 @@ let tunnelUrl, respBody;
 
 		describe('connecting to ngrok with authtoken and subdomain', function () {
 			const uniqDomain = 'koko-' + uuid.v4();
-			
+
 			before(async () => {
 				tunnelUrl = await ngrok.connect({
 					port: port,
@@ -55,11 +53,8 @@ let tunnelUrl, respBody;
 
 			describe('calling local server through ngrok', function() {
 
-				before(function(done) {
-					request.get(tunnelUrl + '/ngrok-subdomain', function (err, resp, body) {
-						respBody = body;
-						done(err);
-					});
+				before(function() {
+					return got(tunnelUrl + '/ngrok-subdomain').text().then(body => respBody = body);
 				});
 
 				it('should return oki-doki too', function() {
@@ -67,6 +62,6 @@ let tunnelUrl, respBody;
 				});
 
 			});
-		});	
+		});
 	});
 });

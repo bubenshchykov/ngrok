@@ -1,10 +1,9 @@
-const request = require('request-promise-native');
+const { NgrokClient } = require('./client');
 const uuid = require('uuid');
 const {getProcess, killProcess, setAuthtoken, getVersion} = require('./process');
 
 let processUrl = null;
-let internalApi = null;
-let tunnels = {};
+let ngrokClient = null;
 
 async function connect (opts) {
   opts = defaults(opts);
@@ -14,7 +13,7 @@ async function connect (opts) {
   }
 
   processUrl = await getProcess(opts);
-  internalApi = request.defaults({baseUrl: processUrl});
+  ngrokClient = new NgrokClient(processUrl);
   return connectRetry(opts);
 }
 
@@ -37,19 +36,11 @@ function validate  (opts) {
 async function connectRetry (opts, retryCount = 0) {
   opts.name = String(opts.name || uuid.v4());
   try {
-    const response = await internalApi.post({url: 'api/tunnels', json: opts});
-    const publicUrl = response.public_url;
-    if (!publicUrl) {
-      throw new Error('failed to start tunnel');
-    }
-    tunnels[publicUrl] = response.uri;
-    if (opts.proto === 'http' && opts.bind_tls !== false) {
-      tunnels[publicUrl.replace('https', 'http')] = response.uri + ' (http)';
-    }
-    return publicUrl;
+    const response = await ngrokClient.startTunnel(opts);
+    return response.public_url;
   } catch (err) {
     if (!isRetriable(err) || retryCount >= 100) {
-      throw err.error || err.response;
+      throw(err);
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
     return connectRetry(opts, ++retryCount);
@@ -57,32 +48,35 @@ async function connectRetry (opts, retryCount = 0) {
  }
 
 function isRetriable (err) {
-  if (!err.response) return false;
-  const body = err.response.body;
-  const notReady500 = err.statusCode === 500 && /panic/.test(body)
-  const notReady502 = err.statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
-  const notReady503 = err.statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
+  if (!err.response){
+    return false;
+  }
+  const statusCode = err.response.statusCode
+  const body = err.body;
+  const notReady500 = statusCode === 500 && /panic/.test(body)
+  const notReady502 = statusCode === 502 && body.details && body.details.err === 'tunnel session not ready yet';
+  const notReady503 = statusCode === 503 && body.details && body.details.err === 'a successful ngrok tunnel session has not yet been established';
   return notReady500 || notReady502 || notReady503;
 }
 
 async function disconnect (publicUrl) {
-  if (!internalApi) return;
+  if (!ngrokClient) return;
+  const tunnels = (await ngrokClient.listTunnels()).tunnels;
   if (!publicUrl) {
-  	const disconnectAll = Object.keys(tunnels).map(disconnect);
+  	const disconnectAll = tunnels.map(tunnel => disconnect(tunnel.public_url) );
   	return Promise.all(disconnectAll);
   }
-  const tunnelUrl = tunnels[publicUrl];
-  if (!tunnelUrl) {
+  const tunnelDetails = tunnels.find(tunnel => tunnel.public_url === publicUrl);
+  if (!tunnelDetails) {
     throw new Error(`there is no tunnel with url: ${publicUrl}`)
   }
-  await internalApi.del(tunnelUrl)
-  delete tunnels[publicUrl];
+  return ngrokClient.stopTunnel(tunnelDetails.name);
 }
 
 async function kill ()  {
-  if (!internalApi) return;
+  if (!ngrokClient) return;
   await killProcess();
-  internalApi = null;
+  ngrokClient = null;
   tunnels = {}
 }
 
@@ -91,7 +85,7 @@ function getUrl() {
 }
 
 function getApi() {
-  return internalApi;
+  return ngrokClient;
 }
 
 module.exports = {

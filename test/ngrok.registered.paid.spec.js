@@ -1,8 +1,7 @@
-const colors = require('colors/safe');
 const ngrok = require('..');
 const http = require('http');
 const net = require('net');
-const request = require('request');
+const got = require('got');
 const URL = require('url');
 const uuid = require('uuid');
 const util = require('./util');
@@ -40,12 +39,9 @@ let tunnelUrl, respBody;
 		});
 
 		describe('calling local server directly', function() {
-			
-			before(function(done) {
-				request.get(localUrl + '/local', function (err, resp, body) {
-					respBody = body;
-					done(err);
-				});
+
+			before(function() {
+				return got(localUrl + '/local').text().then(body => respBody = body);
 			});
 
 			it('should return oki-doki', function() {
@@ -64,11 +60,8 @@ let tunnelUrl, respBody;
 
 				describe('calling local server through ngrok', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok', function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(function() {
+						return got(tunnelUrl + '/ngrok').text().then(body => respBody = body);
 					});
 
 					it('should return oki-doki too', function() {
@@ -79,13 +72,10 @@ let tunnelUrl, respBody;
 
 						before(async () => await ngrok.disconnect());
 
-						describe('calling local server through discconected ngrok', function() {
+						describe('calling local server through disconnected ngrok', function() {
 
-							before(function(done) {
-								request.get(tunnelUrl + '/ngrok', function (err, resp, body) {
-									respBody = body;
-									done(err);
-								});
+							before(function() {
+								return got(tunnelUrl + '/ngrok').text().then(body => respBody = body).catch(err => respBody = err.response.body);
 							});
 
 							it('should return error message', function() {
@@ -101,7 +91,7 @@ let tunnelUrl, respBody;
 
 			describe('connecting to ngrok with subdomain', function () {
 				const uniqDomain = 'koko-' + uuid.v4();
-				
+
 				before(async () => {
 					tunnelUrl = await ngrok.connect({
 						port: port,
@@ -115,11 +105,8 @@ let tunnelUrl, respBody;
 
 				describe('calling local server through ngrok', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok-subdomain', function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(function() {
+						return got(tunnelUrl + '/ngrok-subdomain').text().then(body => respBody = body);
 					});
 
 					it('should return oki-doki too', function() {
@@ -143,8 +130,8 @@ let tunnelUrl, respBody;
 					});
 
 					it('should return an error that the tunnel is already established', function () {
-						expect(error.msg).to.equal('failed to start tunnel');
-						expect(error.details.err).to.contain('is already bound to another tunnel session');
+						expect(error.message).to.equal('failed to start tunnel');
+						expect(error.body.details.err).to.contain('is already bound to another tunnel session');
 					});
 				});
 
@@ -167,7 +154,7 @@ let tunnelUrl, respBody;
 			});
 
 			describe('connecting to ngrok with auth', function () {
-				
+
 				before(async () => {
 					tunnelUrl = await ngrok.connect({
 						port: port,
@@ -181,11 +168,8 @@ let tunnelUrl, respBody;
 
 				describe('calling local server through ngrok without http authorization', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok-httpauth', function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(function() {
+						return got(tunnelUrl + '/ngrok-httpauth').text().then(body => respBody = body).catch(err => respBody = err.response.body);
 					});
 
 					it('should return error message', function() {
@@ -196,11 +180,8 @@ let tunnelUrl, respBody;
 
 				describe('calling local server through ngrok with http authorization', function() {
 
-					before(function(done) {
-						request.get(tunnelUrl + '/ngrok-httpauth', {auth: {user: 'oki', password: 'doki'}}, function (err, resp, body) {
-							respBody = body;
-							done(err);
-						});
+					before(function() {
+						return got(tunnelUrl + '/ngrok-httpauth', {username: 'oki', password: 'doki'}).text().then(body => respBody = body);
 					});
 
 					it('should return oki-doki too', function() {
@@ -214,7 +195,7 @@ let tunnelUrl, respBody;
 	});
 
 	describe('starting local tcp server', function () {
-			
+
 		let tcpServerPort;
 		before(function(done) {
 			const tcpServer = net.createServer(function(socket) {
@@ -246,7 +227,7 @@ let tunnelUrl, respBody;
 			describe('calling local tcp server through ngrok', function() {
 				let socketData;
 				let socket;
-				
+
 				before(function (done) {
 					net.connect(+tunnelUrlParts.port, tunnelUrlParts.hostname)
 						.once('data', function(data) {

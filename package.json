@@ -15,7 +15,8 @@
     "postinstall.js",
     "process.js",
     "bin/ngrok",
-    "ngrok.d.ts"
+    "ngrok.d.ts",
+    "client.js"
   ],
   "repository": {
     "type": "git",
@@ -41,16 +42,17 @@
   },
   "dependencies": {
     "@types/node": "^8.10.50",
-    "@types/request": "^2.48.2",
     "decompress-zip": "^0.3.2",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.7",
+    "got": "^11.5.1",
     "uuid": "^3.3.2"
   },
   "bin": {
     "ngrok": "./bin/ngrok"
   },
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=10.19.0"
+  },
+  "optionalDependencies": {
+    "hpagent": "^0.1.1"
   }
 }
