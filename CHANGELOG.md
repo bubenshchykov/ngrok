@@ -1,0 +1,25 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [4.0.0-beta.1] - 2020-01-17
+
+### Changed
+
+- Replaced the deprecated [request](https://www.npmjs.com/package/request) and [request-promise-native](https://www.npmjs.com/package/request-promise-native) with [got](https://www.npmjs.com/package/got)
+- `ngrok.getApi()` will now return an `NgrokClient` object which has methods to call on the available [ngrok API methods](https://ngrok.com/docs#client-api-base)
+- Revamped the exported types, there is now an `Ngrok` namespace under which most types now sit
+- Added types for the `NgrokClient` responses
+- Changed CI from Travis to GitHub Actions
+
+### Fixed
+
+- Passing a `name` option to `connect` now causes the module to read the ngrok config and retrieve a [named tunnel](https://ngrok.com/docs#tunnel-definitions) (fixes #197)
+
+## [3.4.0] - 2020-12-22
+
+Please see [commit logs](https://github.com/bubenshchykov/ngrok/commits/master) for updates prior to version 4.
