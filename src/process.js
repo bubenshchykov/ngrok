@@ -36,7 +36,7 @@ async function startProcess (opts) {
 	if (opts.configPath) start.push('--config=' + opts.configPath);
 	if (opts.binPath) dir = opts.binPath(dir);
 
-	const ngrok = spawn(bin, start, {cwd: dir});
+	const ngrok = spawn(bin, start, {cwd: dir, windowsHide: true});
 
 	let resolve, reject;
 	const apiUrl = new Promise((res, rej) => {
@@ -115,7 +115,7 @@ async function setAuthtoken (optsOrToken) {
 
 	let dir = defaultDir;
 	if (opts.binPath) dir = opts.binPath(dir)
-	const ngrok = spawn(bin, authtoken, {cwd: dir});
+	const ngrok = spawn(bin, authtoken, {cwd: dir, windowsHide: true});
 
 	const killed = new Promise((resolve, reject) => {
 		ngrok.stdout.once('data', () => resolve());
