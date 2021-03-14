@@ -137,7 +137,7 @@ async function setAuthtoken (optsOrToken) {
 async function getVersion(opts = {}) {
 	let dir = defaultDir;
 	if (opts.binPath) dir = opts.binPath(dir);
-	const { stdout } = await exec(`${bin} --version`, { cwd: dir });
+	const { stdout } = await exec(`${join(dir, bin)} --version`);
 	return stdout.replace('ngrok version', '').trim();
 }
 
