@@ -1,6 +1,6 @@
 {
   "name": "ngrok",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "types": "ngrok.d.ts",
@@ -48,7 +48,7 @@
     "uuid": "^3.3.2"
   },
   "bin": {
-    "ngrok": "./bin/ngrok"
+    "ngrok": "bin/ngrok"
   },
   "engines": {
     "node": ">=8.3.0"
