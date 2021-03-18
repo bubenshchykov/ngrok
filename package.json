@@ -1,6 +1,6 @@
 {
   "name": "ngrok",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.4",
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "types": "ngrok.d.ts",
@@ -49,7 +49,7 @@
     "yaml": "^1.10.0"
   },
   "bin": {
-    "ngrok": "./bin/ngrok"
+    "ngrok": "bin/ngrok"
   },
   "engines": {
     "node": ">=10.19.0"
