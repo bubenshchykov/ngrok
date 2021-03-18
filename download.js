@@ -136,7 +136,7 @@ function downloadNgrok(callback, options) {
 
   function extract(cb) {
     console.error('ngrok - unpacking binary');
-    const moduleBinPath = path.join(__dirname, '..', 'bin');
+    const moduleBinPath = path.join(__dirname, 'bin');
     new Zip(cacheUrl)
       .extract({ path: moduleBinPath })
       .once('error', error)

@@ -5,7 +5,7 @@ const platform = require('os').platform();
 const { join } = require("path");
 
 const defaultDir = join(__dirname, "..", 'bin');
-const bin = platform === 'win32' ? 'ngrok.exe' : './ngrok';
+const bin = platform === 'win32' ? 'ngrok.exe' : 'ngrok';
 const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
 const inUse = /address already in use/;
 
@@ -36,7 +36,7 @@ async function startProcess (opts) {
 	if (opts.configPath) start.push('--config=' + opts.configPath);
 	if (opts.binPath) dir = opts.binPath(dir);
 
-	const ngrok = spawn(bin, start, {cwd: dir});
+	const ngrok = spawn(join(dir, bin), start);
 
 	let resolve, reject;
 	const apiUrl = new Promise((res, rej) => {
@@ -115,7 +115,7 @@ async function setAuthtoken (optsOrToken) {
 
 	let dir = defaultDir;
 	if (opts.binPath) dir = opts.binPath(dir)
-	const ngrok = spawn(bin, authtoken, {cwd: dir});
+	const ngrok = spawn(join(dir, bin), authtoken);
 
 	const killed = new Promise((resolve, reject) => {
 		ngrok.stdout.once('data', () => resolve());
@@ -136,7 +136,7 @@ async function setAuthtoken (optsOrToken) {
 async function getVersion(opts = {}) {
 	let dir = defaultDir;
 	if (opts.binPath) dir = opts.binPath(dir);
-	const { stdout } = await exec(`${bin} --version`, { cwd: dir });
+	const { stdout } = await exec(`${join(dir, bin)} --version`);
 	return stdout.replace('ngrok version', '').trim();
 }
 
