@@ -1,66 +1,70 @@
-const { join } = require('path');
-const fs = require('fs');
-const child_process = require('child_process');
+const { join } = require("path");
+const fs = require("fs");
+const child_process = require("child_process");
 
-const postinstallPath = join(__dirname, '../postinstall.js');
-const ngrokPath = join(__dirname, 'fixtures', '.ngrok');
+const postinstallPath = join(__dirname, "../postinstall.js");
+const ngrokPath = join(__dirname, "fixtures", ".ngrok");
 fs.mkdirSync(ngrokPath, { recursive: true });
 const certpath = `${ngrokPath}/testCert.pem`;
 
-describe('postinstall', () => {
-	before(() => {
-		process.env.NGROK_ROOT_CA_PATH = certpath;
-		process.env.NGROK_IGNORE_CACHE = 'true';
-	});
+describe("postinstall", () => {
+  before(() => {
+    process.env.NGROK_ROOT_CA_PATH = certpath;
+    process.env.NGROK_IGNORE_CACHE = "true";
+  });
 
-	after(() => {
-		delete process.env.NGROK_IGNORE_CACHE
-		delete process.env.NGROK_ROOT_CA_PATH
-	});
+  after(() => {
+    delete process.env.NGROK_IGNORE_CACHE;
+    delete process.env.NGROK_ROOT_CA_PATH;
+  });
 
-	describe('with no certificate', () => {
-		before(() => {
-			clearNgrokDirectory();
-			writeJunkPemFile();
-		});
+  describe("with no certificate", () => {
+    before(() => {
+      clearNgrokDirectory();
+      writeJunkPemFile();
+    });
 
-		it('should run using a junk file without crashing', done => {
-			const postinstall = child_process.fork(postinstallPath, { stdio: 'ignore' });
-			postinstall.on('exit', code => done(code));
-		}).timeout(20000);
-	});
+    it("should run using a junk file without crashing", (done) => {
+      const postinstall = child_process.fork(postinstallPath, {
+        stdio: "ignore",
+      });
+      postinstall.on("exit", (code) => done(code));
+    }).timeout(20000);
+  });
 
-	describe('with VerisignCertificate', () => {
-		before(() => {
-			clearNgrokDirectory();
-			writeVerisignCertPemFile();
-		});
+  describe("with VerisignCertificate", () => {
+    before(() => {
+      clearNgrokDirectory();
+      writeVerisignCertPemFile();
+    });
 
-		it('should fail to run with an invalid certificate', done => {
-			const postinstall = child_process.fork(postinstallPath, { stdio: 'ignore' });
-			postinstall.on('exit', code => {
-				expect(code).to.equal(1);
-				done();
-			});
-		});
-	});
+    it("should fail to run with an invalid certificate", (done) => {
+      const postinstall = child_process.fork(postinstallPath, {
+        stdio: "ignore",
+      });
+      postinstall.on("exit", (code) => {
+        expect(code).to.equal(1);
+        done();
+      });
+    });
+  });
 
-	after(() => {
-		clearNgrokDirectory();
-	});
+  after(() => {
+    clearNgrokDirectory();
+  });
 });
 
 function clearNgrokDirectory() {
-	const files = fs.readdirSync(ngrokPath);
-	files.forEach(f => fs.unlinkSync(join(ngrokPath, f)));
+  const files = fs.readdirSync(ngrokPath);
+  files.forEach((f) => fs.unlinkSync(join(ngrokPath, f)));
 }
 
 function writeJunkPemFile() {
-	const pem = 'junk data';
-	fs.writeFileSync(certpath, pem, { flag: 'w' });
+  const pem = "junk data";
+  fs.writeFileSync(certpath, pem, { flag: "w" });
 }
 function writeVerisignCertPemFile() {
-	const pem = `-----BEGIN CERTIFICATE-----
+  const pem = `-----BEGIN CERTIFICATE-----
 MIIEuTCCA6GgAwIBAgIQQBrEZCGzEyEDDrvkEhrFHTANBgkqhkiG9w0BAQsFADCB
 vTELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDlZlcmlTaWduLCBJbmMuMR8wHQYDVQQL
 ExZWZXJpU2lnbiBUcnVzdCBOZXR3b3JrMTowOAYDVQQLEzEoYykgMjAwOCBWZXJp
@@ -89,5 +93,5 @@ lRQOfc2VNNnSj3BzgXucfr2YYdhFh5iQxeuGMMY1v/D/w1WIg0vvBZIGcfK4mJO3
 7M2CYfE45k+XmCpajQ==
 -----END CERTIFICATE-----
 `;
-	fs.writeFileSync(certpath, pem, { flag: 'w' });
+  fs.writeFileSync(certpath, pem, { flag: "w" });
 }

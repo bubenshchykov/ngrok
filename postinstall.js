@@ -1,12 +1,15 @@
-const os = require('os');
-const path = require('path');
-const fs = require('fs');
-const pkgName = require('./package.json').name;
+const os = require("os");
+const path = require("path");
+const fs = require("fs");
+const pkgName = require("./package.json").name;
 
-require('./download')(err => {
+require("./download")((err) => {
   // Fix default executable path on Windows Git Bash
-  if (!err && process.env.MSYSTEM && os.release().includes('10')) {
-    const exeFile = path.resolve(process.env.APPDATA, path.join('npm', pkgName));
+  if (!err && process.env.MSYSTEM && os.release().includes("10")) {
+    const exeFile = path.resolve(
+      process.env.APPDATA,
+      path.join("npm", pkgName)
+    );
 
     if (fs.existsSync(exeFile)) {
       const parsedContent = fs
