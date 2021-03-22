@@ -131,7 +131,7 @@ async function setAuthtoken (optsOrToken) {
 }
 
 /**
- * @param {INgrokOptions | undefined} opts
+ * @param {Ngrok.Options | undefined} opts
  */
 async function getVersion(opts = {}) {
 	let dir = defaultDir;
