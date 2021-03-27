@@ -56,7 +56,7 @@ npm install ngrok -g
 ngrok http 8080
 ```
 
-For global install on Linux, you might need to run ```sudo npm install --unsafe-perm -g ngrok``` due to the [nature](https://github.com/bubenshchykov/ngrok/issues/115#issuecomment-380927124) of npm postinstall script.
+For global install on Linux, you might need to run `sudo npm install --unsafe-perm -g ngrok` due to the [nature](https://github.com/bubenshchykov/ngrok/issues/115#issuecomment-380927124) of npm postinstall script.
 
 ### Auth Token
 You can create basic http-https-tcp tunnel without an [authtoken](https://ngrok.com/docs#authtoken). For custom subdomains and more you should obtain an authtoken by [signing up at ngrok.com](https://ngrok.com). Once you set the authtoken, it is stored in ngrok config and used for all tunnels. You can set the authtoken directly:

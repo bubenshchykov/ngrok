@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Moved the download.js file back to the top level, since it can be required indivually.
+- Moved the download.js file back to the top level, since it can be required individually.
 
 ## [4.0.0-beta.2] - 2020-01-17
 
