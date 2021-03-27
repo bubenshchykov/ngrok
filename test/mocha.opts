@@ -1,7 +1,0 @@
---require ./test/setup.js
---reporter spec
---ui bdd
---recursive
---colors
---timeout 10000
---slow 100
