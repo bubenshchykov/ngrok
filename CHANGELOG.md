@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2020-03-27
+
+### Breaking changes
+
+- Replaced the deprecated [request](https://www.npmjs.com/package/request) and [request-promise-native](https://www.npmjs.com/package/request-promise-native) with [got](https://www.npmjs.com/package/got)
+- `ngrok.getApi()` will now return an `NgrokClient` object which has methods to call on the available [ngrok API methods](https://ngrok.com/docs#client-api-base)
+- Revamped the exported types, there is now an `Ngrok` namespace under which most types now sit
+- Added types for the `NgrokClient` responses
+
+### Changed
+
+- Changed CI from Travis to GitHub Actions
+- Brought development dependencies up to date
+
+### Fixed
+
+- Passing a `name` option to `connect` now causes the module to read the ngrok config and retrieve a [named tunnel](https://ngrok.com/docs#tunnel-definitions) (fixes #197)
+
+
 ## [4.0.0-beta.4] - 2020-03-18
 
 ### Fixed
