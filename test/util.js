@@ -1,4 +1,4 @@
-const homedir = require("homedir");
+const { homedir } = require("os");
 const path = require("path");
 const fs = require("fs");
 

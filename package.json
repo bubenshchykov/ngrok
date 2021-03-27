@@ -38,7 +38,6 @@
   "devDependencies": {
     "chai": "^4.3.4",
     "colors": "^1.4.0",
-    "homedir": "^0.6.0",
     "mocha": "^8.3.2"
   },
   "dependencies": {
