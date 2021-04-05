@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.1] - 2020-04-05
+
+### Fixed
+
+- Trying to connect a new tunnel using a name would drop options like `binPath` as they were overwritten from the loaded config. [#220](https://github.com/bubenshchykov/ngrok/pull/220) changes the behaviour to merge passed options with the named tunnel options
+- Avoids showing a terminal window on Windows when spawning ([#211](https://github.com/bubenshchykov/ngrok/pull/211))
+
 ## [4.0.0] - 2020-03-27
 
 ### Breaking changes
