@@ -12,7 +12,9 @@ function defaults(opts) {
   if (opts.name) {
     const configPath = opts.configPath || defaultConfigPath();
     const config = parse(readFileSync(configPath, "utf8"));
-    opts = config["tunnels"][opts.name];
+    if (config.tunnels && config.tunnels[opts.name]) {
+      opts = Object.assign(opts, config.tunnels[opts.name]);
+    }
   }
   if (typeof opts === "function") opts = { proto: "http", addr: 80 };
   if (typeof opts !== "object") opts = { proto: "http", addr: opts };

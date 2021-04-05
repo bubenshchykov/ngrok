@@ -35,6 +35,8 @@ describe("utils", () => {
         addr: "3000",
         subdomain: "testtunnel",
         proto: "http",
+        configPath,
+        name: "test",
       });
     });
 
@@ -45,8 +47,34 @@ describe("utils", () => {
           name: "nope",
         })
       ).to.deep.equal({
+        configPath,
+        name: "nope",
         addr: 80,
         proto: "http",
+      });
+    });
+
+    it("doesn't override config functions when loading from config", () => {
+      const binPath = () => {};
+      const onLogEvent = () => {};
+      const onStatusChange = () => {};
+      expect(
+        defaults({
+          configPath,
+          name: "test",
+          binPath,
+          onLogEvent,
+          onStatusChange,
+        })
+      ).to.deep.equal({
+        configPath,
+        name: "test",
+        addr: "3000",
+        subdomain: "testtunnel",
+        proto: "http",
+        binPath,
+        onLogEvent,
+        onStatusChange,
       });
     });
 
