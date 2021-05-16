@@ -39,7 +39,7 @@ function downloadNgrok(callback, options) {
     const cdnFiles = {
       darwinia32: cdn + cdnPath + "darwin-386.zip",
       darwinx64: cdn + cdnPath + "darwin-amd64.zip",
-      darwinarm64: cdn + cdnPath + "darwin-amd64.zip",
+      darwinarm64: cdn + cdnPath + "darwin-arm64.zip",
       linuxarm: cdn + cdnPath + "linux-arm.zip",
       linuxarm64: cdn + cdnPath + "linux-arm64.zip",
       androidarm: cdn + cdnPath + "linux-arm.zip",
