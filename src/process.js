@@ -27,6 +27,18 @@ async function getProcess(opts) {
   }
 }
 
+function parseAddr(message) {
+  if (message[0] === "{") {
+    const parsed = JSON.parse(message);
+    return parsed.addr
+  } else {
+    const parsed = message.match(ready);
+    if (parsed) {
+      return parsed[1];
+    }
+  }
+}
+
 async function startProcess(opts) {
   let dir = defaultDir;
   const start = ["start", "--none", "--log=stdout"];
@@ -43,10 +55,9 @@ async function startProcess(opts) {
   });
 
   ngrok.stdout.on("data", (data) => {
-    const msg = data.toString();
-    const addr = msg.match(ready);
+    const msg = data.toString().trim();
     if (opts.onLogEvent) {
-      opts.onLogEvent(msg.trim());
+      opts.onLogEvent(msg);
     }
     if (opts.onStatusChange) {
       if (msg.match("client session established")) {
@@ -55,11 +66,16 @@ async function startProcess(opts) {
         opts.onStatusChange("closed");
       }
     }
-    if (addr) {
-      resolve(`http://${addr[1]}`);
-    } else if (msg.match(inUse)) {
-      reject(new Error(msg.substring(0, 10000)));
-    }
+
+    const msgs = msg.split(/\n/);
+    msgs.forEach(msg => {
+      const addr = parseAddr(msg);
+      if (addr) {
+        resolve(`http://${addr}`);
+      } else if (msg.match(inUse)) {
+        reject(new Error(msg.substring(0, 10000)));
+      }
+    })
   });
 
   ngrok.stderr.on("data", (data) => {
