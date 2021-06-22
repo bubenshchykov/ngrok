@@ -34,7 +34,6 @@ async function connectRetry(opts, retryCount = 0) {
       throw err;
     }
     // console.log("::::::  6  :::::::: try again")
-
     await new Promise((resolve) => setTimeout(resolve, 200));
     return connectRetry(opts, ++retryCount);
   }
