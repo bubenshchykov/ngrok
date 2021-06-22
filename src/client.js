@@ -29,7 +29,7 @@ class NgrokClient {
     } catch (error) {
       let clientError;
       try {
-        const response = JSON.parse(error.response.body);
+        const response = JSON.parse(error.response);
         clientError = new NgrokClientError(
           response.msg,
           error.response,
