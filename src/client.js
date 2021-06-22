@@ -13,7 +13,7 @@ class NgrokClient {
   constructor(processUrl) {
     this.internalApi = got.extend({
       prefixUrl: processUrl,
-      retry: 1,
+      retry: 3,
     });
   }
 
@@ -37,16 +37,6 @@ class NgrokClient {
           error.details,
           response
       );
-      // } catch (e) {
-      //   const response = e.response ? e.response.body ? JSON.parse(e.response.body) : e.response : e
-      //   console.log("Error:::::::: 2 ::::::: \n", e)
-      //   console.log("Error Response:::::: 2 ::::::: ", response)
-      //   clientError = new NgrokClientError(
-      //       e.msg,
-      //       e.response || e.details,
-      //       response
-      //   );
-      // }
       throw clientError;
     }
   }
@@ -57,9 +47,9 @@ class NgrokClient {
           (response) => response.statusCode === 204
       );
     } catch (e) {
+      // console.log("Error:::::::: 6 ::::::: ", e)
       const response = e.response ? e.response.body ? JSON.parse(e.response.body) : e.response : e
-      // console.log("Error:::::::: 4 ::::::: ", e)
-      // console.log("Error Response:::::: 4 ::::::: ", response)
+      // console.log("Error Response:::::: 6 ::::::: ", response)
       throw new NgrokClientError(e.msg, e.response, response);
     }
   }

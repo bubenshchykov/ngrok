@@ -30,7 +30,7 @@ async function connectRetry(opts, retryCount = 0) {
     return response.public_url;
   } catch (err) {
     // console.log("::::::  5  ::::::::",retryCount,isRetriable(err))
-    if (!isRetriable(err) || retryCount >= 0) {
+    if (!isRetriable(err) || retryCount >= 20) {
       throw err;
     }
     // console.log("::::::  6  :::::::: try again")

@@ -34,9 +34,7 @@ function validate(opts) {
 
 function isRetriable(err) {
   // console.log("::::::  3  ::::::::", err)
-  if (err.code === 'ECONNREFUSED' || err.body.code === 'ECONNREFUSED')
-    return false
-  const statusCode = err.response ? err.response.statusCode : err.body.status_code;
+  const statusCode = err.response ? err.response.statusCode : err.body? err.body.status_code : 0;
   const body = err.body;
   const notReady500 = statusCode === 500 && /panic/.test(body);
   const notReady502 =
