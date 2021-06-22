@@ -20,8 +20,6 @@ async function connect(opts) {
 
   processUrl = await getProcess(opts);
   ngrokClient = new NgrokClient(processUrl);
-  //TODO: This seems hacky, but it makes it not hang.
-  await new Promise((resolve) => setTimeout(resolve, 500));
   return connectRetry(opts);
 }
 
