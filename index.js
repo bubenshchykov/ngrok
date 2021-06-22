@@ -20,7 +20,7 @@ async function connect(opts) {
 
   processUrl = await getProcess(opts);
   ngrokClient = new NgrokClient(processUrl);
-  return connectRetry(opts);
+  return await connectRetry(opts);
 }
 
 async function connectRetry(opts, retryCount = 0) {
@@ -33,7 +33,7 @@ async function connectRetry(opts, retryCount = 0) {
       throw err;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
-    return connectRetry(opts, ++retryCount);
+    return await connectRetry(opts, ++retryCount);
   }
 }
 
