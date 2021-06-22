@@ -22,7 +22,7 @@ async function connect(opts) {
   ngrokClient = new NgrokClient(processUrl);
   //TODO: This seems hacky, but it makes it not hang.
   await new Promise((resolve) => setTimeout(resolve, 500));
-  return await connectRetry(opts);
+  return connectRetry(opts);
 }
 
 async function connectRetry(opts, retryCount = 0) {
@@ -35,7 +35,7 @@ async function connectRetry(opts, retryCount = 0) {
       throw err;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
-    return await connectRetry(opts, ++retryCount);
+    return connectRetry(opts, ++retryCount);
   }
 }
 
