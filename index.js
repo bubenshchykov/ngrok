@@ -29,9 +29,12 @@ async function connectRetry(opts, retryCount = 0) {
     const response = await ngrokClient.startTunnel(opts);
     return response.public_url;
   } catch (err) {
-    if (!isRetriable(err) || retryCount >= 100) {
+    // console.log("::::::  5  ::::::::",retryCount,isRetriable(err))
+    if (!isRetriable(err) || retryCount >= 0) {
       throw err;
     }
+    // console.log("::::::  6  :::::::: try again")
+
     await new Promise((resolve) => setTimeout(resolve, 200));
     return connectRetry(opts, ++retryCount);
   }
@@ -42,12 +45,12 @@ async function disconnect(publicUrl) {
   const tunnels = (await ngrokClient.listTunnels()).tunnels;
   if (!publicUrl) {
     const disconnectAll = tunnels.map((tunnel) =>
-      disconnect(tunnel.public_url)
+        disconnect(tunnel.public_url)
     );
     return Promise.all(disconnectAll);
   }
   const tunnelDetails = tunnels.find(
-    (tunnel) => tunnel.public_url === publicUrl
+      (tunnel) => tunnel.public_url === publicUrl
   );
   if (!tunnelDetails) {
     throw new Error(`there is no tunnel with url: ${publicUrl}`);

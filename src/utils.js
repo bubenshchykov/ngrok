@@ -27,27 +27,28 @@ function defaults(opts) {
 function validate(opts) {
   if (opts.web_addr === false || opts.web_addr === "false") {
     throw new Error(
-      "web_addr:false is not supported, module depends on internal ngrok api"
+        "web_addr:false is not supported, module depends on internal ngrok api"
     );
   }
 }
 
 function isRetriable(err) {
-  if (!err.response) {
-    return false;
-  }
-  const statusCode = err.response.statusCode;
+  // console.log("::::::  3  ::::::::", err)
+  if (err.code === 'ECONNREFUSED' || err.body.code === 'ECONNREFUSED')
+    return false
+  const statusCode = err.response ? err.response.statusCode : err.body.status_code;
   const body = err.body;
   const notReady500 = statusCode === 500 && /panic/.test(body);
   const notReady502 =
-    statusCode === 502 &&
-    body.details &&
-    body.details.err === "tunnel session not ready yet";
+      statusCode === 502 &&
+      body.details &&
+      body.details.err === "tunnel session not ready yet";
   const notReady503 =
-    statusCode === 503 &&
-    body.details &&
-    body.details.err ===
+      statusCode === 503 &&
+      body.details &&
+      body.details.err ===
       "a successful ngrok tunnel session has not yet been established";
+  // console.log("::::::  4  ::::::::error codes:", notReady500, notReady502, notReady503)
   return notReady500 || notReady502 || notReady503;
 }
 

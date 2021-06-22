@@ -13,7 +13,7 @@ class NgrokClient {
   constructor(processUrl) {
     this.internalApi = got.extend({
       prefixUrl: processUrl,
-      retry: 0,
+      retry: 1,
     });
   }
 
@@ -21,27 +21,32 @@ class NgrokClient {
     try {
       if (method === "get") {
         return await this.internalApi
-          .get(path, { searchParams: options })
-          .json();
+            .get(path, { searchParams: options })
+            .json();
       } else {
         return await this.internalApi[method](path, { json: options }).json();
       }
     } catch (error) {
       let clientError;
-      try {
-        const response = JSON.parse(error.response);
-        clientError = new NgrokClientError(
-          response.msg,
-          error.response,
+      // try {
+      const response = error.response ? error.response.body ? JSON.parse(error.response.body) : error.response : error
+      // console.log("Error:::::: 1 ::::: \n", error)
+      // console.log("Error Response::::::: 1 :::::: ", response)
+      clientError = new NgrokClientError(
+          error.msg,
+          error.details,
           response
-        );
-      } catch (e) {
-        clientError = new NgrokClientError(
-          error.response.body,
-          error.response,
-          error.response.body
-        );
-      }
+      );
+      // } catch (e) {
+      //   const response = e.response ? e.response.body ? JSON.parse(e.response.body) : e.response : e
+      //   console.log("Error:::::::: 2 ::::::: \n", e)
+      //   console.log("Error Response:::::: 2 ::::::: ", response)
+      //   clientError = new NgrokClientError(
+      //       e.msg,
+      //       e.response || e.details,
+      //       response
+      //   );
+      // }
       throw clientError;
     }
   }
@@ -49,11 +54,13 @@ class NgrokClient {
   async booleanRequest(method, path, options = {}) {
     try {
       return await this.internalApi[method](path, { json: options }).then(
-        (response) => response.statusCode === 204
+          (response) => response.statusCode === 204
       );
-    } catch (error) {
-      const response = JSON.parse(error.response.body);
-      throw new NgrokClientError(response.msg, error.response, response);
+    } catch (e) {
+      const response = e.response ? e.response.body ? JSON.parse(e.response.body) : e.response : e
+      // console.log("Error:::::::: 4 ::::::: ", e)
+      // console.log("Error Response:::::: 4 ::::::: ", response)
+      throw new NgrokClientError(e.msg, e.response, response);
     }
   }
 
