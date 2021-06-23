@@ -42,12 +42,12 @@ async function disconnect(publicUrl) {
   const tunnels = (await ngrokClient.listTunnels()).tunnels;
   if (!publicUrl) {
     const disconnectAll = tunnels.map((tunnel) =>
-        disconnect(tunnel.public_url)
+      disconnect(tunnel.public_url)
     );
     return Promise.all(disconnectAll);
   }
   const tunnelDetails = tunnels.find(
-      (tunnel) => tunnel.public_url === publicUrl
+    (tunnel) => tunnel.public_url === publicUrl
   );
   if (!tunnelDetails) {
     throw new Error(`there is no tunnel with url: ${publicUrl}`);
