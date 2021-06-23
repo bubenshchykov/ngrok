@@ -21,15 +21,15 @@ class NgrokClient {
     try {
       if (method === "get") {
         return await this.internalApi
-            .get(path, { searchParams: options })
-            .json();
+          .get(path, { searchParams: options })
+          .json();
       } else {
         return await this.internalApi[method](path, { json: options }).json();
       }
     } catch (error) {
       let clientError;
       // try {
-      const response = error.response ? error.response.body ? JSON.parse(error.response.body) : error.response : error
+      const response = error.response ? error.response.body ? JSON.parse(error.response.body) : error.response : error;
       clientError = new NgrokClientError(
           error.msg,
           error.details,
