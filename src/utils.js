@@ -33,7 +33,6 @@ function validate(opts) {
 }
 
 function isRetriable(err) {
-  // console.log("::::::  3  ::::::::", err)
   const statusCode = err.response ? err.response.statusCode : err.body? err.body.status_code : 0;
   const body = err.body;
   const notReady500 = statusCode === 500 && /panic/.test(body);
@@ -46,7 +45,6 @@ function isRetriable(err) {
       body.details &&
       body.details.err ===
       "a successful ngrok tunnel session has not yet been established";
-  // console.log("::::::  4  ::::::::error codes:", notReady500, notReady502, notReady503)
   return notReady500 || notReady502 || notReady503;
 }
 

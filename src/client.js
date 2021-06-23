@@ -30,8 +30,6 @@ class NgrokClient {
       let clientError;
       // try {
       const response = error.response ? error.response.body ? JSON.parse(error.response.body) : error.response : error
-      // console.log("Error:::::: 1 ::::: \n", error)
-      // console.log("Error Response::::::: 1 :::::: ", response)
       clientError = new NgrokClientError(
           error.msg,
           error.details,
@@ -47,9 +45,7 @@ class NgrokClient {
           (response) => response.statusCode === 204
       );
     } catch (e) {
-      // console.log("Error:::::::: 6 ::::::: ", e)
       const response = e.response ? e.response.body ? JSON.parse(e.response.body) : e.response : e
-      // console.log("Error Response:::::: 6 ::::::: ", response)
       throw new NgrokClientError(e.msg, e.response, response);
     }
   }
