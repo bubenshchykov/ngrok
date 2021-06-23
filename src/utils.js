@@ -27,7 +27,7 @@ function defaults(opts) {
 function validate(opts) {
   if (opts.web_addr === false || opts.web_addr === "false") {
     throw new Error(
-        "web_addr:false is not supported, module depends on internal ngrok api"
+      "web_addr:false is not supported, module depends on internal ngrok api"
     );
   }
 }
@@ -37,14 +37,14 @@ function isRetriable(err) {
   const body = err.body;
   const notReady500 = statusCode === 500 && /panic/.test(body);
   const notReady502 =
-      statusCode === 502 &&
-      body.details &&
-      body.details.err === "tunnel session not ready yet";
+    statusCode === 502 &&
+    body.details &&
+    body.details.err === "tunnel session not ready yet";
   const notReady503 =
-      statusCode === 503 &&
-      body.details &&
-      body.details.err ===
-      "a successful ngrok tunnel session has not yet been established";
+    statusCode === 503 &&
+    body.details &&
+    body.details.err ===
+    "a successful ngrok tunnel session has not yet been established";
   return notReady500 || notReady502 || notReady503;
 }
 
