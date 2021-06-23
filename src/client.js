@@ -41,7 +41,7 @@ class NgrokClient {
   async booleanRequest(method, path, options = {}) {
     try {
       return await this.internalApi[method](path, { json: options }).then(
-          (response) => response.statusCode === 204
+        (response) => response.statusCode === 204
       );
     } catch (e) {
       const response = e.response ? e.response.body ? JSON.parse(e.response.body) : e.response : e
