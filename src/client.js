@@ -30,9 +30,9 @@ class NgrokClient {
       let clientError;
       const response = error.response ? error.response.body ? JSON.parse(error.response.body) : error.response : error;
       clientError = new NgrokClientError(
-          error.msg || error.message,
-          error.details || error.stack,
-          response || error.response
+          error.msg,
+          error.details,
+          response
       );
       throw clientError;
     }
