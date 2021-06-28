@@ -13,7 +13,7 @@ class NgrokClient {
   constructor(processUrl) {
     this.internalApi = got.extend({
       prefixUrl: processUrl,
-      retry: 3,
+      retry: 0,
     });
   }
 
