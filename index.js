@@ -29,7 +29,7 @@ async function connectRetry(opts, retryCount = 0) {
     const response = await ngrokClient.startTunnel(opts);
     return response.public_url;
   } catch (err) {
-    if (!isRetriable(err) || retryCount >= 100) {
+    if (!isRetriable(err) || retryCount >= 20) {
       throw err;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
