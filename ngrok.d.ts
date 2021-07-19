@@ -60,7 +60,7 @@ declare module "ngrok" {
   export function getVersion(options?: Ngrok.Options): Promise<string>;
 
   namespace Ngrok {
-    type Protocol = "http" | "tcp" | "tls";
+    type Protocol = "https" | "http" | "tcp" | "tls";
     type Region = "us" | "eu" | "au" | "ap" | "sa" | "jp" | "in";
 
     interface Options {
