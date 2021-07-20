@@ -1,3 +1,5 @@
+import { Response } from "got";
+
 declare module "ngrok" {
   /**
    * Creates a ngrok tunnel.
@@ -215,6 +217,19 @@ declare module "ngrok" {
     replayRequest(id: string, tunnelName: string): Promise<boolean>;
     deleteAllRequests(): Promise<boolean>;
     requestDetail(id: string): Promise<Request>;
+  }
+
+  type ErrorBody = {
+    error_code: number;
+    status_code: number;
+    msg: string;
+    details: { [key: string]: string }
+  }
+
+  class NgrokClientError extends Error {
+    constructor(message: string, response: Response, body: ErrorBody | string);
+    get response(): Response;
+    get body(): ErrorBody | string;
   }
 }
 
