@@ -72,8 +72,6 @@ async function startProcess(opts) {
     activeProcess = null;
   });
 
-  process.on("exit", async () => await killProcess());
-
   try {
     const url = await apiUrl;
     activeProcess = ngrok;
@@ -91,12 +89,20 @@ async function startProcess(opts) {
 }
 
 function killProcess() {
-  if (!activeProcess) return;
+  if (!activeProcess) {
+    return Promise.resolve();
+  }
   return new Promise((resolve) => {
     activeProcess.on("exit", () => resolve());
     activeProcess.kill();
   });
 }
+
+process.on("exit", () => {
+  if (activeProcess) {
+    activeProcess.kill();
+  }
+});
 
 /**
  * @param {string | Ngrok.Options} optsOrToken
