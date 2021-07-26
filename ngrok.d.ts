@@ -216,7 +216,7 @@ declare module "ngrok" {
     ): Promise<Ngrok.RequestsResponse>;
     replayRequest(id: string, tunnelName: string): Promise<boolean>;
     deleteAllRequests(): Promise<boolean>;
-    requestDetail(id: string): Promise<Request>;
+    requestDetail(id: string): Promise<Ngrok.Request>;
   }
 
   type ErrorBody = {
