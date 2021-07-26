@@ -70,7 +70,7 @@ function downloadNgrok(callback, options) {
         fs.mkdirSync(dir);
       }
     } catch (err) {
-      dir = path.join(__dirname, "..", "bin");
+      dir = path.join(__dirname, "bin");
     }
     const name = Buffer.from(cdnUrl).toString("base64");
     return path.join(dir, name + ".zip");
