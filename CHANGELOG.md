@@ -6,14 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.0.1] - 2020-04-05
+## [4.1.0] - 2021-07-26
+
+### Changed
+
+- Exposes the `NgrokClientError` class
+
+### Fixed
+
+- Previously, if the ngrok log_format was set to JSON, `getProcess` would never resolve. This is fixed now. (#221)
+- If the home directory download location isn't usable, the backup directory was defined wrong and the download would fail. The directory is now fixed. (#237)
+- Avoids memory leaks caused by adding listeners to the `process` "exit" event over and over. (#240)
+
+## [4.0.1] - 2021-04-05
 
 ### Fixed
 
 - Trying to connect a new tunnel using a name would drop options like `binPath` as they were overwritten from the loaded config. [#220](https://github.com/bubenshchykov/ngrok/pull/220) changes the behaviour to merge passed options with the named tunnel options
 - Avoids showing a terminal window on Windows when spawning ([#211](https://github.com/bubenshchykov/ngrok/pull/211))
 
-## [4.0.0] - 2020-03-27
+## [4.0.0] - 2021-03-27
 
 ### Breaking changes
 
@@ -32,25 +44,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Passing a `name` option to `connect` now causes the module to read the ngrok config and retrieve a [named tunnel](https://ngrok.com/docs#tunnel-definitions) (fixes #197)
 
 
-## [4.0.0-beta.4] - 2020-03-18
+## [4.0.0-beta.4] - 2021-03-18
 
 ### Fixed
 
 - Really fixed the location of the downloaded binary
 
-## [4.0.0-beta.3] - 2020-01-17
+## [4.0.0-beta.3] - 2021-01-17
 
 ### Fixed
 
 - Moved the download.js file back to the top level, since it can be required individually.
 
-## [4.0.0-beta.2] - 2020-01-17
+## [4.0.0-beta.2] - 2021-01-17
 
 ### Fixed
 
 - Corrected the file listing in package.json
 
-## [4.0.0-beta.1] - 2020-01-17
+## [4.0.0-beta.1] - 2021-01-17
 
 ### Changed
 
