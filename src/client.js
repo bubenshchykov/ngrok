@@ -96,4 +96,4 @@ class NgrokClient {
   }
 }
 
-module.exports = { NgrokClient };
+module.exports = { NgrokClient,  NgrokClientError };

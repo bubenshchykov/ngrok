@@ -1,4 +1,4 @@
-const { NgrokClient } = require("./src/client");
+const { NgrokClient, NgrokClientError } = require("./src/client");
 const uuid = require("uuid");
 const {
   getProcess,
@@ -78,4 +78,5 @@ module.exports = {
   getUrl,
   getApi,
   getVersion,
+  NgrokClientError
 };
