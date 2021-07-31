@@ -54,6 +54,6 @@
     "node": ">=10.19.0"
   },
   "optionalDependencies": {
-    "hpagent": "^0.1.1"
+    "hpagent": "^0.1.2"
   }
 }
