@@ -86,6 +86,9 @@ async function startProcess(opts) {
   ngrok.on("exit", () => {
     processPromise = null;
     activeProcess = null;
+    if (opts.onTerminated) {
+      opts.onTerminated();
+    }
   });
 
   try {

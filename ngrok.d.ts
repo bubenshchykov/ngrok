@@ -132,6 +132,11 @@ declare module "ngrok" {
        * When connection is lost, ngrok will keep trying to reconnect.
        */
       onStatusChange?: (status: "connected" | "closed") => any;
+
+       /**
+       * Callback called when ngrok host process is terminated.
+       */
+      onTerminated?: () => any;
     }
 
     interface Metrics {
