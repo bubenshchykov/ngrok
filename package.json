@@ -3,6 +3,10 @@
   "version": "4.2.0",
   "description": "node wrapper for ngrok",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./download": "./download.js"
+  },
   "types": "ngrok.d.ts",
   "scripts": {
     "test": "mocha --exit",
@@ -12,6 +16,7 @@
   "files": [
     "bin/ngrok",
     "download.js",
+    "download.d.ts",
     "index.js",
     "ngrok.d.ts",
     "postinstall.js",
