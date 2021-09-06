@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.0] - 2021-09-06
+
+### Changed
+
+- Added `onTerminated` callback to notify users when the underlying ngrok 
+  process terminates
+
+### Fixed
+
+- TypeScript definition for the download function
+
 ## [4.1.0] - 2021-07-26
 
 ### Changed
