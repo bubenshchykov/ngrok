@@ -58,6 +58,7 @@ describe("utils", () => {
       const binPath = () => {};
       const onLogEvent = () => {};
       const onStatusChange = () => {};
+      const onTerminated = () => {};
       expect(
         defaults({
           configPath,
@@ -65,6 +66,7 @@ describe("utils", () => {
           binPath,
           onLogEvent,
           onStatusChange,
+          onTerminated,
         })
       ).to.deep.equal({
         configPath,
@@ -75,6 +77,7 @@ describe("utils", () => {
         binPath,
         onLogEvent,
         onStatusChange,
+        onTerminated,
       });
     });
 

@@ -132,6 +132,11 @@ declare module "ngrok" {
        * When connection is lost, ngrok will keep trying to reconnect.
        */
       onStatusChange?: (status: "connected" | "closed") => any;
+
+       /**
+       * Callback called when ngrok host process is terminated.
+       */
+      onTerminated?: () => any;
     }
 
     interface Metrics {
@@ -231,18 +236,4 @@ declare module "ngrok" {
     get response(): Response;
     get body(): ErrorBody | string;
   }
-}
-
-declare module "ngrok/download" {
-  function downloadNgrok(
-    callback: (err?: Error) => void,
-    options?: {
-      cafilePath: string;
-      arch: string;
-      cdnUrl: string;
-      cdnPath: string;
-      ignoreCache: boolean;
-    }
-  ): void;
-  export = downloadNgrok;
 }
