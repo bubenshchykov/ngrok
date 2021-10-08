@@ -1,3 +1,5 @@
+import { Response } from "got";
+
 declare module "ngrok" {
   /**
    * Creates a ngrok tunnel.
@@ -60,7 +62,8 @@ declare module "ngrok" {
   export function getVersion(options?: Ngrok.Options): Promise<string>;
 
   namespace Ngrok {
-    type Protocol = "https" | "http" | "tcp" | "tls";
+    type Protocol = "http" | "tcp" | "tls";
+    type TunnelProtocol = "https" | "http" | "tcp" | "tls";
     type Region = "us" | "eu" | "au" | "ap" | "sa" | "jp" | "in";
 
     interface Options {
@@ -130,6 +133,11 @@ declare module "ngrok" {
        * When connection is lost, ngrok will keep trying to reconnect.
        */
       onStatusChange?: (status: "connected" | "closed") => any;
+
+       /**
+       * Callback called when ngrok host process is terminated.
+       */
+      onTerminated?: () => any;
     }
 
     interface Metrics {
@@ -153,7 +161,7 @@ declare module "ngrok" {
       name: string;
       uri: string;
       public_url: string;
-      proto: Ngrok.Protocol;
+      proto: Ngrok.TunnelProtocol;
       metrics: {
         conns: Connections;
         http: HTTPRequests;
@@ -214,20 +222,19 @@ declare module "ngrok" {
     ): Promise<Ngrok.RequestsResponse>;
     replayRequest(id: string, tunnelName: string): Promise<boolean>;
     deleteAllRequests(): Promise<boolean>;
-    requestDetail(id: string): Promise<Request>;
+    requestDetail(id: string): Promise<Ngrok.Request>;
   }
-}
 
-declare module "ngrok/download" {
-  function downloadNgrok(
-    callback: (err?: Error) => void,
-    options?: {
-      cafilePath: string;
-      arch: string;
-      cdnUrl: string;
-      cdnPath: string;
-      ignoreCache: boolean;
-    }
-  ): void;
-  export = downloadNgrok;
+  type ErrorBody = {
+    error_code: number;
+    status_code: number;
+    msg: string;
+    details: { [key: string]: string }
+  }
+
+  class NgrokClientError extends Error {
+    constructor(message: string, response: Response, body: ErrorBody | string);
+    get response(): Response;
+    get body(): ErrorBody | string;
+  }
 }
