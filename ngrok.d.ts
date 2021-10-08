@@ -63,6 +63,7 @@ declare module "ngrok" {
 
   namespace Ngrok {
     type Protocol = "http" | "tcp" | "tls";
+    type TunnelProtocol = "https" | "http" | "tcp" | "tls";
     type Region = "us" | "eu" | "au" | "ap" | "sa" | "jp" | "in";
 
     interface Options {
@@ -160,7 +161,7 @@ declare module "ngrok" {
       name: string;
       uri: string;
       public_url: string;
-      proto: Ngrok.Protocol;
+      proto: Ngrok.TunnelProtocol;
       metrics: {
         conns: Connections;
         http: HTTPRequests;
