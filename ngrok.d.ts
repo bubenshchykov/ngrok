@@ -1,5 +1,3 @@
-import { Response } from "got";
-
 declare module "ngrok" {
   /**
    * Creates a ngrok tunnel.
