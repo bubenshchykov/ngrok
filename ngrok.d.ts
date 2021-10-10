@@ -62,7 +62,10 @@ declare module "ngrok" {
   export function getVersion(options?: Ngrok.Options): Promise<string>;
 
   namespace Ngrok {
+    // This is a protocol that you can select when starting a tunnel.
     type Protocol = "http" | "tcp" | "tls";
+    // Choosing http will start a tunnel on both http and https. So when the 
+    // tunnels are returned from the API, "https" is a possibility too.
     type TunnelProtocol = "https" | "http" | "tcp" | "tls";
     type Region = "us" | "eu" | "au" | "ap" | "sa" | "jp" | "in";
 
