@@ -39,7 +39,7 @@ declare module "ngrok" {
   /**
    * Gets the ngrok client API.
    */
-  export function getApi(): NgrokClient | null;
+  export function getApi(): NgrokClient | Promise<NgrokClient> | null;
 
   /**
    * You can create basic http-https-tcp tunnel without authtoken.
