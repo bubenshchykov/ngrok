@@ -2,6 +2,7 @@ const { NgrokClient, NgrokClientError } = require("./src/client");
 const uuid = require("uuid");
 const {
   getProcess,
+  getProcessUrl,
   killProcess,
   setAuthtoken,
   getVersion,
@@ -66,8 +67,13 @@ function getUrl() {
   return processUrl;
 }
 
-function getApi() {
-  return ngrokClient;
+async function getApi() {
+  if (ngrokClient) {
+    return ngrokClient;
+  }
+
+  const ngrokProcessUrl = await getProcessUrl();
+  return new NgrokClient(`http://${ngrokProcessUrl}:4040/`);
 }
 
 module.exports = {
@@ -78,5 +84,6 @@ module.exports = {
   getUrl,
   getApi,
   getVersion,
+  NgrokClient,
   NgrokClientError
 };
