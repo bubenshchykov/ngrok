@@ -27,6 +27,10 @@ async function getProcess(opts) {
   }
 }
 
+/*
+  In order to get the local process URL where ngrok is running, first check the platform, 
+  then spawn a child process to gather the URL and clean the output if necessary
+*/
 async function getProcessUrl(port = 4040) {
   return new Promise((resolve, reject) => {
 
