@@ -27,6 +27,45 @@ async function getProcess(opts) {
   }
 }
 
+async function getProcessUrl(port = 4040) {
+  return new Promise((resolve, reject) => {
+
+    try {
+
+      const child = platform === 'win32'
+        ? spawn(`(Get-NetTCPConnection -LocalPort ${port}).LocalAddress`, { shell: 'powershell.exe' })
+        : spawn('sh', ['-c', `lsof -n -i :${port} | grep LISTEN`])
+
+      let output;
+
+      child.stdout.on('data', (data) => {
+          output = data.toString();
+        });
+          
+      child.stderr.on('error', (data) => {
+          reject(data);
+      });
+      
+      child.once('exit', () => {
+
+        platform === 'win32'
+          ? resolve(output)
+          : output = output.split(' ').filter(String);
+
+          if (output[0] === 'ngrok') {
+            resolve(output[8].split(':')[0]);
+          }
+
+          resolve();
+      });
+
+    } catch (err) {
+        reject(err);
+    }
+
+  })
+}
+
 function parseAddr(message) {
   if (message[0] === "{") {
     const parsed = JSON.parse(message);
@@ -162,6 +201,7 @@ async function getVersion(opts = {}) {
 
 module.exports = {
   getProcess,
+  getProcessUrl,
   killProcess,
   setAuthtoken,
   getVersion,
