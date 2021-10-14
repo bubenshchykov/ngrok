@@ -78,5 +78,6 @@ module.exports = {
   getUrl,
   getApi,
   getVersion,
+  NgrokClient,
   NgrokClientError
 };
