@@ -73,7 +73,8 @@ async function getApi() {
   }
 
   const ngrokProcessUrl = await getProcessUrl();
-  return new NgrokClient(`http://${ngrokProcessUrl}:4040/`);
+
+  return ngrokProcessUrl ? new NgrokClient(`http://${ngrokProcessUrl}:4040/`) : null;
 }
 
 module.exports = {
