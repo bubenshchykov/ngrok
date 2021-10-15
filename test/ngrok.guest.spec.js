@@ -3,6 +3,7 @@ const http = require("http");
 const got = require("got");
 const uuid = require("uuid");
 const util = require("./util");
+const { expect } = require("chai");
 
 const port = 8080;
 const localUrl = "http://127.0.0.1:" + port;
@@ -75,9 +76,12 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
 
         describe("getting internal api wrapper", () => {
           let api;
-          before(() => (api = ngrok.getApi()));
+          before(async () => api = await ngrok.getApi());
           it("should give you ngrok api", () => {
             expect(api).to.be.ok;
+          });
+          it("should be an instance of NgrokClient", async () => {
+            expect(api).to.be.instanceOf(ngrok.NgrokClient);
           });
         });
 
