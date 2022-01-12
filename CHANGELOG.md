@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- ngrok now returns an information and login page when you try to request an HTML site with a guest account, which broke the tests. Fixed the broken test and added one to specifically test the behaviour.
+
 ## [4.2.2] - 2021-09-06
 
 ### Fixed
@@ -23,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Added `onTerminated` callback to notify users when the underlying ngrok 
+- Added `onTerminated` callback to notify users when the underlying ngrok
   process terminates
 
 ### Fixed

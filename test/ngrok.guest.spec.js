@@ -20,6 +20,7 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
     before(function (done) {
       server = http
         .createServer(function (req, res) {
+          res.setHeader("Content-Type", "text/plain");
           res.writeHead(200);
           res.end("oki-doki: " + req.url);
         })
@@ -195,6 +196,62 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
 
     after(async () => {
       await ngrok.kill();
+    });
+  });
+
+  describe("starting local server that returns html", function () {
+    let server;
+
+    before(function (done) {
+      server = http
+        .createServer(function (req, res) {
+          res.setHeader("Content-Type", "text/html");
+          res.writeHead(200);
+          res.end("<p>oki-doki: " + req.url + "</p>");
+        })
+        .listen(port, done);
+    });
+
+    after(function (done) {
+      server.close(done.bind(null, null));
+    });
+
+    describe("calling local server directly", function () {
+      before(function () {
+        return got(localUrl + "/local")
+          .text()
+          .then((body) => (respBody = body));
+      });
+
+      it("should return oki-doki", function () {
+        expect(respBody).to.equal("<p>oki-doki: /local</p>");
+      });
+
+      describe("connecting to ngrok with port specified", function () {
+        before(async function () {
+          tunnelUrl = await ngrok.connect(port);
+        });
+
+        after(async function () {
+          await ngrok.kill();
+        });
+
+        it("should return url pointing to ngrok domain", function () {
+          expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
+        });
+
+        describe("calling local server through ngrok", function () {
+          before(function () {
+            return got(tunnelUrl + "/ngrok")
+              .text()
+              .then((body) => (respBody = body));
+          });
+
+          it("should return an ngrok message to sign up", function () {
+            expect(respBody).to.match(/Sign up for an ngrok account/);
+          });
+        });
+      });
     });
   });
 });

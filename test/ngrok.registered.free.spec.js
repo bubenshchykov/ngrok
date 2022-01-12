@@ -109,7 +109,7 @@ describe("registered.free.spec.js - setting free authtoken", function () {
           });
 
           it("should return error message", function () {
-            expect(respBody).to.contain("Authorization Failed");
+            expect(respBody).to.contain("401 Unauthorized");
           });
         });
 
