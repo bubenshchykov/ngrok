@@ -11,7 +11,7 @@ function downloadNgrok(callback, options) {
   const fs = require("fs");
   const path = require("path");
   const readline = require("readline");
-  const Zip = require("decompress-zip");
+  const extract_zip = require('extract-zip');
   const got = require("got");
 
   const cafilePath = options.cafilePath || process.env.NGROK_ROOT_CA_PATH;
@@ -148,10 +148,8 @@ function downloadNgrok(callback, options) {
   function extract(cb) {
     console.error("ngrok - unpacking binary");
     const moduleBinPath = path.join(__dirname, "bin");
-    new Zip(cacheUrl)
-      .extract({ path: moduleBinPath })
-      .once("error", error)
-      .once("extract", () => {
+    extract_zip(cacheUrl, { dir: moduleBinPath})
+      .then(() => {
         const suffix = os.platform() === "win32" ? ".exe" : "";
         if (suffix === ".exe") {
           fs.writeFileSync(path.join(moduleBinPath, "ngrok.cmd"), "ngrok.exe");
@@ -163,12 +161,11 @@ function downloadNgrok(callback, options) {
         }
         console.log("ngrok - binary unpacked to " + target);
         cb(null);
+      })
+      .catch((e) => {
+        console.error("ngrok - error unpacking binary", e);
+        cb(e);
       });
-
-    function error(e) {
-      console.error("ngrok - error unpacking binary", e);
-      cb(e);
-    }
   }
 
   function retry(err) {
