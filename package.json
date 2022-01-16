@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@types/node": "^8.10.50",
-    "decompress-zip": "^0.3.2",
+    "extract-zip": "^2.0.1",
     "got": "^11.5.1",
     "uuid": "^7.0.0 || ^8.0.0",
     "yaml": "^1.10.0"
