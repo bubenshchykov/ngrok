@@ -6,9 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+...
+
+## [4.3.0] - 2022-01-17
+
 ### Fixed
 
 - ngrok now returns an information and login page when you try to request an HTML site with a guest account, which broke the tests. Fixed the broken test and added one to specifically test the behaviour.
+- Switched from decompress-zip to extract-zip to support Node 17
+- Updated version of uuid to avoid install warnings
 
 ## [4.2.2] - 2021-09-06
 
