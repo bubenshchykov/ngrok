@@ -178,7 +178,7 @@ let tunnelUrl, respBody;
             });
 
             it("should return error message", function () {
-              expect(respBody).to.contain("Authorization Failed");
+              expect(respBody).to.contain("401 Unauthorized");
             });
           });
 
