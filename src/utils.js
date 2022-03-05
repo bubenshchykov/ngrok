@@ -2,13 +2,14 @@ const { homedir } = require("os");
 const { join } = require("path");
 const { parse } = require("yaml");
 const { readFileSync } = require("fs");
+const cloneDeep = require("lodash.clonedeep");
 
 function defaultConfigPath() {
   return join(homedir(), ".ngrok2", "ngrok.yml");
 }
 
 function defaults(opts) {
-  opts = opts || { proto: "http", addr: 80 };
+  opts = cloneDeep(opts) || { proto: "http", addr: 80 };
   if (opts.name) {
     const configPath = opts.configPath || defaultConfigPath();
     const config = parse(readFileSync(configPath, "utf8"));

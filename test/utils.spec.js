@@ -25,6 +25,16 @@ describe("utils", () => {
       });
     });
 
+    it("returns a copy of the argument", () => {
+      const opts = { addr: 8080, proto: "http" };
+      const result = defaults(opts);
+      // Expects that the contents of the result are the same as the original
+      // object
+      expect(result).to.eql(opts);
+      // Expects that the two objects are different, because result is a copy
+      expect(result).not.to.equal(opts);
+    });
+
     it("loads the config from the config file if a name is passed", () => {
       expect(
         defaults({
@@ -140,8 +150,7 @@ describe("utils", () => {
         },
         body: {
           details: {
-            err:
-              "a successful ngrok tunnel session has not yet been established",
+            err: "a successful ngrok tunnel session has not yet been established",
           },
         },
       };
@@ -160,8 +169,7 @@ describe("utils", () => {
         },
         body: {
           details: {
-            err:
-              "a successful ngrok tunnel session has not yet been established",
+            err: "a successful ngrok tunnel session has not yet been established",
           },
         },
       };
