@@ -1,4 +1,4 @@
-const colors = require("colors/safe");
+const chalk = require("chalk");
 const env = process.env;
 
 // travis master branch sets NGROK_FORCE_TOKENS=true and forces tokens to be present
@@ -12,7 +12,7 @@ if (
 
 if (!env.NGROK_AUTHTOKEN_FREE)
   console.log(
-    colors.yellow(
+    chalk.yellow(
       `Warning: No process.env.NGROK_AUTHTOKEN_FREE found, falling back to shared authtoken.
 Tests may blink if people use it simulatenously.
 For stable test suite, signup at ngrok.com (free) and put your token here.`
@@ -21,7 +21,7 @@ For stable test suite, signup at ngrok.com (free) and put your token here.`
 
 if (!env.NGROK_AUTHTOKEN_PAID)
   console.log(
-    colors.magenta(
+    chalk.magenta(
       "Warning: no process.env.NGROK_AUTHTOKEN_PAID found, skipping related specs"
     )
   );
