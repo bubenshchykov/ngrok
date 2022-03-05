@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.3.1] - 2022-03-05
+
+### Fixed
+
+- Connect options were being mutated, clones them instead (#268)
+
+### Changed
+
+- Dropped dependency on colors for chalk (#265)
+- Updated test for information page
+
 ## [4.3.0] - 2022-01-17
 
 ### Fixed
