@@ -248,7 +248,7 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
           });
 
           it("should return an ngrok message to sign up", function () {
-            expect(respBody).to.match(/Sign up for an ngrok account/);
+            expect(respBody).to.match(/sign up/i);
           });
         });
       });
