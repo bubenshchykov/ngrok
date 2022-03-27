@@ -1,11 +1,9 @@
 const { NgrokClient, NgrokClientError } = require("./src/client");
 const uuid = require("uuid");
-const {
-  getProcess,
-  killProcess,
-  setAuthtoken,
-  getVersion,
-} = require("./src/process");
+const { getProcess, killProcess } = require("./src/process");
+const { getVersion } = require("./src/version");
+const { setAuthtoken } = require("./src/authtoken");
+
 const { defaults, validate, isRetriable } = require("./src/utils");
 
 let processUrl = null;
@@ -78,5 +76,5 @@ module.exports = {
   getApi,
   getVersion,
   NgrokClient,
-  NgrokClientError
+  NgrokClientError,
 };
