@@ -3,6 +3,7 @@ const uuid = require("uuid");
 const { getProcess, killProcess } = require("./src/process");
 const { getVersion } = require("./src/version");
 const { setAuthtoken } = require("./src/authtoken");
+const { upgradeConfig } = require("./src/config");
 
 const { defaults, validate, isRetriable } = require("./src/utils");
 
@@ -71,6 +72,7 @@ module.exports = {
   connect,
   disconnect,
   authtoken: setAuthtoken,
+  upgradeConfig,
   kill,
   getUrl,
   getApi,

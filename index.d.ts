@@ -61,10 +61,19 @@ declare module "ngrok" {
    */
   export function getVersion(options?: Ngrok.Options): Promise<string>;
 
+  /**
+   *
+   */
+  export function upgradeConfig(options?: {
+    relocate?: boolean;
+    configPath?: string;
+    binPath?: (defaultPath: string) => string;
+  }): Promise<void>;
+
   namespace Ngrok {
     // This is a protocol that you can select when starting a tunnel.
     type Protocol = "http" | "tcp" | "tls";
-    // Choosing http will start a tunnel on both http and https. So when the 
+    // Choosing http will start a tunnel on both http and https. So when the
     // tunnels are returned from the API, "https" is a possibility too.
     type TunnelProtocol = "https" | "http" | "tcp" | "tls";
     type Region = "us" | "eu" | "au" | "ap" | "sa" | "jp" | "in";
@@ -137,7 +146,7 @@ declare module "ngrok" {
        */
       onStatusChange?: (status: "connected" | "closed") => any;
 
-       /**
+      /**
        * Callback called when ngrok host process is terminated.
        */
       onTerminated?: () => any;
@@ -232,8 +241,8 @@ declare module "ngrok" {
     error_code: number;
     status_code: number;
     msg: string;
-    details: { [key: string]: string }
-  }
+    details: { [key: string]: string };
+  };
 
   class NgrokClientError extends Error {
     constructor(message: string, response: Response, body: ErrorBody | string);
