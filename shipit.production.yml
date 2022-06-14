@@ -1,0 +1,10 @@
+ci:
+  require: []
+
+dependencies:
+  override:
+    - npm install
+
+deploy:
+  override:
+    - npm run changeset publish
