@@ -59,7 +59,6 @@ async function kill() {
   if (!ngrokClient) return;
   await killProcess();
   ngrokClient = null;
-  tunnels = {};
 }
 
 function getUrl() {
