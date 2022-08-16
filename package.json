@@ -7,7 +7,7 @@
     ".": "./index.js",
     "./download": "./download.js"
   },
-  "types": "ngrok.d.ts",
+  "types": "index.d.ts",
   "scripts": {
     "test": "mocha --exit",
     "postinstall": "node ./postinstall.js",
