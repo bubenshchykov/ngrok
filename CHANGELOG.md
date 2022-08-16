@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.3.2] - 2022-08-16
+
+### Fixed
+
+- Removes an unused variable that was causing trouble in strict mode (#280)
+- Sets correct binary for darwin-arm architecture (#223)
+- Moves TypeScript definition file so it works with latest module resolution (#292)
+
+### Changed
+
+- Updates `got` dependency to 11.8.5
+
+
 ## [4.3.1] - 2022-03-05
 
 ### Fixed
