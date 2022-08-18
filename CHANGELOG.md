@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.3.3] - 2022-08-18
+
+### Fixed
+
+- Removed old ngrok.d.ts from package.json files and added index.d.ts
+
 ## [4.3.2] - 2022-08-16
 
 ### Fixed
