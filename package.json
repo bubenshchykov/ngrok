@@ -19,7 +19,6 @@
     "download.d.ts",
     "index.js",
     "index.d.ts",
-    "ngrok.d.ts",
     "postinstall.js",
     "src/client.js",
     "src/process.js",
