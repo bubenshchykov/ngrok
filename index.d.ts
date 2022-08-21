@@ -56,6 +56,12 @@ declare module "ngrok" {
   export function authtoken(token: string | Ngrok.Options): Promise<void>;
 
   /**
+   * Returns the default location of the config file, ngrok.yml
+   * Based on the docs here: https://ngrok.com/docs/ngrok-agent/config#config-ngrok-location
+   */
+  export function defaultConfigPath(): string;
+
+  /**
    *
    * Gets the version of the ngrok binary.
    */
@@ -70,7 +76,7 @@ declare module "ngrok" {
     binPath?: (defaultPath: string) => string;
   }): Promise<void>;
 
-  namespace Ngrok {
+  export namespace Ngrok {
     // This is a protocol that you can select when starting a tunnel.
     type Protocol = "http" | "tcp" | "tls";
     // Choosing http will start a tunnel on both http and https. So when the

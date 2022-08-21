@@ -36,8 +36,9 @@ function parseAddr(message) {
 async function startProcess(opts) {
   let dir = defaultDir;
   const start = ["start", "--none", "--log=stdout"];
-  if (opts.region) start.push("--region=" + opts.region);
-  if (opts.configPath) start.push("--config=" + opts.configPath);
+  if (opts.authtoken) start.push(`--authtoken=${opts.authtoken}`);
+  if (opts.region) start.push(`--region=${opts.region}`);
+  if (opts.configPath) start.push(`--config=${opts.configPath}`);
   if (opts.binPath) dir = opts.binPath(dir);
 
   const ngrok = spawn(join(dir, bin), start, { windowsHide: true });

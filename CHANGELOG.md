@@ -6,7 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Changed
+
+Updates to ngrok binary version 3. This is a breaking change.
+
+- **[breaking]** download.js now uses URLs that download ngrok version 3
+- **[breaking]** To set basic auth on a tunnel, use the option `basic_auth` instead of `auth` or `httpauth`
+- **[breaking]** The ngrok client API now fails if you send arguments that aren't part of the [available configuration](https://ngrok.com/docs/ngrok-agent/config#config-ngrok-tunnel-definitions). Changed the `defaults` function to return `tunnelOpts` and `globalOpts` from the available options
+- Updates the underlying ngrok client command to set the authtoken
+- Passing an authtoken as a connect option doesn't update the ngrok config file, it just passes it to the command
+- Updates the test setup to use mocha hooks to store/restore config
+- Basic auth password must be at least 8 characters now, updated tests that used a 4 character password
+- The ngrok client tries to guess the closest region, updated the tests to use a consistent region of "us" (the old default)
+- The v3 ngrok client looks for config in its new [default location](https://ngrok.com/docs/ngrok-agent/config#config-ngrok-location), but will fallback to the old location. Updated tests to remove both, to reset the state.
+- Adds a function to [upgrade the config file](https://ngrok.com/docs/guides/upgrade-v2-v3).
 
 ## [4.3.3] - 2022-08-18
 

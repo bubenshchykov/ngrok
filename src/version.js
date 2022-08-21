@@ -7,6 +7,7 @@ const { defaultDir, bin } = require("./constants");
 
 /**
  * @param {Ngrok.Options | undefined} opts
+ * @returns Promise<string>
  */
 async function getVersion(opts = {}) {
   let dir = defaultDir;

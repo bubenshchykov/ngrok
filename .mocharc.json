@@ -1,5 +1,5 @@
 {
-  "require": "./test/setup.js",
+  "require": ["./test/setup.js", "./test/configSetup.js"],
   "reporter": "spec",
   "ui": "bdd",
   "recursive": true,

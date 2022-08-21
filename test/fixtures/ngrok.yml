@@ -1,3 +1,4 @@
+version: "2"
 tunnels:
   test:
     addr: "3000"

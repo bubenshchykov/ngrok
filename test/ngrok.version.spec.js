@@ -1,3 +1,4 @@
+const { expect } = require("chai");
 const ngrok = require("..");
 const { getVersion } = require("../src/version");
 

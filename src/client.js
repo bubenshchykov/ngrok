@@ -1,4 +1,4 @@
-const got = require("got");
+const got = require("got").default;
 
 class NgrokClientError extends Error {
   constructor(message, response, body) {
