@@ -8,19 +8,19 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [10.x, 12.x, 14.x, 16.x, 18.x]
       max-parallel: 1
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm test
-      env:
-        CI: true
-        NGROK_AUTHTOKEN_FREE: ${{secrets.NGROK_AUTHTOKEN_FREE}}
-        NGROK_AUTHTOKEN_PAID: ${{secrets.NGROK_AUTHTOKEN_PAID}}
-        NGROK_FORCE_TOKENS: ${{secrets.NGROK_FORCE_TOKENS}}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm test
+        env:
+          CI: true
+          NGROK_AUTHTOKEN_FREE: ${{secrets.NGROK_AUTHTOKEN_FREE}}
+          NGROK_AUTHTOKEN_PAID: ${{secrets.NGROK_AUTHTOKEN_PAID}}
+          NGROK_FORCE_TOKENS: ${{secrets.NGROK_FORCE_TOKENS}}
