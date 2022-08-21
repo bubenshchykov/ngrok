@@ -1,10 +1,6 @@
 name: Tests
 
-on:
-  push
-  pull_request:
-    types: [opened]
-  
+on: push
 
 jobs:
   test:
