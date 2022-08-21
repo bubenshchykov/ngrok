@@ -12,6 +12,7 @@ const {
   validate,
   isRetriable,
   defaultConfigPath,
+  oldDefaultConfigPath,
 } = require("./src/utils");
 
 /**
@@ -105,6 +106,7 @@ module.exports = {
   disconnect,
   authtoken: setAuthtoken,
   defaultConfigPath,
+  oldDefaultConfigPath,
   upgradeConfig,
   kill,
   getUrl,

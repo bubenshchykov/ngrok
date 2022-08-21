@@ -62,6 +62,12 @@ declare module "ngrok" {
   export function defaultConfigPath(): string;
 
   /**
+   * Returns the old default location of the config file from ngrok v2, which is
+   * still a fallback location that ngrok checks.
+   */
+  export function oldDefaultConfigPath(): string;
+
+  /**
    *
    * Gets the version of the ngrok binary.
    */
