@@ -24,7 +24,6 @@ describe("a config file without a version", () => {
       error = e;
     }
     expect(error).not.to.be.undefined;
-    expect(error).to.match(/Error reading configuration file/);
   });
 
   describe("with the upgradeConfig function", () => {
