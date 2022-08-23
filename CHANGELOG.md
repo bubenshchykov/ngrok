@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Updates to ngrok binary version 3. This is a breaking change.
 
+- **[breaking]** Drops support for Node less than version 14.2
 - **[breaking]** download.js now uses URLs that download ngrok version 3
 - **[breaking]** To set basic auth on a tunnel, use the option `basic_auth` instead of `auth` or `httpauth`
 - **[breaking]** The ngrok client API now fails if you send arguments that aren't part of the [available configuration](https://ngrok.com/docs/ngrok-agent/config#config-ngrok-tunnel-definitions). Changed the `defaults` function to return `tunnelOpts` and `globalOpts` from the available options
