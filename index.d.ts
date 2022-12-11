@@ -165,6 +165,10 @@ declare module "ngrok" {
       uri: string;
       public_url: string;
       proto: Ngrok.TunnelProtocol;
+      config: {
+        addr: string;
+        inspect: boolean;
+      };
       metrics: {
         conns: Connections;
         http: HTTPRequests;
