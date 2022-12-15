@@ -28,20 +28,12 @@ class NgrokClient {
       }
     } catch (error) {
       let clientError;
-      try {
-        const response = JSON.parse(error.response.body);
-        clientError = new NgrokClientError(
-          response.msg,
-          error.response,
+      const response = error.response ? error.response.body ? JSON.parse(error.response.body) : error.response : error;
+      clientError = new NgrokClientError(
+          error.msg,
+          error.details,
           response
-        );
-      } catch (e) {
-        clientError = new NgrokClientError(
-          error.response.body,
-          error.response,
-          error.response.body
-        );
-      }
+      );
       throw clientError;
     }
   }
@@ -51,9 +43,9 @@ class NgrokClient {
       return await this.internalApi[method](path, { json: options }).then(
         (response) => response.statusCode === 204
       );
-    } catch (error) {
-      const response = JSON.parse(error.response.body);
-      throw new NgrokClientError(response.msg, error.response, response);
+    } catch (e) {
+      const response = e.response ? e.response.body ? JSON.parse(e.response.body) : e.response : e
+      throw new NgrokClientError(e.msg, e.response, response);
     }
   }
 

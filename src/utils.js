@@ -34,10 +34,7 @@ function validate(opts) {
 }
 
 function isRetriable(err) {
-  if (!err.response) {
-    return false;
-  }
-  const statusCode = err.response.statusCode;
+  const statusCode = err.response ? err.response.statusCode : err.body? err.body.status_code : 0;
   const body = err.body;
   const notReady500 = statusCode === 500 && /panic/.test(body);
   const notReady502 =
@@ -48,7 +45,7 @@ function isRetriable(err) {
     statusCode === 503 &&
     body.details &&
     body.details.err ===
-      "a successful ngrok tunnel session has not yet been established";
+    "a successful ngrok tunnel session has not yet been established";
   return notReady500 || notReady502 || notReady503;
 }
 
