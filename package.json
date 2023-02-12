@@ -48,7 +48,7 @@
   "dependencies": {
     "@types/node": "^8.10.50",
     "extract-zip": "^2.0.1",
-    "got": "^11.8.5",
+    "got": "^12.5.3",
     "lodash.clonedeep": "^4.5.0",
     "uuid": "^7.0.0 || ^8.0.0",
     "yaml": "^1.10.0"
