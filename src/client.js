@@ -28,21 +28,26 @@ class NgrokClient {
       }
     } catch (error) {
       let clientError;
-      try {
-        const response = JSON.parse(error.response.body);
-        clientError = new NgrokClientError(
-          response.msg,
-          error.response,
-          response
-        );
-      } catch (e) {
-        clientError = new NgrokClientError(
-          error.response.body,
-          error.response,
-          error.response.body
-        );
+      if (error.response) {
+        try {
+          const response = JSON.parse(error.response.body);
+          clientError = new NgrokClientError(
+            response.msg,
+            error.response,
+            response
+          );
+        } catch (e) {
+          clientError = new NgrokClientError(
+            error.response.body,
+            error.response,
+            error.response.body
+          );
+        }
+        throw clientError;
+      } else {
+        // Rethrow the original error as it is not an HTTP error.
+        throw error;
       }
-      throw clientError;
     }
   }
 
