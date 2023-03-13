@@ -1,12 +1,12 @@
+const { expect } = require("chai");
 const ngrok = require("..");
 const http = require("http");
-const got = require("got");
+const got = require("got").default;
 const uuid = require("uuid");
 const util = require("./util");
 
 const port = 8080;
 const authtoken = process.env.NGROK_AUTHTOKEN_PAID;
-const localUrl = "http://127.0.0.1:" + port;
 let tunnelUrl, respBody;
 
 (authtoken ? describe : describe.skip)(
@@ -44,6 +44,7 @@ let tunnelUrl, respBody;
             port: port,
             subdomain: uniqDomain,
             authtoken: authtoken,
+            region: "us",
           });
         });
 

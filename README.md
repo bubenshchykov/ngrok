@@ -1,5 +1,7 @@
 # ngrok [![Tests](https://github.com/bubenshchykov/ngrok/workflows/Tests/badge.svg)](https://github.com/bubenshchykov/ngrok/actions) ![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg) [![npm](https://img.shields.io/npm/v/ngrok.svg)](https://www.npmjs.com/package/ngrok) [![npm](https://img.shields.io/npm/dm/ngrok.svg)](https://www.npmjs.com/package/ngrok)
 
+This project is the Node.js wrapper for the [ngrok client](https://ngrok.com/download). Version 5 of this project uses ngrok client version 3. For ngrok client version 2, check out version 4.
+
 ![alt ngrok.com](https://ngrok.com/static/img/overview.png)
 
 * [Usage](#usage)
@@ -10,6 +12,7 @@
     * [Options](#options)
   * [Disconnect](#disconnect)
   * [Config](#config)
+    * [Updating config for ngrok version 3](#updating-config-for-ngrok-version-3)
   * [Inspector](#inspector)
   * [API](#api)
     * [List tunnels](#list-tunnels)
@@ -25,6 +28,9 @@
 * [ngrok binary update](#ngrok-binary-update)
 * [Using with nodemon](#using-with-nodemon)
 * [Contributors](#contributors)
+* [Upgrading to version 5](#upgrading-to-version-5)
+  * [Config](#config-1)
+  * [Connect options](#connect-options)
 * [Upgrading to version 4](#upgrading-to-version-4)
   * [TypeScript](#typescript)
 
@@ -102,7 +108,7 @@ There are many options that you can pass to `connect`, here are some examples:
 const url = await ngrok.connect({
   proto: 'http', // http|tcp|tls, defaults to http
   addr: 8080, // port or network address, defaults to 80
-  auth: 'user:pwd', // http basic authentication for tunnel
+  basic_auth: 'user:pwd', // http basic authentication for tunnel
   subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io
   authtoken: '12345', // your authtoken from ngrok.com
   region: 'us', // one of ngrok regions (us, eu, au, ap, sa, jp, in), defaults to us
@@ -113,9 +119,12 @@ const url = await ngrok.connect({
 });
 ```
 
-See [the ngrok documentation for all of the tunnel definition options](https://ngrok.com/docs#tunnel-definitions) including: `name, inspect, host_header, bind_tls, hostname, crt, key, client_cas, remote_addr`.
+See [the ngrok documentation for all of the tunnel definition options](https://ngrok.com/docs/ngrok-agent/config#config-ngrok-tunnel-definitions) including: `name, inspect, host_header, scheme, hostname, crt, key, remote_addr`.
 
-Note on regions: the region used in the first tunnel will be used for all the following tunnels.
+Note on regions:
+
+* The region used in the first tunnel will be used for all the following tunnels
+* If you do not provide a region, ngrok will try to pick the closest one to your location. This will include the region in the URL. To get a URL without a region, set the region to "us".
 
 ### Disconnect
 
@@ -127,19 +136,40 @@ await ngrok.disconnect(); // stops all
 await ngrok.kill(); // kills ngrok process
 ```
 
-Note on HTTP tunnels: by default bind_tls is true, so whenever you use HTTP proto two tunnels are created - HTTP and HTTPS. If you disconnect the HTTPS tunnel, the HTTP tunnel remains open. You might want to close them both by passing the HTTP-version url, or simply by disconnecting all in one go `ngrok.disconnect()`.
-
 ### Config
 
 You can use ngrok's [configurations files](https://ngrok.com/docs#config), and pass `name` option when making a tunnel. Configuration files allow to store tunnel options. Ngrok looks for them here:
 
-```
-OS X	/Users/example/.ngrok2/ngrok.yml
-Linux	/home/example/.ngrok2/ngrok.yml
-Windows	C:\Users\example\.ngrok2\ngrok.yml
-```
+| System         | Path                                              |
+| -------------- | ------------------------------------------------- |
+| MacOS (Darwin) | `"~/Library/Application Support/ngrok/ngrok.yml"` |
+| Linux          | `"~/.config/ngrok/ngrok.yml"`                     |
+| Windows        | `"%HOMEPATH%\AppData\Local\ngrok\ngrok.yml"`      |
 
 You can specify a custom `configPath` when making a tunnel.
+
+#### Updating config for ngrok version 3
+
+With the upgrade to ngrok version 3, an older config file will no longer be compatible without a few changes. The ngrok agent provides a [command to upgrade your config](https://ngrok.com/docs/ngrok-agent/ngrok#command-ngrok-config-upgrade). On the command line you can run:
+
+```
+ngrok config upgrade
+```
+
+The default locations of the config file have changed too, you can upgrade and move your config file with the command:
+
+```
+ngrok config upgrade --relocate
+```
+
+The library makes this command available as well. To get the same effect you can run:
+
+```js
+await ngrok.upgradeConfig();
+
+// relocate the config file too:
+await ngrok.upgradeConfig({ relocate: true });
+```
 
 ### Inspector
 
@@ -219,12 +249,12 @@ const request = await api.requestDetail(requestId);
 
 ### Proxy
 
-- If you are behind a corporate proxy and have issues installing ngrok, you can set ```HTTPS_PROXY``` env var to fix it. ngrok's postinstall scripts uses the [`got`](https://www.npmjs.com/package/got) module to fetch the binary and the [`hpagent`](https://github.com/delvedor/hpagent) module to support HTTPS proxies. You will need to install the `hpagent` module as a dependency
+- If you are behind a corporate proxy and have issues installing ngrok, you can set `HTTPS_PROXY` env var to fix it. ngrok's postinstall scripts uses the [`got`](https://www.npmjs.com/package/got) module to fetch the binary and the [`hpagent`](https://github.com/delvedor/hpagent) module to support HTTPS proxies. You will need to install the `hpagent` module as a dependency
 - If you are using a CA file, set the path in the environment variable `NGROK_ROOT_CA_PATH`. The path is needed for downloading the ngrok binary in the postinstall script
 
 ## How it works
 
-```npm install``` downloads the ngrok binary for your platform from the official ngrok hosting. To host binaries yourself set the `NGROK_CDN_URL` environment variable before installing ngrok. To force specific platform set `NGROK_ARCH`, eg `NGROK_ARCH=freebsdia32`.
+`npm install` downloads the ngrok binary for your platform from the official ngrok hosting. To host binaries yourself set the `NGROK_CDN_URL` environment variable before installing ngrok. To force specific platform set `NGROK_ARCH`, eg `NGROK_ARCH=freebsdia32`.
 
 The first time you create a tunnel the ngrok process is spawned and runs until you disconnect or when the parent process is killed. All further tunnels are connected or disconnected through the internal ngrok API which usually runs on http://127.0.0.1:4040.
 
@@ -243,9 +273,23 @@ If you want your application to restart as you make changes to it, you may use [
 
 ## Contributors
 
-Please run ```git update-index --assume-unchanged bin/ngrok``` to not override [ngrok stub](https://github.com/bubenshchykov/ngrok/blob/master/bin/ngrok) in your PR. Unfortunately it can't be gitignored.
+Please run `git update-index --assume-unchanged bin/ngrok` to not override [ngrok stub](https://github.com/bubenshchykov/ngrok/blob/master/bin/ngrok) in your PR. Unfortunately it can't be gitignored.
 
 The test suite covers the basic usage without an authtoken, as well as features available for free and paid authtokens. You can supply your own tokens as environment variables, otherwise a warning is given and some specs are ignored (locally and in PR builds). GitHub Actions supplies real tokens to master branch and runs all specs always.
+
+## Upgrading to version 5
+
+Please read the [upgrade notes for the ngrok agent](https://ngrok.com/docs/guides/upgrade-v2-v3). Library specific changes are described below and there is more in the [CHANGELOG](./CHANGELOG.md):
+
+### Config 
+
+The format and default location of the config file has changed. Please see the section on [upgrading your config file](#updating-config-for-ngrok-version-3) for more detail.
+
+### Connect options
+
+The `bind_tls` option is now `scheme`. When `bind_tls` was true (the default), ngrok agent version 2 would start two tunnels, one on `http` and one on `https`. Now, when `scheme` is set to `https` (the default), only an `https` tunnel will be created. To create both tunnels, you will need to pass `["http", "https"]` as the `scheme` option.
+
+The `auth` option, also available as `httpauth`, is now just `basic_auth`. Note also that the password for `basic_auth` must be between 8 and 128 characters long.
 
 ## Upgrading to version 4
 

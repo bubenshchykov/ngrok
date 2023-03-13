@@ -1,7 +1,8 @@
+const { expect } = require("chai");
 const ngrok = require("..");
 const http = require("http");
 const net = require("net");
-const got = require("got");
+const got = require("got").default;
 const URL = require("url");
 const uuid = require("uuid");
 const util = require("./util");
@@ -52,7 +53,10 @@ let tunnelUrl, respBody;
 
         describe("connecting to ngrok with port specified", function () {
           before(async () => {
-            tunnelUrl = await ngrok.connect(port);
+            tunnelUrl = await ngrok.connect({
+              addr: port,
+              region: "us",
+            });
           });
 
           it("should return url pointing to ngrok domain", function () {
@@ -98,6 +102,7 @@ let tunnelUrl, respBody;
             tunnelUrl = await ngrok.connect({
               port: port,
               subdomain: uniqDomain,
+              region: "us",
             });
           });
 
@@ -146,6 +151,7 @@ let tunnelUrl, respBody;
 
             before(async () => {
               tunnelUrl = await ngrok.connect({
+                region: "us",
                 port: port,
                 subdomain: uniqDomain,
               });
@@ -161,7 +167,7 @@ let tunnelUrl, respBody;
           before(async () => {
             tunnelUrl = await ngrok.connect({
               port: port,
-              auth: "oki:doki",
+              basic_auth: "username:password",
             });
           });
 
@@ -185,8 +191,8 @@ let tunnelUrl, respBody;
           describe("calling local server through ngrok with http authorization", function () {
             before(function () {
               return got(tunnelUrl + "/ngrok-httpauth", {
-                username: "oki",
-                password: "doki",
+                username: "username",
+                password: "password",
               })
                 .text()
                 .then((body) => (respBody = body));

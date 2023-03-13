@@ -3,3 +3,4 @@ bin/
 bin/**
 bin/ngrok
 *.log
+package-lock.json

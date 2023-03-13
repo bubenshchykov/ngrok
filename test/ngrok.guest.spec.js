@@ -1,9 +1,12 @@
+const { expect } = require("chai");
 const ngrok = require("..");
 const http = require("http");
-const got = require("got");
+const { join } = require("path");
+const got = require("got").default;
 const uuid = require("uuid");
 const util = require("./util");
 
+const configPath = join("test", "fixtures", "ngrok.yml");
 const port = 8080;
 const localUrl = "http://127.0.0.1:" + port;
 let tunnelUrl, respBody, error;
@@ -44,7 +47,10 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
 
       describe("connecting to ngrok with port specified", function () {
         before(async function () {
-          tunnelUrl = await ngrok.connect(port);
+          tunnelUrl = await ngrok.connect({
+            addr: port,
+            configPath,
+          });
         });
 
         it("should return url pointing to ngrok domain", function () {
@@ -129,7 +135,12 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
         before(async () => await ngrok.kill());
 
         before(async function () {
-          tunnelUrl = await ngrok.connect({ region: "eu" });
+          try {
+            tunnelUrl = await ngrok.connect({ region: "eu", configPath });
+          } catch (error) {
+            console.error(error.body);
+            throw error;
+          }
         });
 
         it("should return url pointing to ngrok eu region", function () {
@@ -146,6 +157,7 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
             await ngrok.connect({
               port: port,
               subdomain: uniqDomain,
+              configPath,
             });
           } catch (err) {
             error = err;
@@ -183,6 +195,7 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
           const statusChangePromise = new Promise((res) => (resolve = res));
           await ngrok.connect({
             port,
+            configPath,
             onLogEvent: (message) => logMessages.push(message),
             onStatusChange: (status) => {
               if (status === "connected") resolve();
@@ -229,7 +242,10 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
 
       describe("connecting to ngrok with port specified", function () {
         before(async function () {
-          tunnelUrl = await ngrok.connect(port);
+          tunnelUrl = await ngrok.connect({
+            addr: port,
+            configPath,
+          });
         });
 
         after(async function () {

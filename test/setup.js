@@ -27,5 +27,4 @@ if (!env.NGROK_AUTHTOKEN_PAID)
   );
 
 const chai = require("chai");
-global.expect = chai.expect;
 chai.config.includeStack = true;

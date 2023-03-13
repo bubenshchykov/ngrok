@@ -56,15 +56,36 @@ declare module "ngrok" {
   export function authtoken(token: string | Ngrok.Options): Promise<void>;
 
   /**
+   * Returns the default location of the config file, ngrok.yml
+   * Based on the docs here: https://ngrok.com/docs/ngrok-agent/config#config-ngrok-location
+   */
+  export function defaultConfigPath(): string;
+
+  /**
+   * Returns the old default location of the config file from ngrok v2, which is
+   * still a fallback location that ngrok checks.
+   */
+  export function oldDefaultConfigPath(): string;
+
+  /**
    *
    * Gets the version of the ngrok binary.
    */
   export function getVersion(options?: Ngrok.Options): Promise<string>;
 
-  namespace Ngrok {
+  /**
+   *
+   */
+  export function upgradeConfig(options?: {
+    relocate?: boolean;
+    configPath?: string;
+    binPath?: (defaultPath: string) => string;
+  }): Promise<void>;
+
+  export namespace Ngrok {
     // This is a protocol that you can select when starting a tunnel.
     type Protocol = "http" | "tcp" | "tls";
-    // Choosing http will start a tunnel on both http and https. So when the 
+    // Choosing http will start a tunnel on both http and https. So when the
     // tunnels are returned from the API, "https" is a possibility too.
     type TunnelProtocol = "https" | "http" | "tcp" | "tls";
     type Region = "us" | "eu" | "au" | "ap" | "sa" | "jp" | "in";
@@ -137,7 +158,7 @@ declare module "ngrok" {
        */
       onStatusChange?: (status: "connected" | "closed") => any;
 
-       /**
+      /**
        * Callback called when ngrok host process is terminated.
        */
       onTerminated?: () => any;
@@ -236,8 +257,8 @@ declare module "ngrok" {
     error_code: number;
     status_code: number;
     msg: string;
-    details: { [key: string]: string }
-  }
+    details: { [key: string]: string };
+  };
 
   class NgrokClientError extends Error {
     constructor(message: string, response: Response, body: ErrorBody | string);

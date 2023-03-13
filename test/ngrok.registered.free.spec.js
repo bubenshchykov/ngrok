@@ -1,7 +1,8 @@
+const { expect } = require("chai");
 const ngrok = require("..");
 const http = require("http");
 const net = require("net");
-const got = require("got");
+const got = require("got").default;
 const URL = require("url");
 const util = require("./util");
 
@@ -92,7 +93,7 @@ describe("registered.free.spec.js - setting free authtoken", function () {
         before(async () => {
           tunnelUrl = await ngrok.connect({
             port: port,
-            auth: "oki:doki",
+            basic_auth: "username:password",
           });
         });
 
@@ -116,8 +117,8 @@ describe("registered.free.spec.js - setting free authtoken", function () {
         describe("calling local server through ngrok with http authorization", function () {
           before(function () {
             return got(tunnelUrl + "/ngrok-httpauth", {
-              username: "oki",
-              password: "doki",
+              username: "username",
+              password: "password",
             })
               .text()
               .then((body) => (respBody = body));

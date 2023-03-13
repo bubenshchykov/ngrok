@@ -1,13 +1,7 @@
-const { promisify } = require("util");
-const { spawn, exec: execCallback } = require("child_process");
-const exec = promisify(execCallback);
-const platform = require("os").platform();
+const { spawn } = require("child_process");
 const { join } = require("path");
 
-const defaultDir = join(__dirname, "..", "bin");
-const bin = platform === "win32" ? "ngrok.exe" : "ngrok";
-const ready = /starting web service.*addr=(\d+\.\d+\.\d+\.\d+:\d+)/;
-const inUse = /address already in use/;
+const { defaultDir, bin, ready, inUse } = require("./constants");
 
 let processPromise, activeProcess;
 
@@ -30,7 +24,7 @@ async function getProcess(opts) {
 function parseAddr(message) {
   if (message[0] === "{") {
     const parsed = JSON.parse(message);
-    return parsed.addr
+    return parsed.addr;
   } else {
     const parsed = message.match(ready);
     if (parsed) {
@@ -42,8 +36,9 @@ function parseAddr(message) {
 async function startProcess(opts) {
   let dir = defaultDir;
   const start = ["start", "--none", "--log=stdout"];
-  if (opts.region) start.push("--region=" + opts.region);
-  if (opts.configPath) start.push("--config=" + opts.configPath);
+  if (opts.authtoken) start.push(`--authtoken=${opts.authtoken}`);
+  if (opts.region) start.push(`--region=${opts.region}`);
+  if (opts.configPath) start.push(`--config=${opts.configPath}`);
   if (opts.binPath) dir = opts.binPath(dir);
 
   const ngrok = spawn(join(dir, bin), start, { windowsHide: true });
@@ -68,14 +63,14 @@ async function startProcess(opts) {
     }
 
     const msgs = msg.split(/\n/);
-    msgs.forEach(msg => {
+    msgs.forEach((msg) => {
       const addr = parseAddr(msg);
       if (addr) {
         resolve(`http://${addr}`);
       } else if (msg.match(inUse)) {
         reject(new Error(msg.substring(0, 10000)));
       }
-    })
+    });
   });
 
   ngrok.stderr.on("data", (data) => {
@@ -123,46 +118,7 @@ process.on("exit", () => {
   }
 });
 
-/**
- * @param {string | Ngrok.Options} optsOrToken
- */
-async function setAuthtoken(optsOrToken) {
-  const isOpts = typeof optsOrToken !== "string";
-  const opts = isOpts ? optsOrToken : {};
-  const token = isOpts ? opts.authtoken : optsOrToken;
-
-  const authtoken = ["authtoken", token];
-  if (opts.configPath) authtoken.push("--config=" + opts.configPath);
-
-  let dir = defaultDir;
-  if (opts.binPath) dir = opts.binPath(dir);
-  const ngrok = spawn(join(dir, bin), authtoken, { windowsHide: true });
-
-  const killed = new Promise((resolve, reject) => {
-    ngrok.stdout.once("data", () => resolve());
-    ngrok.stderr.once("data", () => reject(new Error("cant set authtoken")));
-  });
-
-  try {
-    return await killed;
-  } finally {
-    ngrok.kill();
-  }
-}
-
-/**
- * @param {Ngrok.Options | undefined} opts
- */
-async function getVersion(opts = {}) {
-  let dir = defaultDir;
-  if (opts.binPath) dir = opts.binPath(dir);
-  const { stdout } = await exec(`${join(dir, bin)} --version`);
-  return stdout.replace("ngrok version", "").trim();
-}
-
 module.exports = {
   getProcess,
   killProcess,
-  setAuthtoken,
-  getVersion,
 };

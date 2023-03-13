@@ -11,8 +11,8 @@ function downloadNgrok(callback, options) {
   const fs = require("fs");
   const path = require("path");
   const readline = require("readline");
-  const extract_zip = require('extract-zip');
-  const got = require("got");
+  const extract_zip = require("extract-zip");
+  const got = require("got").default;
 
   const cafilePath = options.cafilePath || process.env.NGROK_ROOT_CA_PATH;
   const cdnUrl = getCdnUrl();
@@ -35,7 +35,7 @@ function downloadNgrok(callback, options) {
     const cdnPath =
       options.cdnPath ||
       process.env.NGROK_CDN_PATH ||
-      "/c/4VmDzA7iaHb/ngrok-stable-";
+      "/c/bNyj1mQVY4c/ngrok-v3-stable-";
     const cdnFiles = {
       darwinia32: cdn + cdnPath + "darwin-386.zip",
       darwinx64: cdn + cdnPath + "darwin-amd64.zip",
@@ -117,7 +117,7 @@ function downloadNgrok(callback, options) {
       })
       .on("downloadProgress", ({ percent, transferred, total }) => {
         readline.clearLine(process.stderr, 0, () => {
-          readline.cursorTo(process.stderr, 0, () => {
+          readline.cursorTo(process.stderr, 0, null, () => {
             process.stderr.write(
               `ngrok - downloading progress: ${transferred}/${total} (${(
                 percent * 100
@@ -148,16 +148,16 @@ function downloadNgrok(callback, options) {
   function extract(cb) {
     console.error("ngrok - unpacking binary");
     const moduleBinPath = path.join(__dirname, "bin");
-    extract_zip(cacheUrl, { dir: moduleBinPath})
+    extract_zip(cacheUrl, { dir: moduleBinPath })
       .then(() => {
         const suffix = os.platform() === "win32" ? ".exe" : "";
         if (suffix === ".exe") {
           fs.writeFileSync(path.join(moduleBinPath, "ngrok.cmd"), "ngrok.exe");
         }
         const target = path.join(moduleBinPath, "ngrok" + suffix);
-        fs.chmodSync(target, 0755);
+        fs.chmodSync(target, 0o755);
         if (!fs.existsSync(target) || fs.statSync(target).size <= 0) {
-          return error(new Error("corrupted file " + target));
+          return cb(new Error("corrupted file " + target));
         }
         console.log("ngrok - binary unpacked to " + target);
         cb(null);

@@ -1,26 +1,41 @@
+/// <reference path="./index.d.ts"/>
+
 const { NgrokClient, NgrokClientError } = require("./src/client");
 const uuid = require("uuid");
-const {
-  getProcess,
-  killProcess,
-  setAuthtoken,
-  getVersion,
-} = require("./src/process");
-const { defaults, validate, isRetriable } = require("./src/utils");
+const { getProcess, killProcess } = require("./src/process");
+const { getVersion } = require("./src/version");
+const { setAuthtoken } = require("./src/authtoken");
+const { upgradeConfig } = require("./src/config");
 
+const {
+  defaults,
+  validate,
+  isRetriable,
+  defaultConfigPath,
+  oldDefaultConfigPath,
+} = require("./src/utils");
+
+/**
+ * @type string | null
+ */
 let processUrl = null;
+/**
+ * @type NgrokClient | null
+ */
 let ngrokClient = null;
 
+/**
+ *
+ * @param {Object | string} opts
+ * @returns Promise<string>
+ */
 async function connect(opts) {
-  opts = defaults(opts);
-  validate(opts);
-  if (opts.authtoken) {
-    await setAuthtoken(opts);
-  }
+  const { tunnelOpts, globalOpts } = defaults(opts);
+  validate(globalOpts);
 
-  processUrl = await getProcess(opts);
+  processUrl = await getProcess(globalOpts);
   ngrokClient = new NgrokClient(processUrl);
-  return connectRetry(opts);
+  return connectRetry(tunnelOpts);
 }
 
 async function connectRetry(opts, retryCount = 0) {
@@ -37,6 +52,11 @@ async function connectRetry(opts, retryCount = 0) {
   }
 }
 
+/**
+ *
+ * @param {string} publicUrl
+ * @returns Promise<void>
+ */
 async function disconnect(publicUrl) {
   if (!ngrokClient) return;
   const tunnels = (await ngrokClient.listTunnels()).tunnels;
@@ -55,16 +75,28 @@ async function disconnect(publicUrl) {
   return ngrokClient.stopTunnel(tunnelDetails.name);
 }
 
+/**
+ *
+ * @returns Promise<void>
+ */
 async function kill() {
   if (!ngrokClient) return;
   await killProcess();
   ngrokClient = null;
 }
 
+/**
+ *
+ * @returns string | null
+ */
 function getUrl() {
   return processUrl;
 }
 
+/**
+ *
+ * @returns NgrokClient | null
+ */
 function getApi() {
   return ngrokClient;
 }
@@ -73,10 +105,13 @@ module.exports = {
   connect,
   disconnect,
   authtoken: setAuthtoken,
+  defaultConfigPath,
+  oldDefaultConfigPath,
+  upgradeConfig,
   kill,
   getUrl,
   getApi,
   getVersion,
   NgrokClient,
-  NgrokClientError
+  NgrokClientError,
 };

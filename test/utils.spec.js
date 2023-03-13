@@ -1,100 +1,117 @@
+const { expect } = require("chai");
 const { defaults, validate, isRetriable } = require("../src/utils");
 const { join } = require("path");
-const { expect } = require("chai");
 
 const configPath = join("test", "fixtures", "ngrok.yml");
 
 describe("utils", () => {
   describe("defaults", () => {
-    it("sets default proto and addr with no arguments", () => {
-      expect(defaults()).to.deep.equal({ proto: "http", addr: 80 });
+    it("returns tunnel and global opts", () => {
+      const opts = defaults();
+      expect(opts).to.haveOwnProperty("tunnelOpts");
+      expect(opts).to.haveOwnProperty("globalOpts");
     });
 
-    it("sets the proto to http if the argument is not an object", () => {
-      expect(defaults(8080)).to.deep.equal({ proto: "http", addr: 8080 });
-    });
-
-    it("sets the default proto and addr when passed a function", () => {
-      expect(defaults(() => {})).to.deep.equal({ proto: "http", addr: 80 });
-    });
-
-    it("sets the proto to http if there is an addr, but no proto", () => {
-      expect(defaults({ addr: 8080 })).to.deep.equal({
-        proto: "http",
-        addr: 8080,
+    describe("tunnelOpts", () => {
+      it("sets default proto and addr with no arguments", () => {
+        const { tunnelOpts } = defaults();
+        expect(tunnelOpts).to.deep.equal({ proto: "http", addr: 80 });
       });
-    });
 
-    it("returns a copy of the argument", () => {
-      const opts = { addr: 8080, proto: "http" };
-      const result = defaults(opts);
-      // Expects that the contents of the result are the same as the original
-      // object
-      expect(result).to.eql(opts);
-      // Expects that the two objects are different, because result is a copy
-      expect(result).not.to.equal(opts);
-    });
+      it("sets the proto to http if the argument is not an object", () => {
+        const { tunnelOpts } = defaults(8080);
+        expect(tunnelOpts).to.deep.equal({ proto: "http", addr: 8080 });
+      });
 
-    it("loads the config from the config file if a name is passed", () => {
-      expect(
-        defaults({
+      it("sets the default proto and addr when passed a function", () => {
+        const { tunnelOpts } = defaults(() => {});
+        expect(tunnelOpts).to.deep.equal({ proto: "http", addr: 80 });
+      });
+
+      it("sets the proto to http if there is an addr, but no proto", () => {
+        const { tunnelOpts } = defaults({ addr: 8080 });
+        expect(tunnelOpts).to.deep.equal({
+          proto: "http",
+          addr: 8080,
+        });
+      });
+
+      it("returns a copy of the argument", () => {
+        const opts = { addr: 8080, proto: "http" };
+        const { tunnelOpts } = defaults(opts);
+        // Expects that the contents of the result are the same as the original
+        // object
+        expect(tunnelOpts).to.eql(opts);
+        // Expects that the two objects are different, because result is a copy
+        expect(tunnelOpts).not.to.equal(opts);
+      });
+
+      it("separates tunnel options from global options", () => {
+        const opts = { addr: 8080, proto: "http", configPath, region: "au" };
+        const { tunnelOpts, globalOpts } = defaults(opts);
+        expect(tunnelOpts).to.deep.equal({ addr: 8080, proto: "http" });
+        expect(globalOpts).to.deep.equal({ configPath, region: "au" });
+      });
+
+      it("loads the config from the config file if a name is passed", () => {
+        const { tunnelOpts, globalOpts } = defaults({
           configPath,
           name: "test",
-        })
-      ).to.deep.equal({
-        addr: "3000",
-        subdomain: "testtunnel",
-        proto: "http",
-        configPath,
-        name: "test",
+        });
+        expect(tunnelOpts).to.deep.equal({
+          addr: "3000",
+          subdomain: "testtunnel",
+          proto: "http",
+        });
+        expect(globalOpts).to.deep.equal({
+          configPath,
+        });
       });
-    });
 
-    it("returns the defaults if the tunnel doesn't exist in the config", () => {
-      expect(
-        defaults({
+      it("returns the defaults if the tunnel doesn't exist in the config", () => {
+        const { tunnelOpts, globalOpts } = defaults({
           configPath,
           name: "nope",
-        })
-      ).to.deep.equal({
-        configPath,
-        name: "nope",
-        addr: 80,
-        proto: "http",
+        });
+        expect(tunnelOpts).to.deep.equal({
+          addr: 80,
+          proto: "http",
+        });
+        expect(globalOpts).to.deep.equal({ configPath });
       });
-    });
 
-    it("doesn't override config functions when loading from config", () => {
-      const binPath = () => {};
-      const onLogEvent = () => {};
-      const onStatusChange = () => {};
-      const onTerminated = () => {};
-      expect(
-        defaults({
+      it("doesn't override config functions when loading from config", () => {
+        const binPath = () => {};
+        const onLogEvent = () => {};
+        const onStatusChange = () => {};
+        const onTerminated = () => {};
+        const { tunnelOpts, globalOpts } = defaults({
           configPath,
           name: "test",
           binPath,
           onLogEvent,
           onStatusChange,
           onTerminated,
-        })
-      ).to.deep.equal({
-        configPath,
-        name: "test",
-        addr: "3000",
-        subdomain: "testtunnel",
-        proto: "http",
-        binPath,
-        onLogEvent,
-        onStatusChange,
-        onTerminated,
+        });
+        expect(tunnelOpts).to.deep.equal({
+          addr: "3000",
+          subdomain: "testtunnel",
+          proto: "http",
+        });
+        expect(globalOpts).to.deep.equal({
+          configPath,
+          binPath,
+          onLogEvent,
+          onStatusChange,
+          onTerminated,
+        });
       });
-    });
 
-    it("throws an error if the configPath doesn't exist", () => {
-      expect(() => {
-        defaults({ configPath: "blah", name: "test" });
-      }).to.throw(Error);
+      it("throws an error if the configPath doesn't exist", () => {
+        expect(() => {
+          defaults({ configPath: "blah", name: "test" });
+        }).to.throw(Error);
+      });
     });
   });
 
