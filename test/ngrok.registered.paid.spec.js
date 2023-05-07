@@ -60,7 +60,7 @@ let tunnelUrl, respBody;
           });
 
           it("should return url pointing to ngrok domain", function () {
-            expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.app/);
+            expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.(app|io)/);
           });
 
           describe("calling local server through ngrok", function () {
@@ -107,7 +107,9 @@ let tunnelUrl, respBody;
           });
 
           it("should return ngrok url with a given subdomain", function () {
-            expect(tunnelUrl).to.equal("https://" + uniqDomain + ".ngrok.app");
+            expect(tunnelUrl).to.match(
+              new RegExp(`https://${uniqDomain}.ngrok.(app|io)`)
+            );
           });
 
           describe("calling local server through ngrok", function () {
@@ -158,8 +160,8 @@ let tunnelUrl, respBody;
             });
 
             it("should be able to connect and return the same ngrok url", function () {
-              expect(tunnelUrl).to.equal(
-                "https://" + uniqDomain + ".ngrok.app"
+              expect(tunnelUrl).to.match(
+                new RegExp(`https://${uniqDomain}.ngrok.(app|io)`)
               );
             });
           });
@@ -174,7 +176,7 @@ let tunnelUrl, respBody;
           });
 
           it("should return url pointing to ngrok domain", function () {
-            expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.app/);
+            expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.(app|io)/);
           });
 
           describe("calling local server through ngrok without http authorization", function () {
