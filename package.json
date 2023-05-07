@@ -1,6 +1,6 @@
 {
   "name": "ngrok",
-  "version": "4.3.3",
+  "version": "5.0.0-beta.1",
   "description": "node wrapper for ngrok",
   "main": "index.js",
   "exports": {
@@ -20,9 +20,13 @@
     "index.js",
     "index.d.ts",
     "postinstall.js",
+    "src/autthoken.js",
     "src/client.js",
+    "src/config.js",
+    "src/constants.js",
     "src/process.js",
-    "src/utils.js"
+    "src/utils.js",
+    "src/version.js"
   ],
   "repository": {
     "type": "git",
