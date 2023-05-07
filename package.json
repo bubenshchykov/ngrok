@@ -52,7 +52,7 @@
     "got": "^11.8.5",
     "lodash.clonedeep": "^4.5.0",
     "uuid": "^7.0.0 || ^8.0.0",
-    "yaml": "^1.10.0"
+    "yaml": "^2.2.2"
   },
   "bin": {
     "ngrok": "bin/ngrok"
