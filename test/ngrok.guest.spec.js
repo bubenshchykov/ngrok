@@ -167,7 +167,7 @@ describe("guest.spec.js - ensuring no authtoken set", function () {
         it("should return error", function () {
           expect(error.message).to.contain("failed to start tunnel");
           expect(error.body.details.err).to.contain(
-            "Only paid plans may bind custom subdomains"
+            "Binding custom subdomains is a feature for paid accounts."
           );
         });
       });

@@ -56,7 +56,7 @@ describe("registered.free.spec.js - setting free authtoken", function () {
         });
 
         it("should return url pointing to ngrok domain", function () {
-          expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
+          expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok-free.app/);
         });
 
         describe("calling local server through ngrok", function () {
@@ -98,7 +98,7 @@ describe("registered.free.spec.js - setting free authtoken", function () {
         });
 
         it("should return url pointing to ngrok domain", function () {
-          expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok.io/);
+          expect(tunnelUrl).to.match(/https:\/\/.(.*).ngrok-free.app/);
         });
 
         describe("calling local server through ngrok without http authorization", function () {
