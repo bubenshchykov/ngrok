@@ -179,7 +179,7 @@ declare module "ngrok" {
       gauge: number;
     }
 
-    interface HTTPRequests extends Metrics {}
+    interface HTTPRequests extends Metrics { }
 
     interface Tunnel {
       name: string;
@@ -203,7 +203,7 @@ declare module "ngrok" {
 
     interface CapturedRequestOptions {
       limit: number;
-      tunnel_name: string;
+      tunnel_name?: string;
     }
 
     interface Request {

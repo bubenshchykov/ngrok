@@ -61,16 +61,20 @@ function downloadNgrok(callback, options) {
 
   function getCacheUrl() {
     let dir;
-    try {
-      dir =
-        os.platform() === "win32" && process.env.APPDATA
-          ? path.join(process.env.APPDATA, "ngrok")
-          : path.join(os.homedir(), ".ngrok");
-      if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
-        fs.mkdirSync(dir);
+
+    if (options.cacheDir) dir = options.cacheDir;
+    else {
+      try {
+        dir =
+          os.platform() === "win32" && process.env.APPDATA
+            ? path.join(process.env.APPDATA, "ngrok")
+            : path.join(os.homedir(), ".ngrok");
+        if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+          fs.mkdirSync(dir);
+        }
+      } catch (err) {
+        dir = path.join(__dirname, "bin");
       }
-    } catch (err) {
-      dir = path.join(__dirname, "bin");
     }
     const name = Buffer.from(cdnUrl).toString("base64");
     return path.join(dir, name + ".zip");
@@ -147,7 +151,7 @@ function downloadNgrok(callback, options) {
 
   function extract(cb) {
     console.error("ngrok - unpacking binary");
-    const moduleBinPath = path.join(__dirname, "bin");
+    const moduleBinPath = options.binDir || path.join(__dirname, "bin");
     extract_zip(cacheUrl, { dir: moduleBinPath })
       .then(() => {
         const suffix = os.platform() === "win32" ? ".exe" : "";
