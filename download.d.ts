@@ -2,11 +2,13 @@ declare module "ngrok/download" {
   export default function downloadNgrok(
     callback: (err?: Error) => void,
     options?: {
-      cafilePath: string;
-      arch: string;
-      cdnUrl: string;
-      cdnPath: string;
-      ignoreCache: boolean;
+      cafilePath?: string;
+      arch?: string;
+      cdnUrl?: string;
+      cdnPath?: string;
+      ignoreCache?: boolean;
+      cacheDir?: string;
+      binDir?: string;
     }
   ): void;
 }
