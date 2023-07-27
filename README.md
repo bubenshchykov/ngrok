@@ -291,6 +291,8 @@ The `bind_tls` option is now `scheme`. When `bind_tls` was true (the default), n
 
 The `auth` option, also available as `httpauth`, is now just `basic_auth`. Note also that the password for `basic_auth` must be between 8 and 128 characters long.
 
+It also makes it possible to use the ngrok free domain which was [introduced in April 2023](https://ngrok.com/blog-post/new-ngrok-domains) by using the `domain` option when creating a tunnel.
+
 ## Upgrading to version 4
 
 The main impetus to update the package was to remove the dependency on the deprecated `request` module. `request` was replaced with `got`. Calls to the main `ngrok` functions, `connect`, `authtoken`, `disconnect`, `kill`, `getVersion` and `getUrl` respond the same as in version 3.
