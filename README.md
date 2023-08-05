@@ -291,7 +291,18 @@ The `bind_tls` option is now `scheme`. When `bind_tls` was true (the default), n
 
 The `auth` option, also available as `httpauth`, is now just `basic_auth`. Note also that the password for `basic_auth` must be between 8 and 128 characters long.
 
-It also makes it possible to use the ngrok free domain which was [introduced in April 2023](https://ngrok.com/blog-post/new-ngrok-domains) by using the `domain` option when creating a tunnel.
+### Using the ngrok static free-domain
+
+In April 2023, ngrok [introduced the ngrok static free-domain](https://ngrok.com/blog-post/new-ngrok-domains), which brings you a static subdomain even for free accounts. To make use of it, just use the `domain` option when creating a tunnel. Example:
+
+```ts
+ngrok.connect({
+  domain: "xxx.ngrok-free.app"
+  authtoken: "YOUR-AUTH-TOKEN"
+})
+```
+
+__Note__: Please make sure to __either__ use the `subdomain` or the `domain` option. Using both would lead to using the subdomain only.  
 
 ## Upgrading to version 4
 
