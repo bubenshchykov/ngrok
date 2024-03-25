@@ -3,6 +3,10 @@ const { join } = require("path");
 
 const { defaultDir, bin } = require("./constants");
 
+const { killProcess } = require('./process');
+
+let authtoken;
+
 function consolidateTokenAndOpts(optsOrToken) {
   const isOpts = typeof optsOrToken !== "string";
   const opts = isOpts ? optsOrToken : {};
@@ -19,6 +23,7 @@ async function setAuthtoken(optsOrToken) {
     command.push("--config=" + opts.configPath);
   }
 
+
   let dir = defaultDir;
   if (opts.binPath) {
     dir = opts.binPath(dir);
@@ -31,6 +36,13 @@ async function setAuthtoken(optsOrToken) {
     process.stdout.once("data", () => resolve());
     process.stderr.once("data", () => reject(new Error("cant set authtoken")));
   });
+
+  if (opts.authtoken) {
+    if (authtoken !== opts.authtoken) {
+      await killProcess();
+    }
+    authtoken = opts.authtoken;
+  }
 
   try {
     return await killed;
