@@ -29,10 +29,19 @@ let ngrokClient = null;
  * @param {Object | string} opts
  * @returns Promise<string>
  */
+
+let authtoken;
+
 async function connect(opts) {
   const { tunnelOpts, globalOpts } = defaults(opts);
   validate(globalOpts);
 
+  if (globalOpts.authtoken) {
+    if (authtoken !== globalOpts.authtoken) {
+      await kill();
+    }
+    authtoken = globalOpts.authtoken;
+  }
   processUrl = await getProcess(globalOpts);
   ngrokClient = new NgrokClient(processUrl);
   return connectRetry(tunnelOpts);
