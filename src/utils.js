@@ -64,6 +64,7 @@ const tunnelProperties = [
   "key",
   "terminate_at",
   "labels",
+  "domain",
 ];
 
 const globalProperties = [
