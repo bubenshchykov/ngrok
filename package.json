@@ -20,7 +20,7 @@
     "index.js",
     "index.d.ts",
     "postinstall.js",
-    "src/autthoken.js",
+    "src/authtoken.js",
     "src/client.js",
     "src/config.js",
     "src/constants.js",
