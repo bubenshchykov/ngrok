@@ -7,9 +7,7 @@ const URL = require("url");
 const util = require("./util");
 
 const port = 8080;
-const authtoken =
-  process.env.NGROK_AUTHTOKEN_FREE ||
-  "6oQGYSXQuj7hdWDfxbpp3_2hWhQtZSq8yiJZDETQLUc";
+const authtoken = process.env.NGROK_AUTHTOKEN_FREE;
 const localUrl = "http://127.0.0.1:" + port;
 let tunnelUrl, respBody;
 
