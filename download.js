@@ -31,7 +31,7 @@ function downloadNgrok(callback, options) {
     const arch =
       options.arch || process.env.NGROK_ARCH || os.platform() + os.arch();
     const cdn =
-      options.cdnUrl || process.env.NGROK_CDN_URL || "https://bin.equinox.io";
+      options.cdnUrl || process.env.NGROK_CDN_URL || "https://bin.ngrok.com";
     const cdnPath =
       options.cdnPath ||
       process.env.NGROK_CDN_PATH ||
